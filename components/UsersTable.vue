@@ -128,11 +128,11 @@ const checkedAllUsers = () => {
                 <tr>
                     <th
                         :class="{ flex: column.key === 'name' }"
-                        style="gap: 10px"
+                        style="gap: 20px"
                         v-for="column in columns"
                         :key="column.key"
                     >
-                        <div class="parent" v-if="column.key === 'name'">
+                        <div v-if="column.key === 'name'">
                             <CustomCheckBtn
                                 @click="checkedAllUsers"
                                 :checked="checkedAll"
@@ -154,7 +154,7 @@ const checkedAllUsers = () => {
                         }"
                     >
                         <div
-                            class="flex-between"
+                            class="flex"
                             v-if="column.key === 'name'"
                             style="gap: 10px"
                         >
