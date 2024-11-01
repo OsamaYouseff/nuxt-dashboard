@@ -17,7 +17,7 @@ const toggleNav = (page: string) => {
                             <NuxtLink
                                 @click="toggleNav('home')"
                                 :class="{ active: currentPage === 'home' }"
-                                to="/user/create"
+                                to="/user/listings"
                             >
                                 <img
                                     src="@/assets/icons/house.svg"
@@ -30,7 +30,7 @@ const toggleNav = (page: string) => {
                             <NuxtLink
                                 @click="toggleNav('users')"
                                 :class="{ active: currentPage === 'users' }"
-                                to="/user/create"
+                                to="/user/listings"
                             >
                                 <img
                                     src="@/assets/icons/UsersFour.svg"
@@ -44,7 +44,7 @@ const toggleNav = (page: string) => {
                             <NuxtLink
                                 @click="toggleNav('experts')"
                                 :class="{ active: currentPage === 'experts' }"
-                                to="/user/create"
+                                to="/user/listings"
                             >
                                 <img
                                     src="@/assets/icons/SealCheck.svg"
@@ -58,7 +58,7 @@ const toggleNav = (page: string) => {
                             <NuxtLink
                                 @click="toggleNav('content')"
                                 :class="{ active: currentPage === 'content' }"
-                                to="/user/create"
+                                to="/user/listings"
                                 class="flex-between"
                             >
                                 <div class="flex" style="gap: 10px">
@@ -79,7 +79,7 @@ const toggleNav = (page: string) => {
                             <NuxtLink
                                 @click="toggleNav('rooms')"
                                 :class="{ active: currentPage === 'rooms' }"
-                                to="/user/create"
+                                to="/user/listings"
                             >
                                 <img
                                     src="@/assets/icons/ChatsCircle.svg"
@@ -95,7 +95,7 @@ const toggleNav = (page: string) => {
                                 :class="{
                                     active: currentPage === 'app-management',
                                 }"
-                                to="/user/create"
+                                to="/user/listings"
                                 class="flex-between"
                             >
                                 <div class="flex" style="gap: 10px">
@@ -126,7 +126,7 @@ const toggleNav = (page: string) => {
                         </div>
                     </div>
 
-                    <img src="@/assets/icons/Icon.svg" alt="" />
+                    <img src="@/assets/icons/icon.svg" alt="" />
                 </div>
             </div>
         </div>
@@ -145,7 +145,8 @@ const toggleNav = (page: string) => {
 }
 
 .sidebar {
-    width: 270px;
+    min-width: 270px;
+    max-width: 270px;
     height: 100vh;
     position: relative;
 }
@@ -185,9 +186,10 @@ a.active {
 
 .user {
     padding: 10px;
-    position: absolute;
-    bottom: 10px;
-    width: 100%;
+    position: fixed;
+    bottom: 15px;
+    max-width: 100%;
+    min-width: 260px;
 }
 
 .user img {
@@ -200,6 +202,7 @@ a.active {
 .content {
     flex: 1;
     background: #fcfcfd;
-    height: 100vh;
+    min-height: 100vh;
+    overflow-x: hidden;
 }
 </style>

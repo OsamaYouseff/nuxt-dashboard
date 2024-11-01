@@ -18,14 +18,22 @@ const currentTab = ref("active");
 
                 <div class="btns flex" style="gap: 10px">
                     <button>
-                        <img src="@/assets/icons/download.svg" alt="   " />
+                        <img
+                            src="@/assets/icons/download.svg"
+                            alt="export-icon"
+                        />
                         Export
                     </button>
-                    <button class="add-user">
-                        <img src="@/assets/icons/plus.svg" alt="   " />
+                    <nuxt-link to="/user/create">
+                        <button class="add-user">
+                            <img
+                                src="@/assets/icons/plus.svg"
+                                alt=" plus-icon"
+                            />
 
-                        Add user
-                    </button>
+                            Add user
+                        </button>
+                    </nuxt-link>
                 </div>
             </div>
         </header>
@@ -73,10 +81,9 @@ const currentTab = ref("active");
             </div>
 
             <!-- Table -->
-
-            <div class="users-list">Table</div>
-
-            <UserListingCard />
+            <div class="users-list">
+                <UsersTable />
+            </div>
         </div>
     </div>
 </template>

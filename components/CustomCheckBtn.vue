@@ -1,6 +1,15 @@
+<script setup lang="ts">
+const props = defineProps({
+    checked: {
+        type: Boolean,
+        default: false,
+    },
+});
+</script>
+
 <template>
     <label class="checkbox-container">
-        <input type="checkbox" />
+        <input type="checkbox" :checked="props.checked" />
         <span class="checkmark"></span>
     </label>
 </template>
@@ -35,9 +44,9 @@
     content: "";
     position: absolute;
     left: 6px;
-    top: 1px;
+    top: 1.5px;
     width: 6px;
-    height: 12px;
+    height: 11px;
     border: solid white;
     border-width: 0 3px 3px 0;
     transform: rotate(45deg);
