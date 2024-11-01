@@ -76,10 +76,4 @@ const handleFileChange = (event: Event) => {
     font-weight: 500;
     cursor: pointer;
 }
-
-h1,
-h2,
-label {
-    color: #101828;
-}
 </style>

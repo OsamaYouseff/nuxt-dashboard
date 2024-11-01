@@ -5,6 +5,20 @@ useHead({
 definePageMeta({
     layout: "dashboard",
 });
+
+const userInfo = reactive({
+    firstname: "",
+    lastname: "",
+    email: "",
+    password: "",
+    role: "",
+});
+
+const resetForm = () => {
+    Object.keys(userInfo).forEach((key) => {
+        userInfo[key] = "";
+    });
+};
 </script>
 <template>
     <div class="container">
@@ -49,7 +63,7 @@ definePageMeta({
                 </p>
             </div>
             <div class="flex" style="gap: 10px">
-                <button>Rest</button>
+                <button @click="resetForm">Rest</button>
                 <button class="add-user">Add</button>
             </div>
         </div>
@@ -62,15 +76,25 @@ definePageMeta({
                 <div class="flex-between">
                     <label for="name">Name</label>
                     <div class="flex-between" style="gap: 10px; width: 512px">
-                        <input type="text" id="name" placeholder="First Name" />
-                        <input type="text" id="name" placeholder="Last Name" />
+                        <input
+                            v-model="userInfo.firstname"
+                            type="text"
+                            id="name"
+                            placeholder="First Name"
+                        />
+                        <input
+                            v-model="userInfo.lastname"
+                            type="text"
+                            id="name"
+                            placeholder="Last Name"
+                        />
                     </div>
                 </div>
-
                 <!-- Email and Password -->
                 <div class="flex-between">
                     <label for="email">Email address</label>
                     <input
+                        v-model="userInfo.email"
                         type="email"
                         id="email"
                         placeholder="Email Address"
@@ -80,6 +104,7 @@ definePageMeta({
                 <div class="flex-between">
                     <label for="password">Password</label>
                     <input
+                        v-model="userInfo.password"
                         type="password"
                         id="password"
                         placeholder="Password"
@@ -88,7 +113,12 @@ definePageMeta({
                 <!-- Role -->
                 <div class="flex-between">
                     <label for="role">Role</label>
-                    <input type="text" id="role" placeholder="Role" />
+                    <input
+                        v-model="userInfo.role"
+                        type="text"
+                        id="role"
+                        placeholder="Role"
+                    />
                 </div>
 
                 <!-- Photo -->
@@ -120,7 +150,7 @@ definePageMeta({
         <div class="flex-between" style="margin-top: 100px">
             <span></span>
             <div class="flex" style="gap: 10px">
-                <button>Rest</button>
+                <button @click="resetForm">Rest</button>
                 <button class="add-user">Add</button>
             </div>
         </div>
