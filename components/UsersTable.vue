@@ -100,7 +100,15 @@ const people = [
     },
 ];
 
-const selected = ref([]);
+let checkedAll = ref<boolean>(false);
+
+const checkedAllUsers = () => {
+    checkedAll.value = !checkedAll.value;
+    document.querySelectorAll("input[type=checkbox]").forEach((el, index) => {
+        if (index === 0) el.checked = !el.checked;
+        if (el.checked === checkedAll.value) el.click();
+    });
+};
 </script>
 
 <template>
@@ -124,8 +132,11 @@ const selected = ref([]);
                         v-for="column in columns"
                         :key="column.key"
                     >
-                        <div v-if="column.key === 'name'">
-                            <CustomCheckBtn />
+                        <div class="parent" v-if="column.key === 'name'">
+                            <CustomCheckBtn
+                                @click="checkedAllUsers"
+                                :checked="checkedAll"
+                            />
                         </div>
                         {{ column.label }}
                     </th>
@@ -147,7 +158,7 @@ const selected = ref([]);
                             v-if="column.key === 'name'"
                             style="gap: 10px"
                         >
-                            <CustomCheckBtn />
+                            <CustomCheckBtn :checked="checkedAll" />
                             <NuxtLink :to="`/user/profile/${person.id}`">
                                 <div class="flex">
                                     <img
