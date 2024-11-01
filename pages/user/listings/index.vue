@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 useHead({
     title: "Users",
 });
@@ -6,7 +6,7 @@ definePageMeta({
     layout: "dashboard",
 });
 
-const currentTab = ref("active");
+const currentTab = ref<string>("active");
 </script>
 
 <template>

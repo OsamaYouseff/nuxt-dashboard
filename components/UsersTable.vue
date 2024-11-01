@@ -133,11 +133,7 @@ const selected = ref([]);
             </thead>
 
             <tbody>
-                <tr
-                    v-for="person in people"
-                    :key="person.id"
-                    :class="{ selected: selected.includes(person.id) }"
-                >
+                <tr v-for="person in people" :key="person.id">
                     <td
                         v-for="column in columns"
                         :key="column.key"
@@ -147,27 +143,29 @@ const selected = ref([]);
                         }"
                     >
                         <div
-                            class="flex"
-                            style="gap: 10px"
+                            class="flex-between"
                             v-if="column.key === 'name'"
+                            style="gap: 10px"
                         >
                             <CustomCheckBtn />
-                            <div class="flex">
-                                <img
-                                    style="
-                                        max-width: 40px;
-                                        max-height: 40px;
-                                        border-radius: 50%;
-                                        margin-right: 5px;
-                                    "
-                                    src="@/assets/images/user2-img.png"
-                                    alt="user-img"
-                                />
-                                <div>
-                                    <p>{{ person[column.key] }}</p>
-                                    <p>U123456781</p>
+                            <NuxtLink :to="`/user/profile/${person.id}`">
+                                <div class="flex">
+                                    <img
+                                        style="
+                                            max-width: 40px;
+                                            max-height: 40px;
+                                            border-radius: 50%;
+                                            margin-right: 5px;
+                                        "
+                                        src="@/assets/images/user2-img.png"
+                                        alt="user-img"
+                                    />
+                                    <div>
+                                        <p>{{ person[column.key] }}</p>
+                                        <p>U123456781</p>
+                                    </div>
                                 </div>
-                            </div>
+                            </NuxtLink>
                         </div>
 
                         <div v-else>
@@ -238,9 +236,5 @@ td {
 tr {
     cursor: pointer;
     border-bottom: 1px solid #eaecf0;
-}
-
-.selected {
-    background: #f5f5f5;
 }
 </style>

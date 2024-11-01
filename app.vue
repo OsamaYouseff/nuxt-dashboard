@@ -43,7 +43,7 @@ a {
 .flex-col-center {
     display: flex;
     justify-content: center;
-    align-items: center;
+    flex-direction: column;
 }
 
 .flex-between {
