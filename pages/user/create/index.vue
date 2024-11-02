@@ -71,7 +71,7 @@ const resetForm = () => {
         <!-- Profile form -->
         <div class="profile-form">
             <h2 style="margin: 20px 0px">Account info</h2>
-            <form @click.prevent="" class="flex-col-center" style="gap: 10px">
+            <form @click.prevent="" class="flex-col-center" style="gap: 25px">
                 <!-- Name -->
                 <div class="flex-between">
                     <label for="name">Name</label>
