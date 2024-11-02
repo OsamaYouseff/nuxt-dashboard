@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { gql } from "graphql-tag";
+import { useQuery } from "@vue/apollo-composable";
+import { computed } from "vue";
+import type User from "@/types/User.ts";
+
 useHead({
     title: "Users",
 });
@@ -7,6 +12,37 @@ definePageMeta({
 });
 
 const currentTab = ref<string>("active");
+
+const USERS_QUERY = gql`
+    query GetUsers {
+        users(limit: 7) {
+            id
+            email
+            password
+            name
+            role
+            avatar
+            creationAt
+            updatedAt
+        }
+    }
+`;
+
+const { result, loading, error } = useQuery(USERS_QUERY);
+
+// Changed from launches to users
+const users: User[] | any = computed(() => result.value?.users ?? []);
+
+// Add watchers for debugging
+watch(result, (newResult: any) => {
+    console.log("Query result:", newResult);
+});
+
+watch(error, (newError: any) => {
+    if (newError) {
+        console.error("GraphQL error:", newError);
+    }
+});
 </script>
 
 <template>
@@ -43,8 +79,12 @@ const currentTab = ref<string>("active");
             <NuxtLink to="/user/listings">Users</NuxtLink>
         </div>
 
+        <div v-if="loading">Loading users...</div>
+
+        <div v-if="error">Error: {{ error.message }}</div>
+
         <!-- Users Table -->
-        <div class="users-table">
+        <div v-else class="users-table">
             <!-- Tabs -->
             <div class="tabs flex">
                 <span
@@ -82,7 +122,7 @@ const currentTab = ref<string>("active");
 
             <!-- Table -->
             <div class="users-list">
-                <UsersTable />
+                <UsersTable :users="users" />
             </div>
         </div>
     </div>

@@ -1,4 +1,10 @@
 <script setup lang="ts">
+import type User from "@/types/User.ts";
+
+const props = defineProps<{
+    users: User[];
+}>();
+
 const columns = [
     {
         key: "name",
@@ -8,12 +14,12 @@ const columns = [
 
     {
         key: "email",
-        width: 180,
+        width: 160,
         label: "Email",
     },
     {
         key: "username",
-        width: 100,
+        width: 50,
         label: "Username",
     },
     {
@@ -23,11 +29,11 @@ const columns = [
     },
     {
         key: "region",
-        width: 80,
+        width: 100,
         label: "Region",
     },
     {
-        key: "createdAt",
+        key: "creationAt",
         width: 80,
         label: "Created At",
     },
@@ -37,71 +43,10 @@ const columns = [
     },
 ];
 
-const people = [
-    {
-        id: 1,
-        name: "Tom",
-        username: "Tom Cook",
-        email: "tom.cook@example.com",
-        mobileNumber: "+20 1234567890",
-        region: "Egypt, Cairo",
-        createdAt: "01/4/2024",
-        role: "Member",
-    },
-    {
-        id: 2,
-        name: "Tom",
-        username: "Tom Cook",
-        email: "tom.cook@example.com",
-        mobileNumber: "+20 1234567890",
-        region: "Egypt, Cairo",
-        createdAt: "01/4/2024",
-        role: "Member",
-    },
-    {
-        id: 4,
-        name: "Whitney",
-        username: "Whitney Francis",
-        email: "whitney.francis@example.com",
-        mobileNumber: "+20 1234567890",
-        region: "Egypt, Cairo",
-        createdAt: "01/4/2024",
-        role: "Admin",
-    },
-    {
-        id: 5,
-        name: "Leonard",
-        username: "Leonard Krasner",
-        email: "leonard.krasner@example.com",
-        mobileNumber: "+20 1234567890",
-        region: "Egypt, Cairo",
-        createdAt: "01/4/2024",
-        role: "Owner",
-    },
-    {
-        id: 3,
-        name: "Tom",
-        username: "Tom Cook",
-        email: "tom.cook@example.com",
-        mobileNumber: "+20 1234567890",
-        region: "Egypt, Cairo",
-        createdAt: "01/4/2024",
-        role: "Member",
-    },
-    {
-        id: 6,
-        name: "Floyd",
-        username: "Floyd Miles",
-        email: "floyd.miles@example.com",
-        mobileNumber: "+20 1234567890",
-        region: "Egypt, Cairo",
-        createdAt: "01/4/2024",
-        role: "Member",
-    },
-];
+console.log(props.users);
 
+//// check logic
 let checkedAll = ref<boolean>(false);
-
 const checkedAllUsers = () => {
     checkedAll.value = !checkedAll.value;
     document.querySelectorAll("input[type=checkbox]").forEach((el, index) => {
@@ -144,7 +89,7 @@ const checkedAllUsers = () => {
             </thead>
 
             <tbody>
-                <tr v-for="person in people" :key="person.id">
+                <tr v-for="person in props.users" :key="person.id">
                     <td
                         v-for="column in columns"
                         :key="column.key"
@@ -153,6 +98,7 @@ const checkedAllUsers = () => {
                             maxWidth: `${column.width}px`,
                         }"
                     >
+                        <!-- Name -->
                         <div
                             class="flex"
                             v-if="column.key === 'name'"
@@ -162,32 +108,68 @@ const checkedAllUsers = () => {
                             <NuxtLink :to="`/user/profile/${person.id}`">
                                 <div class="flex">
                                     <img
+                                        v-if="!person.avatar.includes('lorem')"
                                         style="
                                             max-width: 40px;
                                             max-height: 40px;
                                             border-radius: 50%;
                                             margin-right: 5px;
                                         "
-                                        src="@/assets/images/user2-img.png"
+                                        :src="person.avatar"
                                         alt="user-img"
                                     />
+                                    <CustomImg v-else :username="person.name" />
+
                                     <div>
                                         <p>{{ person[column.key] }}</p>
-                                        <p>U123456781</p>
+                                        <p>U12367{{ person.id }}</p>
                                     </div>
                                 </div>
                             </NuxtLink>
                         </div>
 
-                        <div v-else>
-                            <p>{{ person[column.key] }}</p>
+                        <!-- Email -->
+                        <div v-else-if="column.key === 'email'">
+                            <p>
+                                {{ person.email }}
+                            </p>
+                        </div>
+
+                        <!-- Username -->
+                        <div
+                            class="flex"
+                            v-else-if="column.key === 'username'"
+                            style="gap: 10px"
+                        >
+                            <NuxtLink :to="`/user/profile/${person.id}`">
+                                <p>@{{ person.name }}</p>
+                            </NuxtLink>
+                        </div>
+
+                        <!-- Mobile Number -->
+                        <div v-else-if="column.key === 'mobileNumber'">
+                            <p>+20 1234567843</p>
+                        </div>
+
+                        <!-- Region -->
+                        <div v-else-if="column.key === 'region'">
+                            <p>Egypt, Cairo</p>
+                        </div>
+
+                        <!-- Created At -->
+                        <div v-else-if="column.key === 'creationAt'">
+                            <p>
+                                {{
+                                    new Date(person.creationAt).toLocaleString()
+                                }}
+                            </p>
                         </div>
 
                         <!-- Actions -->
                         <div
                             class="flex-center"
                             style="gap: 10px"
-                            v-if="column.key === 'actions'"
+                            v-else-if="column.key === 'actions'"
                         >
                             <img
                                 src="@/assets/icons/block.svg"
