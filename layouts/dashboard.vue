@@ -4,6 +4,12 @@ const currentPage = ref<string>("users");
 const toggleNav = (page: string) => {
     currentPage.value = page;
 };
+
+const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    navigateTo("/login");
+};
 </script>
 
 <template>
@@ -132,7 +138,11 @@ const toggleNav = (page: string) => {
                             </div>
                         </div>
 
-                        <img src="@/assets/icons/icon.svg" alt="" />
+                        <img
+                            @click="handleLogout"
+                            src="@/assets/icons/icon.svg"
+                            alt=""
+                        />
                     </div>
                 </div>
             </div>
