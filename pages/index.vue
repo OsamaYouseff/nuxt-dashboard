@@ -3,9 +3,9 @@ useHead({
     title: "Nuxt Dashboard ",
 });
 
-// definePageMeta({
-//     middleware: "auth",
-// });
+definePageMeta({
+    middleware: "un-auth",
+});
 </script>
 
 <template>

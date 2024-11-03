@@ -39,13 +39,12 @@ watch(error, (newError) => {
     <div class="p-4">
         <h1 class="text-2xl font-bold mb-4">Users List</h1>
 
-        <!-- Loading state -->
-        <div v-if="loading">Loading users...</div>
+        <spinner v-if="loading" />
 
-        <!-- Error state -->
-        <div v-else-if="error" class="text-red-500">
-            Error: {{ error.message }}
-        </div>
+        <ErrorComponent
+            v-if="error"
+            :error="{ myMessage: 'Failed to Show Data', apiMessage: error }"
+        />
 
         <!-- Data display -->
         <div v-else-if="users.length" class="space-y-4">

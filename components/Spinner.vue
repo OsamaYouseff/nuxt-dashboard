@@ -1,16 +1,5 @@
 <template>
-    <div
-        style="
-            text-align: center;
-            height: 100vh;
-            width: 83%;
-            background: #fefefef2;
-            display: grid;
-            place-content: center;
-            z-index: 999;
-            position: absolute;
-        "
-    >
+    <div class="wrapper">
         <div class="spin"></div>
     </div>
 </template>
@@ -25,6 +14,19 @@
     border-radius: 50%;
     border-top-color: #e71f63;
     animation: spin 1s ease infinite;
+}
+
+.wrapper {
+    text-align: center;
+    height: 100vh;
+    min-height: 60vh;
+    min-width: 100%;
+    background: #fefefef2;
+    display: grid;
+    place-content: center;
+    z-index: 9999;
+    position: absolute;
+    transform: translateY(-10%);
 }
 
 @keyframes spin {

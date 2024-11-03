@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import EyeSlash from "@/assets/icons/EyeSlash.svg";
 import EyeOpen from "@/assets/icons/EyeOpen.svg";
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/yup";
+import * as yup from "yup";
 useHead({
     title: "Nuxt Dashboard | Register ",
 });
@@ -8,11 +11,39 @@ definePageMeta({
     middleware: "un-auth",
 });
 
+interface RegisterForm {
+    username?: string | null;
+    email?: string | null;
+    password?: string | null;
+}
+
 const showPassword = ref(false);
 
-const handleSignUp = () => {
+const schema = toTypedSchema(
+    yup.object({
+        username: yup.string().required().min(3),
+        email: yup.string().required().email(),
+        password: yup.string().required().min(8),
+    })
+);
+
+const { values, errors, defineField, handleSubmit } = useForm<RegisterForm>({
+    validationSchema: schema,
+});
+
+const [username, usernameAttrs] = defineField("username");
+const [email, emailAttrs] = defineField("email", {
+    validateOnModelUpdate: false,
+});
+const [password, passwordAttrs] = defineField("password", {
+    validateOnModelUpdate: false,
+});
+
+const handleSignUp = handleSubmit(async (values: RegisterForm) => {
+    // Handle form submission logic here
+    console.log(values);
     alert("Sign Up");
-};
+});
 </script>
 
 <template>
@@ -25,19 +56,35 @@ const handleSignUp = () => {
             <div class="container">
                 <h1 style="margin-bottom: 20px">Sign Up for an Account</h1>
                 <form>
+                    <!-- username -->
                     <div class="input-wrapper">
-                        <input type="text" placeholder="Username" />
+                        <input
+                            v-model="username"
+                            v-bind="usernameAttrs"
+                            type="text"
+                            placeholder="Username"
+                        />
                         <img src="@/assets/icons/user.svg" />
                     </div>
+                    <ErrorMsg v-if="errors.username" :error="errors.username" />
 
                     <!-- email -->
                     <div class="input-wrapper">
-                        <input type="email" placeholder="Email" />
+                        <input
+                            v-model="email"
+                            v-bind="emailAttrs"
+                            type="email"
+                            placeholder="Email"
+                        />
                         <img src="@/assets/icons/EnvelopeSimple.svg" />
                     </div>
+                    <ErrorMsg v-if="errors.email" :error="errors.email" />
+
                     <!-- password -->
                     <div class="input-wrapper">
                         <input
+                            v-model="password"
+                            v-bind="passwordAttrs"
                             :type="showPassword ? 'text' : 'password'"
                             placeholder="Password"
                         />
@@ -51,17 +98,9 @@ const handleSignUp = () => {
                             />
                         </div>
                     </div>
+                    <!-- error message -->
+                    <ErrorMsg v-if="errors.password" :error="errors.password" />
 
-                    <p class="flex" style="gap: 3px">
-                        <img
-                            v-show="false"
-                            src="@/assets/icons/info.svg"
-                            alt="info-icons"
-                        />
-                        <span>
-                            Your password must have at least 8 characters
-                        </span>
-                    </p>
                     <div class="terms-and-conditions">
                         <CustomCheckBtn />
                         <p>

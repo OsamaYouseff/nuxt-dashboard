@@ -1,4 +1,8 @@
-<script setup>
+<script setup lang="ts">
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/yup";
+import * as yup from "yup";
+
 useHead({
     title: "Add User",
 });
@@ -7,13 +11,11 @@ definePageMeta({
     layout: "dashboard",
     middleware: "auth",
 });
-
-// Form state
 const userInfo = reactive({
     name: "",
     email: "",
     password: "",
-    role: "admin",
+    role: "customer",
     avatar: "https://via.placeholder.com/150",
 });
 
@@ -29,7 +31,6 @@ const CREATE_USER_MUTATION = gql`
         }
     }
 `;
-
 // const CREATE_USER_MUTATION = gql`
 //     mutation {
 //         addUser(
@@ -50,18 +51,44 @@ const CREATE_USER_MUTATION = gql`
 //     }
 // `;
 
-const resetForm = () => {
-    userInfo.name = "";
-    userInfo.email = "";
-    userInfo.password = "";
-    userInfo.role = "admin";
-};
-
 // Create reactive references for loading and error states
+
 let loading = ref(false);
 let error = ref(null);
 
-const handleCreateUser = async () => {
+// Validation
+
+interface UserForm {
+    firstname: string;
+    lastname: string;
+    email: string;
+    password: string;
+    role: string;
+    avatar: string;
+}
+
+const schema = yup.object({
+    firstname: yup.string().required().min(3),
+    lastname: yup.string().required().min(3),
+    email: yup.string().email().required(),
+    password: yup.string().required().min(8),
+    role: yup.string().required(),
+    avatar: yup.string().required(),
+});
+const { values, errors, defineField, handleSubmit } = useForm<UserForm>({
+    validationSchema: toTypedSchema(schema),
+});
+
+const [firstname, firstnameAttrs] = defineField("firstname");
+const [lastname, lastnameAttrs] = defineField("lastname");
+const [email, emailAttrs] = defineField("email", {
+    validateOnModelUpdate: false,
+});
+const [password, passwordAttrs] = defineField("password", {
+    validateOnModelUpdate: false,
+});
+
+const handleCreateUser = handleSubmit(async (values: UserForm) => {
     try {
         const variables = {
             data: {
@@ -71,7 +98,6 @@ const handleCreateUser = async () => {
                 avatar: "https://via.placeholder.com/150",
             },
         };
-        loading = true;
 
         // Initialize the mutation
         const { mutate: addUser } = useMutation(CREATE_USER_MUTATION);
@@ -83,11 +109,14 @@ const handleCreateUser = async () => {
         resetForm();
     } catch (err) {
         console.error("Error creating user:", err);
-    } finally {
-        loading = false;
     }
+});
+const resetForm = () => {
+    userInfo.name = "";
+    userInfo.email = "";
+    userInfo.password = "";
+    userInfo.role = "admin";
 };
-
 // Watch for errors
 watchEffect(() => {
     if (error.value) {
@@ -97,38 +126,13 @@ watchEffect(() => {
 </script>
 
 <template>
-    <div v-if="loading">
-        <spinner />
-    </div>
+    <spinner v-if="loading" />
 
-    <div
-        class="flex-col-center"
-        v-else-if="error"
-        style="text-align: center; height: 80vh; gap: 30px"
-    >
-        <h1 style="color: var(--secondary-color)">
-            Failed to Create this user 😢😢
-        </h1>
-        <h2 style="color: var(--secondary-color)">
-            Error: {{ error.message }}
-        </h2>
+    <ErrorComponent
+        v-if="error"
+        :error="{ myMessage: 'Failed to Create User', apiMessage: error }"
+    />
 
-        <button
-            @click="$router.go(0)"
-            class="flex-center"
-            style="
-                background: var(--primary-color);
-                width: 200px;
-                height: 50px;
-                text-align: center;
-                color: white;
-                margin: 0px auto;
-                font-size: 20px;
-            "
-        >
-            <span>Retry</span>
-        </button>
-    </div>
     <div v-else class="container">
         <!-- header -->
         <header>
@@ -184,40 +188,67 @@ watchEffect(() => {
                 <div class="flex-between">
                     <label for="name">Name</label>
                     <div class="flex-between" style="gap: 10px; width: 512px">
-                        <input
-                            v-model="userInfo.firstname"
-                            type="text"
-                            id="name"
-                            placeholder="First Name"
-                        />
-                        <input
-                            v-model="userInfo.lastname"
-                            type="text"
-                            id="name"
-                            placeholder="Last Name"
-                        />
+                        <div class="input-container flex">
+                            <input
+                                v-model="firstname"
+                                v-bind="firstnameAttrs"
+                                type="text"
+                                id="name"
+                                placeholder="First Name"
+                            />
+                            <ErrorMsg
+                                v-show="errors.firstname"
+                                :error="errors.firstname"
+                            />
+                        </div>
+
+                        <div class="input-container flex">
+                            <input
+                                v-model="lastname"
+                                v-bind="lastnameAttrs"
+                                type="text"
+                                id="name"
+                                placeholder="Last Name"
+                            />
+                            <ErrorMsg
+                                v-show="errors.lastname"
+                                :error="errors.lastname"
+                            />
+                        </div>
                     </div>
                 </div>
                 <!-- Email and Password -->
                 <div class="flex-between">
                     <label for="email">Email address</label>
-                    <input
-                        v-model="userInfo.email"
-                        type="email"
-                        id="email"
-                        placeholder="Email Address"
-                    />
+                    <div style="width: 512px" class="input-container flex">
+                        <input
+                            v-model="email"
+                            v-bind="emailAttrs"
+                            type="email"
+                            id="email"
+                            placeholder="Email Address"
+                        />
+                        <ErrorMsg v-show="errors.email" :error="errors.email" />
+                    </div>
                 </div>
                 <!-- Password -->
                 <div class="flex-between">
                     <label for="password">Password</label>
-                    <input
-                        v-model="userInfo.password"
-                        type="password"
-                        id="password"
-                        placeholder="Password"
-                    />
+                    <div class="input-container flex" style="width: 512px">
+                        <input
+                            v-model="password"
+                            v-bind="passwordAttrs"
+                            type="password"
+                            id="password"
+                            placeholder="Password"
+                        />
+                        <ErrorMsg
+                            v-show="errors.password"
+                            :error="errors.password"
+                        />
+                    </div>
                 </div>
+
                 <!-- Role -->
                 <div class="flex-between">
                     <label for="role">Role</label>
@@ -312,9 +343,13 @@ button.add-user img {
 }
 
 form {
-    min-width: 400px;
+    min-width: 800px;
     max-width: 800px;
     max-width: 70%;
+}
+
+.input-container {
+    position: relative;
 }
 
 input:not([type="file"]) {
@@ -330,6 +365,14 @@ input:not([type="file"]) {
 }
 .input-wrapper > input:focus {
     border: 2px solid var(--secondary-color);
+}
+
+.error-message {
+    position: absolute;
+    top: -20px;
+    margin-top: 5px;
+    font-size: 11px;
+    margin-top: 0px !important;
 }
 
 .img-container {

@@ -7,132 +7,139 @@ const toggleNav = (page: string) => {
 </script>
 
 <template>
-    <div class="dashboard">
-        <!-- sidebar -->
-        <div class="sidebar">
-            <div class="nav">
-                <nav>
-                    <ul>
-                        <li>
-                            <NuxtLink
-                                @click="toggleNav('home')"
-                                :class="{ active: currentPage === 'home' }"
-                                to="/user/listings"
-                            >
-                                <img
-                                    src="@/assets/icons/house.svg"
-                                    alt="nav-icon"
-                                />
-                                Home
-                            </NuxtLink>
-                        </li>
-                        <li>
-                            <NuxtLink
-                                @click="toggleNav('users')"
-                                :class="{ active: currentPage === 'users' }"
-                                to="/user/listings"
-                            >
-                                <img
-                                    src="@/assets/icons/UsersFour.svg"
-                                    alt="nav-icon"
-                                />
-
-                                Users
-                            </NuxtLink>
-                        </li>
-                        <li>
-                            <NuxtLink
-                                @click="toggleNav('experts')"
-                                :class="{ active: currentPage === 'experts' }"
-                                to="/user/listings"
-                            >
-                                <img
-                                    src="@/assets/icons/SealCheck.svg"
-                                    alt="nav-icon"
-                                />
-
-                                Experts
-                            </NuxtLink>
-                        </li>
-                        <li>
-                            <NuxtLink
-                                @click="toggleNav('content')"
-                                :class="{ active: currentPage === 'content' }"
-                                to="/user/listings"
-                                class="flex-between"
-                            >
-                                <div class="flex" style="gap: 10px">
+    <div>
+        <div class="dashboard">
+            <!-- sidebar -->
+            <div class="sidebar">
+                <div class="nav">
+                    <nav>
+                        <ul>
+                            <li>
+                                <NuxtLink
+                                    @click="toggleNav('home')"
+                                    :class="{ active: currentPage === 'home' }"
+                                    to="/user/listings"
+                                >
                                     <img
-                                        src="@/assets/icons/SquareHalf.svg"
+                                        src="@/assets/icons/house.svg"
+                                        alt="nav-icon"
+                                    />
+                                    Home
+                                </NuxtLink>
+                            </li>
+                            <li>
+                                <NuxtLink
+                                    @click="toggleNav('users')"
+                                    :class="{ active: currentPage === 'users' }"
+                                    to="/user/listings"
+                                >
+                                    <img
+                                        src="@/assets/icons/UsersFour.svg"
                                         alt="nav-icon"
                                     />
 
-                                    Content
-                                </div>
-                                <img
-                                    src="@/assets/icons/chevron-down.svg"
-                                    alt=""
-                                />
-                            </NuxtLink>
-                        </li>
-                        <li>
-                            <NuxtLink
-                                @click="toggleNav('rooms')"
-                                :class="{ active: currentPage === 'rooms' }"
-                                to="/user/listings"
-                            >
-                                <img
-                                    src="@/assets/icons/ChatsCircle.svg"
-                                    alt="nav-icon"
-                                />
-
-                                Rooms
-                            </NuxtLink>
-                        </li>
-                        <li>
-                            <NuxtLink
-                                @click="toggleNav('app-management')"
-                                :class="{
-                                    active: currentPage === 'app-management',
-                                }"
-                                to="/user/listings"
-                                class="flex-between"
-                            >
-                                <div class="flex" style="gap: 10px">
+                                    Users
+                                </NuxtLink>
+                            </li>
+                            <li>
+                                <NuxtLink
+                                    @click="toggleNav('experts')"
+                                    :class="{
+                                        active: currentPage === 'experts',
+                                    }"
+                                    to="/user/listings"
+                                >
                                     <img
-                                        src="@/assets/icons/NotePencil.svg"
+                                        src="@/assets/icons/SealCheck.svg"
                                         alt="nav-icon"
                                     />
 
-                                    App management
-                                </div>
-                                <img
-                                    src="@/assets/icons/chevron-down.svg"
-                                    alt=""
-                                />
-                            </NuxtLink>
-                        </li>
-                    </ul>
-                </nav>
+                                    Experts
+                                </NuxtLink>
+                            </li>
+                            <li>
+                                <NuxtLink
+                                    @click="toggleNav('content')"
+                                    :class="{
+                                        active: currentPage === 'content',
+                                    }"
+                                    to="/user/listings"
+                                    class="flex-between"
+                                >
+                                    <div class="flex" style="gap: 10px">
+                                        <img
+                                            src="@/assets/icons/SquareHalf.svg"
+                                            alt="nav-icon"
+                                        />
 
-                <div class="user flex-between">
-                    <div class="flex">
-                        <img src="@/assets/images/user-img.jpg" alt="" />
-                        <div style="margin-left: 10px">
-                            <p style="font-size: 14px; font-weight: bold">
-                                John Doe
-                            </p>
-                            <p style="font-size: 14px">Super admin</p>
+                                        Content
+                                    </div>
+                                    <img
+                                        src="@/assets/icons/chevron-down.svg"
+                                        alt=""
+                                    />
+                                </NuxtLink>
+                            </li>
+                            <li>
+                                <NuxtLink
+                                    @click="toggleNav('rooms')"
+                                    :class="{ active: currentPage === 'rooms' }"
+                                    to="/user/listings"
+                                >
+                                    <img
+                                        src="@/assets/icons/ChatsCircle.svg"
+                                        alt="nav-icon"
+                                    />
+
+                                    Rooms
+                                </NuxtLink>
+                            </li>
+                            <li>
+                                <NuxtLink
+                                    @click="toggleNav('app-management')"
+                                    :class="{
+                                        active:
+                                            currentPage === 'app-management',
+                                    }"
+                                    to="/user/listings"
+                                    class="flex-between"
+                                >
+                                    <div class="flex" style="gap: 10px">
+                                        <img
+                                            src="@/assets/icons/NotePencil.svg"
+                                            alt="nav-icon"
+                                        />
+
+                                        App management
+                                    </div>
+                                    <img
+                                        src="@/assets/icons/chevron-down.svg"
+                                        alt=""
+                                    />
+                                </NuxtLink>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <div class="user flex-between">
+                        <div class="flex">
+                            <img src="@/assets/images/user-img.jpg" alt="" />
+                            <div style="margin-left: 10px">
+                                <p style="font-size: 14px; font-weight: bold">
+                                    John Doe
+                                </p>
+                                <p style="font-size: 14px">Super admin</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <img src="@/assets/icons/icon.svg" alt="" />
+                        <img src="@/assets/icons/icon.svg" alt="" />
+                    </div>
                 </div>
             </div>
-        </div>
-        <!-- content -->
-        <div class="content">
-            <slot />
+            <!-- content -->
+            <div class="content">
+                <slot />
+            </div>
         </div>
     </div>
 </template>
@@ -190,6 +197,7 @@ a.active {
     bottom: 15px;
     max-width: 100%;
     min-width: 260px;
+    border-top: 2px solid #eaecf0;
 }
 
 .user img {

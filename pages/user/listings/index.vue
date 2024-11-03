@@ -96,38 +96,14 @@ watch(
             </div>
         </header>
 
-        <div v-if="loading">
-            <spinner />
+        <div style="width: 77vw; position: relative">
+            <spinner v-if="loading" />
         </div>
 
-        <div
-            class="flex-col-center"
-            v-else-if="error"
-            style="text-align: center; height: 80vh; gap: 30px"
-        >
-            <h1 style="color: var(--secondary-color)">
-                Failed to fetch users 😢😢
-            </h1>
-            <h2 style="color: var(--secondary-color)">
-                Error: {{ error.message }}
-            </h2>
-
-            <button
-                @click="$router.go(0)"
-                class="flex-center"
-                style="
-                    background: var(--primary-color);
-                    width: 200px;
-                    height: 50px;
-                    text-align: center;
-                    color: white;
-                    margin: 0px auto;
-                    font-size: 20px;
-                "
-            >
-                <span>Retry</span>
-            </button>
-        </div>
+        <ErrorComponent
+            v-if="error"
+            :error="{ myMessage: 'Failed to login', apiMessage: error }"
+        />
 
         <div v-else>
             <!-- Nav path -->
@@ -184,7 +160,7 @@ watch(
 <style scoped>
 .container {
     width: 100%;
-    height: 100%;
+    height: 100vh;
     padding: 20px 30px;
 }
 

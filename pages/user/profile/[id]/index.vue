@@ -49,53 +49,15 @@ const editMode = ref<boolean>(false);
 
 <template>
     <div>
-        <div v-if="loading">
-            <spinner />
-        </div>
+        <spinner v-if="loading" />
 
-        <div
-            class="flex-col-center"
-            v-else-if="error"
-            style="text-align: center; height: 80vh; gap: 30px"
-        >
-            <h1 style="color: var(--secondary-color)">
-                Failed to display this user details 😢😢
-            </h1>
-            <h2 style="color: var(--secondary-color)">
-                Error: {{ error.message }}
-            </h2>
-            <div class="flex-center" style="gap: 30px">
-                <nuxt-link to="/user/listings">
-                    <Button
-                        class="flex-center"
-                        style="
-                            background: var(--secondary-color);
-                            width: 200px;
-                            height: 50px;
-                            text-align: center;
-                            color: white;
-                            font-size: 20px;
-                        "
-                        >Go Back</Button
-                    >
-                </nuxt-link>
-                <nuxt-link :to="`${route.params.id}`">
-                    <button
-                        class="flex-center"
-                        style="
-                            background: var(--primary-color);
-                            width: 200px;
-                            height: 50px;
-                            text-align: center;
-                            color: white;
-                            font-size: 20px;
-                        "
-                    >
-                        <span>Retry</span>
-                    </button>
-                </nuxt-link>
-            </div>
-        </div>
+        <ErrorComponent
+            v-if="error"
+            :error="{
+                myMessage: 'Failed to Show User Profile',
+                apiMessage: error,
+            }"
+        />
 
         <div class="container">
             <!-- header -->

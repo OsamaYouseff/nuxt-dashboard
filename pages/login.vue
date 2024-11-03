@@ -2,6 +2,9 @@
 // imports
 import EyeSlash from "@/assets/icons/EyeSlash.svg";
 import EyeOpen from "@/assets/icons/EyeOpen.svg";
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/yup";
+import * as yup from "yup";
 
 useHead({
     title: "Nuxt Dashboard | Register ",
@@ -21,7 +24,6 @@ const LOGIN_USER_MUTATION = gql`
 `;
 
 const showPassword = ref(false);
-
 const loginInfo = ref({
     email: "john@mail.com",
     password: "changeme",
@@ -29,23 +31,35 @@ const loginInfo = ref({
 
 const { mutate: login, loading, error } = useMutation(LOGIN_USER_MUTATION);
 
-// Store token function
-const setTokens = (accessToken: string, refreshToken: string) => {
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
-};
+// Validation
+interface LoginForm {
+    email?: string | null;
+    password?: string | null;
+}
+const schema = toTypedSchema(
+    yup.object({
+        email: yup.string().required().email(),
+        password: yup.string().required().min(8),
+    })
+);
+const { values, errors, defineField, handleSubmit } = useForm<LoginForm>({
+    validationSchema: schema,
+});
+const [email, emailAttrs] = defineField("email", {
+    validateOnModelUpdate: false,
+});
+const [password, passwordAttrs] = defineField("password", {
+    validateOnModelUpdate: false,
+});
 
-// Login function
-const handleSignIn = async () => {
+const handleSignIn = handleSubmit(async (values: LoginForm) => {
     try {
         const { data } = await login({
             variables: {
-                email: loginInfo.value.email,
-                password: loginInfo.value.password,
+                email: values.email,
+                password: values.password,
             },
         });
-
-        console.log(data);
 
         if (data.login.access_token && data.login.refresh_token) {
             setTokens(data.login.access_token, data.login.refresh_token);
@@ -56,6 +70,11 @@ const handleSignIn = async () => {
     } catch (err) {
         console.error("Login error:", err);
     }
+});
+
+const setTokens = (accessToken: string, refreshToken: string) => {
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
 };
 </script>
 
@@ -66,16 +85,39 @@ const handleSignIn = async () => {
         </div>
 
         <div class="form-wrapper" @submit.prevent="handleSignIn">
-            <div class="container">
+            <div style="width: 50vw; position: relative">
+                <spinner
+                    style="transform: translateY(-20%); height: 70vh"
+                    v-if="loading"
+                />
+            </div>
+
+            <ErrorComponent
+                v-if="error"
+                :error="{ myMessage: 'Failed to login', apiMessage: error }"
+            />
+
+            <div v-else class="container">
                 <h1>Sign In to your Account</h1>
                 <h2>Welcome back! please enter your detail</h2>
                 <form>
-                    <div class="input-wrapper">
-                        <input type="email" placeholder="Email" />
-                        <img src="@/assets/icons/EnvelopeSimple.svg" />
-                    </div>
+                    <!-- Email -->
                     <div class="input-wrapper">
                         <input
+                            v-model="email"
+                            v-bind="emailAttrs"
+                            type="email"
+                            placeholder="Email"
+                        />
+                        <img src="@/assets/icons/EnvelopeSimple.svg" />
+                    </div>
+                    <ErrorMsg v-if="errors.email" :error="errors.email" />
+
+                    <!-- Password -->
+                    <div class="input-wrapper">
+                        <input
+                            v-model="password"
+                            v-bind="passwordAttrs"
                             :type="showPassword ? 'text' : 'password'"
                             placeholder="Password"
                         />
@@ -89,6 +131,7 @@ const handleSignIn = async () => {
                             />
                         </div>
                     </div>
+                    <ErrorMsg v-if="errors.password" :error="errors.password" />
 
                     <div class="Remember-me-container">
                         <div class="Remember-me">
@@ -115,7 +158,6 @@ const handleSignIn = async () => {
     min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
 }
 
 .background {
@@ -145,7 +187,7 @@ const handleSignIn = async () => {
 
 .form-wrapper {
     width: 50%;
-    height: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
