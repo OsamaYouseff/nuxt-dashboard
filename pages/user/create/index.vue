@@ -11,7 +11,7 @@ const userInfo = reactive({
     lastname: "",
     email: "",
     password: "",
-    role: "",
+    role: "admin",
 });
 
 const resetForm = () => {
@@ -19,9 +19,88 @@ const resetForm = () => {
         userInfo[key] = "";
     });
 };
+
+// Define the mutation
+const CREATE_USER_MUTATION = gql`
+    mutation {
+        addUser(
+            data: {
+                name: "ali sayed"
+                email: "ali@gmail.com"
+                password: "123456"
+                avatar: "https://api.lorem.space/image/face?w=150&h=220"
+            }
+        ) {
+            id
+            name
+            avatar
+            role
+        }
+    }
+`;
+
+const loading = false;
+const error = false;
+
+// const { mutate: AddUser, loading, error } = useMutation(CREATE_USER_MUTATION);
+
+// Handler function
+const handleCreateUser = async () => {
+    try {
+        const { mutate: addUser } = await useMutation(CREATE_USER_MUTATION);
+
+        addUser();
+
+        console.log("User added successfully");
+
+        resetForm();
+    } catch (err) {
+        console.error("Error creating user:", err);
+    }
+};
+
+// Optional: Watch for errors
+watch(error, (newError) => {
+    if (newError) {
+        console.error("Mutation error:", newError);
+    }
+});
 </script>
+
 <template>
-    <div class="container">
+    <div v-if="loading">
+        <spinner />
+    </div>
+
+    <div
+        class="flex-col-center"
+        v-else-if="error"
+        style="text-align: center; height: 80vh; gap: 30px"
+    >
+        <h1 style="color: var(--secondary-color)">
+            Failed to Create this user 😢😢
+        </h1>
+        <h2 style="color: var(--secondary-color)">
+            Error: {{ error.message }}
+        </h2>
+
+        <button
+            @click="$router.go(0)"
+            class="flex-center"
+            style="
+                background: var(--primary-color);
+                width: 200px;
+                height: 50px;
+                text-align: center;
+                color: white;
+                margin: 0px auto;
+                font-size: 20px;
+            "
+        >
+            <span>Retry</span>
+        </button>
+    </div>
+    <div v-else class="container">
         <!-- header -->
         <header>
             <div class="flex">
@@ -64,7 +143,7 @@ const resetForm = () => {
             </div>
             <div class="flex" style="gap: 10px">
                 <button @click="resetForm">Rest</button>
-                <button class="add-user">Add</button>
+                <button @click="handleCreateUser" class="add-user">Add</button>
             </div>
         </div>
 
@@ -151,7 +230,7 @@ const resetForm = () => {
             <span></span>
             <div class="flex" style="gap: 10px">
                 <button @click="resetForm">Rest</button>
-                <button class="add-user">Add</button>
+                <button @click="handleCreateUser" class="add-user">Add</button>
             </div>
         </div>
     </div>

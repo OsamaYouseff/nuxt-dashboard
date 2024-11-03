@@ -10,12 +10,92 @@ definePageMeta({
     layout: "dashboard",
 });
 
+const route = useRoute();
+// Fetching Users
+const USER_QUERY = gql`
+    query GetUser {
+        user (id: ${route.params.id || 1}) {
+            id
+            email
+            password
+            name
+            role
+            avatar
+            creationAt
+            updatedAt
+        }
+    }
+`;
+
+const { result, loading, error } = useQuery(USER_QUERY);
+
+const user = computed(() => result?.value?.user);
+
+// Add watchers for debugging
+watch(result, (newResult) => {
+    console.log("Query result:", newResult);
+});
+
+watch(error, (newError) => {
+    if (newError) {
+        console.error("GraphQL error:", newError);
+    }
+});
+
 const isUserBlocked = ref<boolean>(true);
 const editMode = ref<boolean>(false);
 </script>
 
 <template>
     <div>
+        <div v-if="loading">
+            <spinner />
+        </div>
+
+        <div
+            class="flex-col-center"
+            v-else-if="error"
+            style="text-align: center; height: 80vh; gap: 30px"
+        >
+            <h1 style="color: var(--secondary-color)">
+                Failed to display this user details 😢😢
+            </h1>
+            <h2 style="color: var(--secondary-color)">
+                Error: {{ error.message }}
+            </h2>
+            <div class="flex-center" style="gap: 30px">
+                <nuxt-link to="/user/listings">
+                    <Button
+                        class="flex-center"
+                        style="
+                            background: var(--secondary-color);
+                            width: 200px;
+                            height: 50px;
+                            text-align: center;
+                            color: white;
+                            font-size: 20px;
+                        "
+                        >Go Back</Button
+                    >
+                </nuxt-link>
+                <nuxt-link :to="`${route.params.id}`">
+                    <button
+                        class="flex-center"
+                        style="
+                            background: var(--primary-color);
+                            width: 200px;
+                            height: 50px;
+                            text-align: center;
+                            color: white;
+                            font-size: 20px;
+                        "
+                    >
+                        <span>Retry</span>
+                    </button>
+                </nuxt-link>
+            </div>
+        </div>
+
         <div class="container">
             <!-- header -->
             <header>
@@ -52,11 +132,20 @@ const editMode = ref<boolean>(false);
                 class="profile-header flex"
                 style="gap: 20px; margin-bottom: 20px"
             >
-                <div class="img-container" style="width: 101px; height: 101px">
+                <div
+                    class="img-container flex-center"
+                    style="width: 101px; height: 101px"
+                >
                     <img
-                        src="@/assets/images/user2-img.png"
+                        v-if="!user?.avatar?.includes('lorem') || !user?.avatar"
+                        :src="user?.avatar"
                         alt="user-img"
                         style="width: 100%; height: 100%; border-radius: 50%"
+                    />
+                    <CustomImg
+                        style="margin: 0; scale: 2.4"
+                        :username="user.name"
+                        v-else
                     />
                 </div>
                 <div>
@@ -71,13 +160,13 @@ const editMode = ref<boolean>(false);
                             src="@/assets/icons/block3.svg"
                             alt="block-icon"
                         />
-                        Olivia Rhye
+                        {{ user?.name }}
                     </h2>
                     <p
                         style="font-size: 18px"
                         :class="{ blocked: isUserBlocked }"
                     >
-                        U123456781
+                        U12345678{{ user?.id }}
                     </p>
                 </div>
             </div>
@@ -109,7 +198,7 @@ const editMode = ref<boolean>(false);
                             :disabled="!editMode"
                             type="text"
                             placeholder="Your name"
-                            value="Olivia Rhye"
+                            :value="user?.name"
                         />
                     </div>
                     <div style="margin-top: 20px">
@@ -118,7 +207,7 @@ const editMode = ref<boolean>(false);
                             :disabled="!editMode"
                             type="emil"
                             placeholder="Your Email address"
-                            value="olivia@untitledui.com"
+                            :value="user?.email"
                         />
                     </div>
                     <div style="margin-top: 20px">
@@ -127,7 +216,7 @@ const editMode = ref<boolean>(false);
                             :disabled="!editMode"
                             type="text"
                             placeholder="Your Role"
-                            value="Admin"
+                            :value="user?.role"
                         />
                     </div>
                 </form>

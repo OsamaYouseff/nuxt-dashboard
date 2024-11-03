@@ -3,12 +3,17 @@ import type User from "@/types/User.ts";
 
 const props = defineProps<{
     users: User[];
+    pageInfo: {
+        page: number;
+        limit: number;
+        totalPages: number;
+    };
 }>();
 
 const columns = [
     {
         key: "name",
-        width: 120,
+        width: 140,
         label: "Name",
     },
 
@@ -42,8 +47,6 @@ const columns = [
         width: 40,
     },
 ];
-
-console.log(props.users);
 
 //// check logic
 let checkedAll = ref<boolean>(false);
@@ -160,7 +163,9 @@ const checkedAllUsers = () => {
                         <div v-else-if="column.key === 'creationAt'">
                             <p>
                                 {{
-                                    new Date(person.creationAt).toLocaleString()
+                                    new Date(person.creationAt)
+                                        .toLocaleString()
+                                        .split(",")[0]
                                 }}
                             </p>
                         </div>
@@ -187,7 +192,7 @@ const checkedAllUsers = () => {
         </table>
 
         <div class="pagination">
-            <CustomPagination />
+            <CustomPagination :pageInfo="props.pageInfo" />
         </div>
     </div>
 </template>

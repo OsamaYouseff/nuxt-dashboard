@@ -1,38 +1,67 @@
 <script setup lang="ts">
-const currentPage = ref<number>(1);
-const totalPages = ref<number>(7);
+const props = defineProps<{
+    pageInfo: {
+        page: number;
+        limit: number;
+        totalPages: number;
+    };
+}>();
+
+const currentPage = props.pageInfo.page;
+const totalPages = props.pageInfo.totalPages;
+
+//// handling change page
+const goToNextPage = () => {
+    if (currentPage < totalPages) {
+        props.pageInfo.page++;
+    }
+};
+const goToPrevPage = () => {
+    if (props.pageInfo.totalPages > 1) {
+        props.pageInfo.page--;
+    }
+};
+const goToPage = (page: number) => {
+    if (page > 0 && page <= totalPages) {
+        props.pageInfo.page = page;
+    }
+};
 </script>
 
 <template>
     <div class="pagination">
-        <button
-            class="btn"
-            @click="currentPage--"
-            :disabled="currentPage === 1"
-        >
-            <img src="@/assets/icons/left-arrow.svg" alt="left-arrow" />
-            Previous
-        </button>
+        <div style="min-width: 150px">
+            <button
+                class="btn"
+                @click="goToPrevPage"
+                :disabled="props.pageInfo.page === 1"
+            >
+                <img src="@/assets/icons/left-arrow.svg" alt="left-arrow" />
+                Previous
+            </button>
+        </div>
 
         <div class="flex-center" style="flex: 1; gap: 10px">
             <button
-                @click="currentPage = i"
+                @click="goToPage(i)"
                 v-for="i in totalPages"
                 :key="i"
                 class="page-btn"
-                :class="{ active: i === currentPage }"
+                :class="{ active: i === props.pageInfo.page }"
             >
                 {{ i }}
             </button>
         </div>
-        <button
-            @click="currentPage++"
-            :disabled="currentPage === totalPages"
-            class="btn"
-        >
-            Next
-            <img src="@/assets/icons/right-arrow.svg" alt="right-arrow" />
-        </button>
+        <div class="flex" style="min-width: 150px; justify-content: flex-end">
+            <button
+                @click="goToNextPage"
+                :disabled="props.pageInfo.page === totalPages"
+                class="btn"
+            >
+                Next
+                <img src="@/assets/icons/right-arrow.svg" alt="right-arrow" />
+            </button>
+        </div>
     </div>
 </template>
 

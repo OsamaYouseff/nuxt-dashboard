@@ -10,12 +10,12 @@ useHead({
 definePageMeta({
     layout: "dashboard",
 });
-
 const currentTab = ref<string>("active");
 
+// Fetching Users
 const USERS_QUERY = gql`
     query GetUsers {
-        users(limit: 7) {
+        users {
             id
             email
             password
@@ -30,8 +30,19 @@ const USERS_QUERY = gql`
 
 const { result, loading, error } = useQuery(USERS_QUERY);
 
-// Changed from launches to users
-const users: User[] | any = computed(() => result.value?.users ?? []);
+// Pagination Logic
+const pageInfo = reactive({
+    page: 1,
+    limit: 7,
+    totalPages: 0,
+});
+
+const users: User[] | any = computed(() => {
+    const from = (pageInfo.page - 1) * pageInfo.limit;
+    const to = from + pageInfo.limit;
+    return result.value?.users.slice(from, to) ?? [];
+});
+pageInfo.totalPages = Math.trunc(result.value?.users?.length / 7) + 1;
 
 // Add watchers for debugging
 watch(result, (newResult: any) => {
@@ -43,6 +54,14 @@ watch(error, (newError: any) => {
         console.error("GraphQL error:", newError);
     }
 });
+
+// Watch page change to log updates for debugging
+watch(
+    () => pageInfo.page,
+    (newPage) => {
+        console.log("Page changed:", newPage);
+    }
+);
 </script>
 
 <template>
@@ -74,55 +93,86 @@ watch(error, (newError: any) => {
             </div>
         </header>
 
-        <!-- Nav path -->
-        <div class="nav-path">
-            <NuxtLink to="/user/listings">Users</NuxtLink>
+        <div v-if="loading">
+            <spinner />
         </div>
 
-        <div v-if="loading">Loading users...</div>
+        <div
+            class="flex-col-center"
+            v-else-if="error"
+            style="text-align: center; height: 80vh; gap: 30px"
+        >
+            <h1 style="color: var(--secondary-color)">
+                Failed to fetch users 😢😢
+            </h1>
+            <h2 style="color: var(--secondary-color)">
+                Error: {{ error.message }}
+            </h2>
 
-        <div v-if="error">Error: {{ error.message }}</div>
+            <button
+                @click="$router.go(0)"
+                class="flex-center"
+                style="
+                    background: var(--primary-color);
+                    width: 200px;
+                    height: 50px;
+                    text-align: center;
+                    color: white;
+                    margin: 0px auto;
+                    font-size: 20px;
+                "
+            >
+                <span>Retry</span>
+            </button>
+        </div>
 
-        <!-- Users Table -->
-        <div v-else class="users-table">
-            <!-- Tabs -->
-            <div class="tabs flex">
-                <span
-                    @click="currentTab = 'active'"
-                    :class="{ active: currentTab == 'active' }"
-                    >Active Users</span
-                >
-                <span
-                    @click="currentTab = 'blocked'"
-                    :class="{ active: currentTab == 'blocked' }"
-                    >Blocked Users</span
-                >
+        <div v-else>
+            <!-- Nav path -->
+            <div class="nav-path">
+                <NuxtLink to="/user/listings">Users</NuxtLink>
             </div>
 
-            <!-- Filters -->
-            <div class="filters flex-between" style="margin-bottom: 20px">
-                <div class="search-bar">
-                    <img
-                        src="@/assets/icons/MagnifyingGlass.svg"
-                        alt="search-icon"
-                    />
-                    <input type="text" placeholder="Search" />
+            <!-- Users Table -->
+            <div class="users-table">
+                <!-- Tabs -->
+                <div class="tabs flex">
+                    <span
+                        @click="currentTab = 'active'"
+                        :class="{ active: currentTab == 'active' }"
+                        >Active Users</span
+                    >
+                    <span
+                        @click="currentTab = 'blocked'"
+                        :class="{ active: currentTab == 'blocked' }"
+                        >Blocked Users</span
+                    >
                 </div>
-                <div class="filters-btns flex" style="gap: 10px">
-                    <button>Jan 6, 2022 – Jan 13, 2022</button>
-                    <button>
+
+                <!-- Filters -->
+                <div class="filters flex-between" style="margin-bottom: 20px">
+                    <div class="search-bar">
                         <img
-                            src="@/assets/icons/Vector.svg"
-                            alt="filter-icon"
+                            src="@/assets/icons/MagnifyingGlass.svg"
+                            alt="search-icon"
                         />
-                        Filters
-                    </button>
+                        <input type="text" placeholder="Search" />
+                    </div>
+                    <div class="filters-btns flex" style="gap: 10px">
+                        <button>Jan 6, 2022 – Jan 13, 2022</button>
+                        <button>
+                            <img
+                                src="@/assets/icons/Vector.svg"
+                                alt="filter-icon"
+                            />
+                            Filters
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Table -->
-            <div class="users-list">
-                <UsersTable :users="users" />
+                <!-- Table -->
+                <div class="users-list">
+                    <UsersTable :users="users" :pageInfo="pageInfo" />
+                </div>
             </div>
         </div>
     </div>
