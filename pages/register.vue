@@ -4,6 +4,9 @@ import EyeOpen from "@/assets/icons/EyeOpen.svg";
 useHead({
     title: "Nuxt Dashboard | Register ",
 });
+definePageMeta({
+    middleware: "un-auth",
+});
 
 const showPassword = ref(false);
 

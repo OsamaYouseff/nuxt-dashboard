@@ -8,6 +8,7 @@ useHead({
 
 definePageMeta({
     layout: "dashboard",
+    middleware: "auth",
 });
 
 const route = useRoute();

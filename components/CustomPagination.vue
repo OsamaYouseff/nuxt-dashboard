@@ -7,9 +7,8 @@ const props = defineProps<{
     };
 }>();
 
-const totalPages = props.pageInfo.totalPages;
-
-const paginationLimit = 15;
+let totalPages = props.pageInfo.totalPages;
+let paginationLimit = 15;
 
 const startRange = ref<number[]>([
     props.pageInfo.page,
@@ -41,6 +40,7 @@ const goToPrevPage = () => {
         props.pageInfo.page--;
     }
 };
+
 const goToPage = (page: number) => {
     if (page > 0 && page <= totalPages) {
         props.pageInfo.page = page;
@@ -49,12 +49,12 @@ const goToPage = (page: number) => {
 </script>
 
 <template>
-    <div class="pagination">
+    <div v-if="props.pageInfo.totalPages > 1" class="pagination">
         <div style="min-width: 150px">
             <button
                 class="btn"
                 @click="goToPrevPage"
-                :disabled="props.pageInfo.page === 1"
+                :disabled="props.pageInfo.page <= 1"
             >
                 <img src="@/assets/icons/left-arrow.svg" alt="left-arrow" />
                 Previous
@@ -63,7 +63,10 @@ const goToPage = (page: number) => {
 
         <div class="flex-center" style="flex: 1; gap: 10px">
             <!-- if total pages is less than 7 -->
-            <div v-if="totalPages >= paginationLimit" class="flex">
+            <div
+                v-if="props.pageInfo.totalPages >= paginationLimit"
+                class="flex"
+            >
                 <button
                     @click="goToPage(i)"
                     v-for="i in startRange"
@@ -107,7 +110,7 @@ const goToPage = (page: number) => {
         <div class="flex" style="min-width: 150px; justify-content: flex-end">
             <button
                 @click="goToNextPage"
-                :disabled="props.pageInfo.page === props.pageInfo.totalPages"
+                :disabled="props.pageInfo.page >= props.pageInfo.totalPages"
                 class="btn"
             >
                 Next

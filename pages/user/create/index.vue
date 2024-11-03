@@ -5,6 +5,7 @@ useHead({
 
 definePageMeta({
     layout: "dashboard",
+    middleware: "auth",
 });
 
 // Form state
@@ -17,33 +18,37 @@ const userInfo = reactive({
 });
 
 // Define the mutation with correct CreateUserDto input type
-// const CREATE_USER_MUTATION = gql`
-//     mutation addUser($data: CreateUserDto!) {
-//         addUser(data: $data) {
-//             id
-//             name
-//             email
-//             role
-//             avatar
-//         }
-//     }
-// `;
 const CREATE_USER_MUTATION = gql`
-    mutation {
-        addUser(
-            data: {
-                name: "Test User7"
-                email: "test@example.com"
-                password: "1234"
-                avatar: "https://api.lorem.space/image/face?w=150&h=220"
-            }
-        ) {
+    mutation addUser($data: CreateUserDto!) {
+        addUser(data: $data) {
             id
             name
+            email
+            role
             avatar
         }
     }
 `;
+
+// const CREATE_USER_MUTATION = gql`
+//     mutation {
+//         addUser(
+//             data: {
+//                 name: "Test User7"
+//                 email: "test@example.com"
+//                 password: "1234"
+//                 avatar: "https://api.lorem.space/image/face?w=150&h=220"
+//             }
+//         ) {
+//             id
+//             name
+//             email
+//             role
+//             password
+//             avatar
+//         }
+//     }
+// `;
 
 const resetForm = () => {
     userInfo.name = "";
@@ -63,7 +68,6 @@ const handleCreateUser = async () => {
                 email: userInfo.email,
                 name: `${userInfo.firstname} ${userInfo.lastname}`,
                 password: userInfo.password,
-                role: userInfo.role,
                 avatar: "https://via.placeholder.com/150",
             },
         };
@@ -73,7 +77,7 @@ const handleCreateUser = async () => {
         const { mutate: addUser } = useMutation(CREATE_USER_MUTATION);
 
         // Execute mutation with variables
-        const result = await addUser({ variables });
+        const result = await addUser(variables);
 
         console.log("User added successfully", result);
         resetForm();

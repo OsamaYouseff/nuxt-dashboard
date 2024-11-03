@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { gql } from "graphql-tag";
-import { useQuery } from "@vue/apollo-composable";
-import { computed } from "vue";
-import type User from "@/types/User.ts";
+// import { gql } from "graphql-tag";
+// import { useQuery } from "@vue/apollo-composable";
+// import { computed } from "vue";
+import type User from "@/types/User";
 
 useHead({
     title: "Users",
 });
 definePageMeta({
     layout: "dashboard",
+    middleware: "auth",
 });
 const currentTab = ref<string>("active");
 
@@ -48,7 +49,7 @@ if (result.value)
 
 // Add watchers for debugging
 watch(result, (newResult: any) => {
-    console.log("Query result:", newResult);
+    // console.log("Query result:", newResult);
 });
 
 watch(error, (newError: any) => {
@@ -60,8 +61,8 @@ watch(error, (newError: any) => {
 // Watch page change to log updates for debugging
 watch(
     () => pageInfo.page,
-    (newPage) => {
-        console.log("Page changed:", newPage);
+    (newPage: number) => {
+        // console.log("Page changed:", newPage);
     }
 );
 </script>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+// imports
 import EyeSlash from "@/assets/icons/EyeSlash.svg";
 import EyeOpen from "@/assets/icons/EyeOpen.svg";
 
@@ -6,10 +7,55 @@ useHead({
     title: "Nuxt Dashboard | Register ",
 });
 
+definePageMeta({
+    middleware: "un-auth",
+});
+
+const LOGIN_USER_MUTATION = gql`
+    mutation {
+        login(email: "john@mail.com", password: "changeme") {
+            access_token
+            refresh_token
+        }
+    }
+`;
+
 const showPassword = ref(false);
 
-const handleSignUp = () => {
-    alert("Sign In");
+const loginInfo = ref({
+    email: "john@mail.com",
+    password: "changeme",
+});
+
+const { mutate: login, loading, error } = useMutation(LOGIN_USER_MUTATION);
+
+// Store token function
+const setTokens = (accessToken: string, refreshToken: string) => {
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
+};
+
+// Login function
+const handleSignIn = async () => {
+    try {
+        const { data } = await login({
+            variables: {
+                email: loginInfo.value.email,
+                password: loginInfo.value.password,
+            },
+        });
+
+        console.log(data);
+
+        if (data.login.access_token && data.login.refresh_token) {
+            setTokens(data.login.access_token, data.login.refresh_token);
+            console.log("Login successful");
+            // Redirect the user after login, e.g., to a dashboard
+            navigateTo("/user/listings");
+        }
+    } catch (err) {
+        console.error("Login error:", err);
+    }
 };
 </script>
 
@@ -19,7 +65,7 @@ const handleSignUp = () => {
             <div class="circle"></div>
         </div>
 
-        <div class="form-wrapper" @submit.prevent="handleSignUp">
+        <div class="form-wrapper" @submit.prevent="handleSignIn">
             <div class="container">
                 <h1>Sign In to your Account</h1>
                 <h2>Welcome back! please enter your detail</h2>

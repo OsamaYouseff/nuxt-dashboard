@@ -191,7 +191,7 @@ const checkedAllUsers = () => {
             </tbody>
         </table>
 
-        <div class="pagination">
+        <div v-if="props.users.length" class="pagination">
             <CustomPagination :pageInfo="props.pageInfo" />
         </div>
     </div>
