@@ -34,7 +34,7 @@ const { result, loading, error } = useQuery(USERS_QUERY);
 const pageInfo = reactive({
     page: 1,
     limit: 7,
-    totalPages: 0,
+    totalPages: 1,
 });
 
 const users: User[] | any = computed(() => {
@@ -42,7 +42,9 @@ const users: User[] | any = computed(() => {
     const to = from + pageInfo.limit;
     return result.value?.users.slice(from, to) ?? [];
 });
-pageInfo.totalPages = Math.trunc(result.value?.users?.length / 7) + 1;
+
+if (result.value)
+    pageInfo.totalPages = Math.trunc(result.value?.users?.length / 7) + 1;
 
 // Add watchers for debugging
 watch(result, (newResult: any) => {

@@ -2,67 +2,92 @@
 useHead({
     title: "Add User",
 });
+
 definePageMeta({
     layout: "dashboard",
 });
 
+// Form state
 const userInfo = reactive({
-    firstname: "",
-    lastname: "",
+    name: "",
     email: "",
     password: "",
     role: "admin",
+    avatar: "https://via.placeholder.com/150",
 });
 
-const resetForm = () => {
-    Object.keys(userInfo).forEach((key) => {
-        userInfo[key] = "";
-    });
-};
-
-// Define the mutation
+// Define the mutation with correct CreateUserDto input type
+// const CREATE_USER_MUTATION = gql`
+//     mutation addUser($data: CreateUserDto!) {
+//         addUser(data: $data) {
+//             id
+//             name
+//             email
+//             role
+//             avatar
+//         }
+//     }
+// `;
 const CREATE_USER_MUTATION = gql`
     mutation {
         addUser(
             data: {
-                name: "ali sayed"
-                email: "ali@gmail.com"
-                password: "123456"
+                name: "Test User7"
+                email: "test@example.com"
+                password: "1234"
                 avatar: "https://api.lorem.space/image/face?w=150&h=220"
             }
         ) {
             id
             name
             avatar
-            role
         }
     }
 `;
 
-const loading = false;
-const error = false;
+const resetForm = () => {
+    userInfo.name = "";
+    userInfo.email = "";
+    userInfo.password = "";
+    userInfo.role = "admin";
+};
 
-// const { mutate: AddUser, loading, error } = useMutation(CREATE_USER_MUTATION);
+// Create reactive references for loading and error states
+let loading = ref(false);
+let error = ref(null);
 
-// Handler function
 const handleCreateUser = async () => {
     try {
-        const { mutate: addUser } = await useMutation(CREATE_USER_MUTATION);
+        const variables = {
+            data: {
+                email: userInfo.email,
+                name: `${userInfo.firstname} ${userInfo.lastname}`,
+                password: userInfo.password,
+                role: userInfo.role,
+                avatar: "https://via.placeholder.com/150",
+            },
+        };
+        loading = true;
 
-        addUser();
+        // Initialize the mutation
+        const { mutate: addUser } = useMutation(CREATE_USER_MUTATION);
 
-        console.log("User added successfully");
+        // Execute mutation with variables
+        const result = await addUser({ variables });
 
+        console.log("User added successfully", result);
         resetForm();
     } catch (err) {
         console.error("Error creating user:", err);
+    } finally {
+        loading = false;
     }
 };
 
-// Optional: Watch for errors
-watch(error, (newError) => {
-    if (newError) {
-        console.error("Mutation error:", newError);
+// Watch for errors
+watchEffect(() => {
+    if (error.value) {
+        console.error("Mutation error:", error.value);
     }
 });
 </script>
@@ -193,6 +218,7 @@ watch(error, (newError) => {
                 <div class="flex-between">
                     <label for="role">Role</label>
                     <input
+                        disabled
                         v-model="userInfo.role"
                         type="text"
                         id="role"

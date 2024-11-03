@@ -7,12 +7,32 @@ const props = defineProps<{
     };
 }>();
 
-const currentPage = props.pageInfo.page;
 const totalPages = props.pageInfo.totalPages;
+
+const paginationLimit = 15;
+
+const startRange = ref<number[]>([
+    props.pageInfo.page,
+    props.pageInfo.page + 1,
+    props.pageInfo.page + 2,
+    props.pageInfo.page + 3,
+    props.pageInfo.page + 4,
+]);
+const endRange = ref<number[]>([
+    totalPages - 4,
+    totalPages - 3,
+    totalPages - 2,
+    totalPages - 1,
+    totalPages,
+]);
+
+const isNumberExist = (num: number) => {
+    return startRange.value.includes(num) || endRange.value.includes(num);
+};
 
 //// handling change page
 const goToNextPage = () => {
-    if (currentPage < totalPages) {
+    if (props.pageInfo.page < props.pageInfo.totalPages) {
         props.pageInfo.page++;
     }
 };
@@ -42,7 +62,38 @@ const goToPage = (page: number) => {
         </div>
 
         <div class="flex-center" style="flex: 1; gap: 10px">
+            <!-- if total pages is less than 7 -->
+            <div v-if="totalPages >= paginationLimit" class="flex">
+                <button
+                    @click="goToPage(i)"
+                    v-for="i in startRange"
+                    :key="i"
+                    class="page-btn"
+                    :class="{ active: i === props.pageInfo.page }"
+                >
+                    {{ i }}
+                </button>
+                <span style="margin: 0 5px">...</span>
+                <button
+                    v-if="!isNumberExist(props.pageInfo.page)"
+                    class="page-btn active"
+                >
+                    {{ props.pageInfo.page }}
+                </button>
+                <span style="margin: 0 5px">...</span>
+                <button
+                    @click="goToPage(i)"
+                    v-for="i in endRange"
+                    :key="i"
+                    class="page-btn"
+                    :class="{ active: i === props.pageInfo.page }"
+                >
+                    {{ i }}
+                </button>
+            </div>
+
             <button
+                v-else
                 @click="goToPage(i)"
                 v-for="i in totalPages"
                 :key="i"
@@ -52,10 +103,11 @@ const goToPage = (page: number) => {
                 {{ i }}
             </button>
         </div>
+
         <div class="flex" style="min-width: 150px; justify-content: flex-end">
             <button
                 @click="goToNextPage"
-                :disabled="props.pageInfo.page === totalPages"
+                :disabled="props.pageInfo.page === props.pageInfo.totalPages"
                 class="btn"
             >
                 Next
@@ -93,9 +145,10 @@ button {
     width: 40px;
     height: 40px;
     border-color: transparent;
-    text-align: center;
-
     border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .page-btn.active {
