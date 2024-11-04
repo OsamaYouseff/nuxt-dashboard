@@ -33,11 +33,11 @@ const { result, loading, error } = useQuery(USER_QUERY);
 const user = computed(() => result?.value?.user);
 
 // Add watchers for debugging
-watch(result, (newResult) => {
+watch(result, (newResult: any) => {
     console.log("Query result:", newResult);
 });
 
-watch(error, (newError) => {
+watch(error, (newError: any) => {
     if (newError) {
         console.error("GraphQL error:", newError);
     }
@@ -49,7 +49,9 @@ const editMode = ref<boolean>(false);
 
 <template>
     <div>
-        <spinner v-if="loading" />
+        <div style="width: 88vw; position: relative">
+            <spinner v-if="loading" />
+        </div>
 
         <ErrorComponent
             v-if="error"

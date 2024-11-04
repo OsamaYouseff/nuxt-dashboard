@@ -96,7 +96,7 @@ watch(
             </div>
         </header>
 
-        <div style="width: 77vw; position: relative">
+        <div style="width: 88vw; position: relative">
             <spinner v-if="loading" />
         </div>
 
