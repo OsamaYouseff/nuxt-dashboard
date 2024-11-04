@@ -1,11 +1,7 @@
 <script setup lang="ts">
-useHead({
-    title: "Nuxt Dashboard ",
-});
+useHead({ title: "Nuxt Dashboard | Home ",});
+definePageMeta({ middleware: "un-auth"});
 
-definePageMeta({
-    middleware: "un-auth",
-});
 </script>
 
 <template>

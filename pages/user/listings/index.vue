@@ -1,16 +1,8 @@
 <script setup lang="ts">
-// import { gql } from "graphql-tag";
-// import { useQuery } from "@vue/apollo-composable";
-// import { computed } from "vue";
-import type User from "@/types/User";
+import type {User} from "@/types/User";
 
-useHead({
-    title: "Users",
-});
-definePageMeta({
-    layout: "dashboard",
-    middleware: "auth",
-});
+useHead({ title: "Dashboard | All Users"});
+definePageMeta({ layout: "dashboard", middleware: "auth"});
 const currentTab = ref<string>("active");
 
 // Fetching Users
@@ -28,8 +20,8 @@ const USERS_QUERY = gql`
         }
     }
 `;
-
 const { result, loading, error } = useQuery(USERS_QUERY);
+
 
 // Pagination Logic
 const pageInfo = reactive({
@@ -37,34 +29,31 @@ const pageInfo = reactive({
     limit: 7,
     totalPages: 1,
 });
-
 const users: User[] | any = computed(() => {
     const from = (pageInfo.page - 1) * pageInfo.limit;
     const to = from + pageInfo.limit;
     return result.value?.users.slice(from, to) ?? [];
 });
+if (result.value) pageInfo.totalPages = Math.trunc(result.value?.users?.length / 7) + 1;
 
-if (result.value)
-    pageInfo.totalPages = Math.trunc(result.value?.users?.length / 7) + 1;
+
 
 // Add watchers for debugging
 watch(result, (newResult: any) => {
     // console.log("Query result:", newResult);
 });
-
 watch(error, (newError: any) => {
     if (newError) {
         console.error("GraphQL error:", newError);
     }
 });
-
-// Watch page change to log updates for debugging
 watch(
     () => pageInfo.page,
     (newPage: number) => {
         // console.log("Page changed:", newPage);
     }
 );
+
 </script>
 
 <template>

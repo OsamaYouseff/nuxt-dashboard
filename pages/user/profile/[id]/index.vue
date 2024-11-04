@@ -2,17 +2,12 @@
 import edit from "@/assets/icons/edit.svg";
 import save from "@/assets/icons/download.svg";
 
-useHead({
-    title: "Profile",
-});
+useHead({ title: "Dashboard | User Profile"});
+definePageMeta({ layout: "dashboard", middleware: "auth"});
 
-definePageMeta({
-    layout: "dashboard",
-    middleware: "auth",
-});
 
+// Fetching User
 const route = useRoute();
-// Fetching Users
 const USER_QUERY = gql`
     query GetUser {
         user (id: ${route.params.id || 1}) {
@@ -27,24 +22,24 @@ const USER_QUERY = gql`
         }
     }
 `;
-
 const { result, loading, error } = useQuery(USER_QUERY);
-
 const user = computed(() => result?.value?.user);
+
+const isUserBlocked = ref<boolean>(true);
+const editMode = ref<boolean>(false);
 
 // Add watchers for debugging
 watch(result, (newResult: any) => {
     console.log("Query result:", newResult);
 });
-
 watch(error, (newError: any) => {
+
     if (newError) {
         console.error("GraphQL error:", newError);
     }
 });
 
-const isUserBlocked = ref<boolean>(true);
-const editMode = ref<boolean>(false);
+
 </script>
 
 <template>

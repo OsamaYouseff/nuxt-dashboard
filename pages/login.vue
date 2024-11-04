@@ -1,22 +1,21 @@
 <script setup lang="ts">
-// imports
 import EyeSlash from "@/assets/icons/EyeSlash.svg";
 import EyeOpen from "@/assets/icons/EyeOpen.svg";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/yup";
 import * as yup from "yup";
+import {setTokens} from "@/composables/auth";
+import type {LoginForm} from "@/types/LoginForm";
 
-useHead({
-    title: "Nuxt Dashboard | Register ",
-});
 
-definePageMeta({
-    middleware: "un-auth",
-});
+useHead({title: "Nuxt Dashboard | Register "});
+definePageMeta({middleware: "un-auth"});
 
+
+// Login Logic with graphql
 const LOGIN_USER_MUTATION = gql`
-    mutation {
-        login(email: "john@mail.com", password: "changeme") {
+    mutation login($email: String!, $password: String!) {
+        login(email: $email, password: $password) {
             access_token
             refresh_token
         }
@@ -29,13 +28,10 @@ const loginInfo = ref({
     password: "changeme",
 });
 
-const { mutate: login, loading, error } = useMutation(LOGIN_USER_MUTATION);
+const { mutate: login, loading, error } = useMutation(LOGIN_USER_MUTATION , ()=>({ variables: loginInfo.value}));
+
 
 // Validation
-interface LoginForm {
-    email?: string | null;
-    password?: string | null;
-}
 const schema = toTypedSchema(
     yup.object({
         email: yup.string().required().email(),
@@ -52,6 +48,7 @@ const [password, passwordAttrs] = defineField("password", {
     validateOnModelUpdate: false,
 });
 
+//// Handlers
 const handleSignIn = handleSubmit(async (values: LoginForm) => {
     try {
         const { data } = await login({
@@ -64,7 +61,6 @@ const handleSignIn = handleSubmit(async (values: LoginForm) => {
         if (data.login.access_token && data.login.refresh_token) {
             setTokens(data.login.access_token, data.login.refresh_token);
             console.log("Login successful");
-            // Redirect the user after login, e.g., to a dashboard
             navigateTo("/user/listings");
         }
     } catch (err) {
@@ -72,10 +68,6 @@ const handleSignIn = handleSubmit(async (values: LoginForm) => {
     }
 });
 
-const setTokens = (accessToken: string, refreshToken: string) => {
-    localStorage.setItem("accessToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
-};
 </script>
 
 <template>

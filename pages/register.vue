@@ -3,22 +3,19 @@ import EyeSlash from "@/assets/icons/EyeSlash.svg";
 import EyeOpen from "@/assets/icons/EyeOpen.svg";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/yup";
+import {setTokens} from "@/composables/auth";
 import * as yup from "yup";
-useHead({
-    title: "Nuxt Dashboard | Register ",
-});
-definePageMeta({
-    middleware: "un-auth",
-});
+import type { RegisterForm } from "@/types/RegisterForm";
 
-interface RegisterForm {
-    username?: string | null;
-    email?: string | null;
-    password?: string | null;
-}
+
+useHead({ title: "Nuxt Dashboard | Register "});
+definePageMeta({ middleware: "un-auth"});
+
 
 const showPassword = ref(false);
 
+
+// Validation
 const schema = toTypedSchema(
     yup.object({
         username: yup.string().required().min(3),
@@ -26,24 +23,77 @@ const schema = toTypedSchema(
         password: yup.string().required().min(8),
     })
 );
-
-const { values, errors, defineField, handleSubmit } = useForm<RegisterForm>({
-    validationSchema: schema,
-});
-
+const { values, errors, defineField, handleSubmit } = useForm<RegisterForm>({validationSchema: schema,});
 const [username, usernameAttrs] = defineField("username");
-const [email, emailAttrs] = defineField("email", {
-    validateOnModelUpdate: false,
+const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false});
+const [password, passwordAttrs] = defineField("password", { validateOnModelUpdate: false});
+
+
+// Register Logic using GraphQL
+const CREATE_USER_MUTATION = gql`
+  mutation addUser($data: CreateUserDto!) {
+    addUser(data: $data) {
+      id
+      name
+      email
+      role
+      avatar
+    }
+  }
+`;
+const LOGIN_USER_MUTATION = gql`
+    mutation login($email: String!, $password: String!) {
+        login(email: $email, password: $password) {
+            access_token
+            refresh_token
+        }
+    }
+`;
+const loginInfo = ref({
+    email: "john@mail.com",
+    password: "changeme",
 });
-const [password, passwordAttrs] = defineField("password", {
-    validateOnModelUpdate: false,
+const variables = {
+  data: {
+    name: "New User",
+    email: "newuser@gmail.com",
+    password: "12345678",
+    role: "admin",
+    avatar: "https://www.w3schools.com/howto/img_avatar.png",
+  },
+};
+
+const { mutate: addUser, loading, error} = useMutation(CREATE_USER_MUTATION, () => ({ variables}));
+const { mutate: loginUser} = useMutation(LOGIN_USER_MUTATION , ()=>({ variables: loginInfo.value }));
+
+// handlers
+const handleSignUp = handleSubmit(async (values: RegisterForm) => {
+
+    try {
+    const {data : registerResponse} = await addUser();
+    
+    if (registerResponse) {
+        
+        const {data : loginResponse} = await loginUser({
+            variables :{
+                email:registerResponse.addUser.email,
+                password:registerResponse.addUser.password
+            }
+        });
+        
+        if (loginResponse) {
+            setTokens(loginResponse.login.access_token, loginResponse.login.refresh_token);
+            console.log("User added successfully", loginResponse);
+            navigateTo("/user/listings")
+        }
+        
+    };
+    
+  } catch (err) {
+    console.error("Error creating user:", err);
+  }
 });
 
-const handleSignUp = handleSubmit(async (values: RegisterForm) => {
-    // Handle form submission logic here
-    console.log(values);
-    alert("Sign Up");
-});
 </script>
 
 <template>
@@ -52,8 +102,20 @@ const handleSignUp = handleSubmit(async (values: RegisterForm) => {
             <div class="circle"></div>
         </div>
 
-        <div class="form-wrapper" @submit.prevent="handleSignUp">
-            <div class="container">
+        <div  class="form-wrapper" @submit.prevent="handleSignUp">
+            <div style="width: 50vw; position: relative">
+                    <spinner
+                        style="transform: translateY(-20%); height: 100vh"
+                        v-if="loading"
+                    />
+                </div>
+    
+                <ErrorComponent
+                    v-if="error"
+                    :error="{ myMessage: 'Failed to login', apiMessage: error }"
+                />
+
+            <div v-else class="container">
                 <h1 style="margin-bottom: 20px">Sign Up for an Account</h1>
                 <form>
                     <!-- username -->
