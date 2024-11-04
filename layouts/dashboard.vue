@@ -156,14 +156,14 @@ const handleLogout = () => {
 
 <style scoped>
 .dashboard {
-    display: flex;
     justify-content: space-between;
+    display: flex;
     background: #f5f5f5;
 }
 
 .sidebar {
-    min-width: 270px;
     max-width: 270px;
+    min-width: 270px;
     height: 100vh;
     position: relative;
 }
