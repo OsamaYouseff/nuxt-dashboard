@@ -183,7 +183,7 @@ watchEffect(() => {
         <!-- Email and Password -->
         <div class="flex-between">
           <label for="email">Email address</label>
-          <div style="width: 512px" class="input-container flex">
+          <div  class="input-container flex">
             <input
               v-model="userInfo.email"
               v-bind="emailAttrs"
@@ -197,7 +197,7 @@ watchEffect(() => {
         <!-- Password -->
         <div class="flex-between">
           <label for="password">Password</label>
-          <div class="input-container flex" style="width: 512px">
+          <div class="input-container flex" >
             <input
               v-model="userInfo.password"
               v-bind="passwordAttrs"
@@ -228,7 +228,7 @@ watchEffect(() => {
         <div class="flex-between">
           <label for="photo">Photo</label>
 
-          <div class="flex" style="gap: 20px; width: 512px">
+          <div class="flex" style="gap: 20px;">
             <div class="img-container">
               <img
                 style="width: 100%; height: 100%; border-radius: 50%"
@@ -308,8 +308,11 @@ form {
   max-width: 70%;
 }
 
+
 .input-container {
   position: relative;
+  flex:1;
+  justify-content: flex-end;
 }
 
 input:not([type="file"]) {
