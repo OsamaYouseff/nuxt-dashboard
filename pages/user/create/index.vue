@@ -48,16 +48,17 @@ const CREATE_USER_MUTATION = gql`
   }
 `;
 
-const variables = {
-  data: {
-    name: `${userInfo.firstname} ${userInfo.lastname}`,
-    email: userInfo.email,
-    password: userInfo.password,
-    role: userInfo.role,
-    avatar: userInfo.avatar,
-  },
-};
-const { mutate: addUser, loading, error } = useMutation(CREATE_USER_MUTATION, () => ({ variables }));
+const { mutate: addUser, loading, error } = useMutation(CREATE_USER_MUTATION, () => ({
+  variables: {
+    data: {
+      name: `${userInfo.firstname} ${userInfo.lastname}`,
+      email: userInfo.email,
+      password: userInfo.password,
+      role: userInfo.role,
+      avatar: userInfo.avatar,
+    }
+  }
+}));
 
 // Handlers
 const handleCreateUser = async () => {
@@ -90,6 +91,7 @@ watchEffect(() => {
     console.error("Mutation error:", error.value);
   }
 });
+
 
 </script>
 
