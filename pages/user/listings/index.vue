@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type {User} from "@/types/User";
+import type { User } from "@/types/User";
 
-useHead({ title: "Dashboard | All Users"});
-definePageMeta({ layout: "dashboard", middleware: "auth"});
+useHead({ title: "Dashboard | All Users" });
+definePageMeta({ layout: "dashboard", middleware: "auth" });
 const currentTab = ref<string>("active");
 
 // Fetching Users
@@ -34,7 +34,7 @@ const users: User[] | any = computed(() => {
     const to = from + pageInfo.limit;
     return result.value?.users.slice(from, to) ?? [];
 });
-if (result.value) pageInfo.totalPages = Math.trunc(result.value?.users?.length / 7) + 1;
+if (result.value) pageInfo.totalPages = Math.trunc(result.value?.users?.length / 7);
 
 
 
@@ -65,18 +65,12 @@ watch(
 
                 <div class="btns flex" style="gap: 10px">
                     <button>
-                        <img
-                            src="@/assets/icons/download.svg"
-                            alt="export-icon"
-                        />
+                        <img src="@/assets/icons/download.svg" alt="export-icon" />
                         Export
                     </button>
                     <nuxt-link to="/user/create">
                         <button class="add-user">
-                            <img
-                                src="@/assets/icons/plus.svg"
-                                alt=" plus-icon"
-                            />
+                            <img src="@/assets/icons/plus.svg" alt=" plus-icon" />
 
                             Add user
                         </button>
@@ -89,10 +83,7 @@ watch(
             <spinner v-if="loading" />
         </div>
 
-        <ErrorComponent
-            v-if="error"
-            :error="{ myMessage: 'Failed to login', apiMessage: error }"
-        />
+        <ErrorComponent v-if="error" :error="{ myMessage: 'Failed to login', apiMessage: error }" />
 
         <div v-else>
             <!-- Nav path -->
@@ -104,34 +95,21 @@ watch(
             <div class="users-table">
                 <!-- Tabs -->
                 <div class="tabs flex">
-                    <span
-                        @click="currentTab = 'active'"
-                        :class="{ active: currentTab == 'active' }"
-                        >Active Users</span
-                    >
-                    <span
-                        @click="currentTab = 'blocked'"
-                        :class="{ active: currentTab == 'blocked' }"
-                        >Blocked Users</span
-                    >
+                    <span @click="currentTab = 'active'" :class="{ active: currentTab == 'active' }">Active Users</span>
+                    <span @click="currentTab = 'blocked'" :class="{ active: currentTab == 'blocked' }">Blocked
+                        Users</span>
                 </div>
 
                 <!-- Filters -->
                 <div class="filters flex-between" style="margin-bottom: 20px">
                     <div class="search-bar">
-                        <img
-                            src="@/assets/icons/MagnifyingGlass.svg"
-                            alt="search-icon"
-                        />
+                        <img src="@/assets/icons/MagnifyingGlass.svg" alt="search-icon" />
                         <input type="text" placeholder="Search" />
                     </div>
                     <div class="filters-btns flex" style="gap: 10px">
                         <button>Jan 6, 2022 – Jan 13, 2022</button>
                         <button>
-                            <img
-                                src="@/assets/icons/Vector.svg"
-                                alt="filter-icon"
-                            />
+                            <img src="@/assets/icons/Vector.svg" alt="filter-icon" />
                             Filters
                         </button>
                     </div>
@@ -177,6 +155,7 @@ button.add-user {
     background: linear-gradient(90deg, #ef3e2c 0%, #e71f63 100%);
     color: white;
 }
+
 button.add-user img {
     width: 25px;
     height: 15px;
@@ -203,6 +182,7 @@ button.add-user img {
     padding-bottom: 10px;
     cursor: pointer;
 }
+
 .tabs span.active {
     border-bottom: 2px solid var(--secondary-color);
     color: var(--secondary-color);
@@ -213,6 +193,7 @@ button.add-user img {
     width: 400px;
     height: 44px;
 }
+
 .search-bar input {
     width: 100%;
     border: 1px solid #d0d5dd;

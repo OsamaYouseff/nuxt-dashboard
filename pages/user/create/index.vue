@@ -5,8 +5,8 @@ import * as yup from "yup";
 import type { UserForm } from "@/types/UserForm";
 
 
-useHead({ title: "Dashboard | Create User"});
-definePageMeta({ layout: "dashboard", middleware: "auth"});
+useHead({ title: "Dashboard | Create User" });
+definePageMeta({ layout: "dashboard", middleware: "auth" });
 
 
 const userInfo = reactive({
@@ -28,11 +28,11 @@ const schema = yup.object({
   role: yup.string().required(),
   avatar: yup.string().required(),
 });
-const { values, errors, defineField, handleSubmit } = useForm<UserForm>({validationSchema: toTypedSchema(schema)});
+const { values, errors, defineField, handleSubmit } = useForm<UserForm>({ validationSchema: toTypedSchema(schema) });
 const [firstname, firstnameAttrs] = defineField("firstname");
 const [lastname, lastnameAttrs] = defineField("lastname");
-const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false});
-const [password, passwordAttrs] = defineField("password", {validateOnModelUpdate: false});
+const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false });
+const [password, passwordAttrs] = defineField("password", { validateOnModelUpdate: false });
 
 
 // Create User Logic with graphql
@@ -57,14 +57,14 @@ const variables = {
     avatar: userInfo.avatar,
   },
 };
-const { mutate: addUser, loading, error} = useMutation(CREATE_USER_MUTATION, () => ({ variables}));
+const { mutate: addUser, loading, error } = useMutation(CREATE_USER_MUTATION, () => ({ variables }));
 
 // Handlers
 const handleCreateUser = async () => {
   try {
     const result = await addUser();
-    
-    if (result){
+
+    if (result) {
       console.log("User added successfully", result);
       resetForm();
       alert("User has been created successfully");
@@ -96,10 +96,7 @@ watchEffect(() => {
 <template>
   <spinner v-if="loading" />
 
-  <ErrorComponent
-    v-if="error"
-    :error="{ myMessage: 'Failed to Create User', apiMessage: error }"
-  />
+  <ErrorComponent v-if="error" :error="{ myMessage: 'Failed to Create User', apiMessage: error }" />
 
   <div v-else class="container">
     <!-- header -->
@@ -110,10 +107,7 @@ watchEffect(() => {
     </header>
 
     <!-- Nav path -->
-    <div
-      class="nav-path flex"
-      style="gap: 10px; margin-bottom: 20px; color: #101828"
-    >
+    <div class="nav-path flex" style="gap: 10px; margin-bottom: 20px; color: #101828">
       <NuxtLink to="/user/listings">Users</NuxtLink>
       <img src="@/assets/icons/next-arrow.svg" alt="next-icon" />
       <NuxtLink to="/user/create">Add User</NuxtLink>
@@ -125,14 +119,12 @@ watchEffect(() => {
         <h2 style="font-weight: 500; font-size: 18px; margin-bottom: 6px">
           Add user account
         </h2>
-        <p
-          style="
+        <p style="
             font-size: 14px;
             font-weight: 400;
             line-height: 16.8px;
             color: #858589;
-          "
-        >
+          ">
           Add photo and personal details here
         </p>
       </div>
@@ -151,90 +143,49 @@ watchEffect(() => {
           <label for="name">Name</label>
           <div class="flex-between" style="gap: 10px; width: 512px">
             <div class="input-container flex">
-              <input
-                v-model="userInfo.firstname"
-                v-bind="firstnameAttrs"
-                type="text"
-                id="name"
-                placeholder="First Name"
-              />
+              <input v-model="userInfo.firstname" v-bind="firstnameAttrs" type="text" id="name"
+                placeholder="First Name" />
               <!-- TODO Enable Error message -->
-              <!-- <ErrorMsg
-                                v-show="errors.firstname"
-                                :error="errors.firstname"
-                            /> -->
+              <!-- <ErrorMsg v-show="errors.firstname" :error="errors.firstname" /> -->
             </div>
 
             <div class="input-container flex">
-              <input
-                v-model="userInfo.lastname"
-                v-bind="lastnameAttrs"
-                type="text"
-                id="name"
-                placeholder="Last Name"
-              />
-              <!-- <ErrorMsg
-                                v-show="errors.lastname"
-                                :error="errors.lastname"
-                            /> -->
+              <input v-model="userInfo.lastname" v-bind="lastnameAttrs" type="text" id="name" placeholder="Last Name" />
+              <!-- <ErrorMsg v-show="errors.lastname" :error="errors.lastname" /> -->
             </div>
           </div>
         </div>
         <!-- Email and Password -->
         <div class="flex-between">
           <label for="email">Email address</label>
-          <div  class="input-container flex">
-            <input
-              v-model="userInfo.email"
-              v-bind="emailAttrs"
-              type="email"
-              id="email"
-              placeholder="Email Address"
-            />
+          <div class="input-container flex">
+            <input v-model="userInfo.email" v-bind="emailAttrs" type="email" id="email" placeholder="Email Address" />
             <!-- <ErrorMsg v-show="errors.email" :error="errors.email" /> -->
           </div>
         </div>
         <!-- Password -->
         <div class="flex-between">
           <label for="password">Password</label>
-          <div class="input-container flex" >
-            <input
-              v-model="userInfo.password"
-              v-bind="passwordAttrs"
-              type="password"
-              id="password"
-              placeholder="Password"
-            />
-            <!-- <ErrorMsg
-                            v-show="errors.password"
-                            :error="errors.password"
-                        /> -->
+          <div class="input-container flex">
+            <input v-model="userInfo.password" v-bind="passwordAttrs" type="password" id="password"
+              placeholder="Password" />
+            <!-- <ErrorMsg v-show="errors.password" :error="errors.password" /> -->
           </div>
         </div>
 
         <!-- Role -->
         <div class="flex-between">
           <label for="role">Role</label>
-          <input
-            disabled
-            v-model="userInfo.role"
-            type="text"
-            id="role"
-            placeholder="Role"
-          />
+          <input disabled v-model="userInfo.role" type="text" id="role" placeholder="Role" />
         </div>
 
         <!-- Photo -->
         <div class="flex-between">
           <label for="photo">Photo</label>
 
-          <div class="flex" style="gap: 20px;">
+          <div class="flex" style="gap: 20px;width: 512px;">
             <div class="img-container">
-              <img
-                style="width: 100%; height: 100%; border-radius: 50%"
-                src="@/assets/images/user2-img.png"
-                alt=""
-              />
+              <img style="width: 100%; height: 100%; border-radius: 50%" src="@/assets/images/user2-img.png" alt="" />
               <span class="delete-btn flex-center">
                 <img src="@/assets/icons/delete.svg" alt="" />
               </span>
@@ -311,7 +262,7 @@ form {
 
 .input-container {
   position: relative;
-  flex:1;
+  flex: 1;
   justify-content: flex-end;
 }
 
@@ -327,7 +278,7 @@ input:not([type="file"]) {
   outline: none;
 }
 
-.input-wrapper > input:focus {
+.input-wrapper>input:focus {
   border: 2px solid var(--secondary-color);
 }
 
