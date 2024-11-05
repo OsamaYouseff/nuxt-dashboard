@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type User from "@/types/User.ts";
+import type {User} from "@/types/User";
 
 const props = defineProps<{
     users: User[];
@@ -52,9 +52,10 @@ const columns = [
 let checkedAll = ref<boolean>(false);
 const checkedAllUsers = () => {
     checkedAll.value = !checkedAll.value;
-    document.querySelectorAll("input[type=checkbox]").forEach((el, index) => {
-        if (index === 0) el.checked = !el.checked;
-        if (el.checked === checkedAll.value) el.click();
+    document.querySelectorAll("input[type=checkbox]").forEach((el: Element, index) => {
+        const inputEl = el as HTMLInputElement;
+        if (index === 0) inputEl.checked = !inputEl.checked;
+        if (inputEl.checked === checkedAll.value) inputEl.click();
     });
 };
 </script>
@@ -64,27 +65,16 @@ const checkedAllUsers = () => {
         <!-- Header -->
         <div class="flex-between" style="padding: 0 10px; margin-bottom: 10px">
             <h2 style="font-size: 18px; font-weight: 500">All Users</h2>
-            <img
-                style="cursor: pointer"
-                src="@/assets/icons/Dropdown.svg"
-                alt="edit"
-            />
+            <img style="cursor: pointer" src="@/assets/icons/Dropdown.svg" alt="edit" />
         </div>
         <!-- Table -->
         <table key="users-table">
             <thead class="table-header">
                 <tr>
-                    <th
-                        :class="{ flex: column.key === 'name' }"
-                        style="gap: 20px"
-                        v-for="column in columns"
-                        :key="column.key"
-                    >
+                    <th :class="{ flex: column.key === 'name' }" style="gap: 20px" v-for="column in columns"
+                        :key="column.key">
                         <div v-if="column.key === 'name'">
-                            <CustomCheckBtn
-                                @click="checkedAllUsers"
-                                :checked="checkedAll"
-                            />
+                            <CustomCheckBtn @click="checkedAllUsers" :checked="checkedAll" />
                         </div>
                         {{ column.label }}
                     </th>
@@ -93,34 +83,30 @@ const checkedAllUsers = () => {
 
             <tbody>
                 <tr v-for="person in props.users" :key="person.id">
-                    <td
-                        v-for="column in columns"
-                        :key="column.key"
-                        :style="{
-                            minWidth: `${column.width}px`,
-                            maxWidth: `${column.width}px`,
-                        }"
-                    >
+                    <td v-for="column in columns" :key="column.key" :style="{
+                        minWidth: `${column.width}px`,
+                        maxWidth: `${column.width}px`,
+                    }">
                         <!-- Name -->
-                        <div
-                            class="flex"
-                            v-if="column.key === 'name'"
-                            style="gap: 10px"
-                        >
+                        <div class="flex" v-if="column.key === 'name'" style="gap: 10px">
                             <CustomCheckBtn :checked="checkedAll" />
                             <NuxtLink :to="`/user/profile/${person.id}`">
-                                <div class="flex">
-                                    <img
-                                        v-if="!person.avatar.includes('lorem')"
-                                        style="
-                                            max-width: 40px;
-                                            max-height: 40px;
+                                <div class="flex-center">
+                                    <div v-if="!person.avatar.includes('lorem')" class="flex-center" style="
+                                            width: 40px;
+                                            height: 40px !important;
                                             border-radius: 50%;
                                             margin-right: 5px;
-                                        "
-                                        :src="person.avatar"
-                                        alt="user-img"
-                                    />
+                                            background: #00000014;    
+                                        ">
+                                    <img  style="
+                                            max-width: 100%;
+                                            max-height: 40px;
+                                            border-radius: 50%;
+                                        " :src="person.avatar" alt="user-img" />
+                                    </div>
+
+                                    
                                     <CustomImg v-else :username="person.name" />
 
                                     <div>
@@ -139,11 +125,7 @@ const checkedAllUsers = () => {
                         </div>
 
                         <!-- Username -->
-                        <div
-                            class="flex"
-                            v-else-if="column.key === 'username'"
-                            style="gap: 10px"
-                        >
+                        <div class="flex" v-else-if="column.key === 'username'" style="gap: 10px">
                             <NuxtLink :to="`/user/profile/${person.id}`">
                                 <p>@{{ person.name }}</p>
                             </NuxtLink>
@@ -171,20 +153,9 @@ const checkedAllUsers = () => {
                         </div>
 
                         <!-- Actions -->
-                        <div
-                            class="flex-center"
-                            style="gap: 10px"
-                            v-else-if="column.key === 'actions'"
-                        >
-                            <img
-                                src="@/assets/icons/block.svg"
-                                alt="block-icon"
-                            />
-                            <img
-                                style="cursor: pointer"
-                                src="@/assets/icons/Dropdown.svg"
-                                alt="edit"
-                            />
+                        <div class="flex-center" style="gap: 10px" v-else-if="column.key === 'actions'">
+                            <img src="@/assets/icons/block.svg" alt="block-icon" />
+                            <img style="cursor: pointer" src="@/assets/icons/Dropdown.svg" alt="edit" />
                         </div>
                     </td>
                 </tr>

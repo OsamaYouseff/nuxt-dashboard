@@ -30,7 +30,7 @@ const editMode = ref<boolean>(false);
 
 // Add watchers for debugging
 watch(result, (newResult: any) => {
-    console.log("Query result:", newResult);
+    // console.log("Query result:", newResult);
 });
 watch(error, (newError: any) => {
 
