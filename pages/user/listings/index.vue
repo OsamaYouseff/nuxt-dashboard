@@ -71,7 +71,7 @@ watch(
             <spinner v-if="loading" />
         </div>
 
-        <ErrorComponent v-if="error" :error="{ myMessage: 'Failed to login', apiMessage: error }" />
+        <ErrorComponent v-if="error" :error="{ myMessage: 'Failed to show users Information', apiMessage: error }" />
 
         <div v-else>
             <!-- Nav path -->
