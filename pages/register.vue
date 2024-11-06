@@ -24,7 +24,7 @@ const schema = toTypedSchema(
         password: yup.string().required().min(8),
     })
 );
-const { values, errors, defineField, handleSubmit } = useForm<RegisterForm>({ validationSchema: schema, });
+const { errors, defineField, handleSubmit } = useForm<RegisterForm>({ validationSchema: schema, });
 const [username, usernameAttrs] = defineField("username");
 const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false });
 const [password, passwordAttrs] = defineField("password", { validateOnModelUpdate: false });
@@ -33,13 +33,6 @@ const [password, passwordAttrs] = defineField("password", { validateOnModelUpdat
 
 
 // Register Logic using GraphQL
-const userInfo = reactive({
-    username: "NewUser",
-    email: "NewUser@mail.com",
-    password: "12345678",
-    role: "admin",
-    avatar: "https://e7.pngegg.com/pngimages/81/570/png-clipart-profile-logo-computer-icons-user-user-blue-heroes-thumbnail.png",
-});
 
 const { mutate: addUser, loading, error } = useMutation(CREATE_USER_MUTATION, () => ({
     variables: {

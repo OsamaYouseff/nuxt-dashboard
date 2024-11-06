@@ -22,7 +22,7 @@ const handleLogout = () => {
                         <ul>
                             <li>
                                 <NuxtLink @click="toggleNav('home')" :class="{ active: currentPage === 'home' }"
-                                    to="/user/listings">
+                                    to="/home">
                                     <img src="@/assets/icons/house.svg" alt="nav-icon" />
                                     Home
                                 </NuxtLink>
@@ -38,7 +38,7 @@ const handleLogout = () => {
                             <li>
                                 <NuxtLink @click="toggleNav('experts')" :class="{
                                     active: currentPage === 'experts',
-                                }" to="/user/listings">
+                                }" to="/experts">
                                     <img src="@/assets/icons/SealCheck.svg" alt="nav-icon" />
 
                                     Experts
@@ -47,7 +47,7 @@ const handleLogout = () => {
                             <li>
                                 <NuxtLink @click="toggleNav('content')" :class="{
                                     active: currentPage === 'content',
-                                }" to="/user/listings" class="flex-between">
+                                }" to="/content" class="flex-between">
                                     <div class="flex" style="gap: 10px">
                                         <img src="@/assets/icons/SquareHalf.svg" alt="nav-icon" />
 
@@ -58,7 +58,7 @@ const handleLogout = () => {
                             </li>
                             <li>
                                 <NuxtLink @click="toggleNav('rooms')" :class="{ active: currentPage === 'rooms' }"
-                                    to="/user/listings">
+                                    to="/rooms">
                                     <img src="@/assets/icons/ChatsCircle.svg" alt="nav-icon" />
 
                                     Rooms
@@ -68,7 +68,7 @@ const handleLogout = () => {
                                 <NuxtLink @click="toggleNav('app-management')" :class="{
                                     active:
                                         currentPage === 'app-management',
-                                }" to="/user/listings" class="flex-between">
+                                }" to="/app-management" class="flex-between">
                                     <div class="flex" style="gap: 10px">
                                         <img src="@/assets/icons/NotePencil.svg" alt="nav-icon" />
 
