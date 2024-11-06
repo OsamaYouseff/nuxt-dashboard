@@ -1,26 +1,14 @@
 <script setup lang="ts">
 import type { User } from "@/types/User";
+import { GET_USERS_QUERY } from "@/graphql/mutations/user";
+
 
 useHead({ title: "Dashboard | All Users" });
 definePageMeta({ layout: "dashboard", middleware: "auth" });
 const currentTab = ref<string>("active");
 
-// Fetching Users
-const USERS_QUERY = gql`
-    query GetUsers {
-        users {
-            id
-            email
-            password
-            name
-            role
-            avatar
-            creationAt
-            updatedAt
-        }
-    }
-`;
-const { result, loading, error } = useQuery(USERS_QUERY);
+
+const { result, loading, error } = useQuery(GET_USERS_QUERY);
 
 
 // Pagination Logic

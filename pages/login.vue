@@ -4,32 +4,30 @@ import EyeOpen from "@/assets/icons/EyeOpen.svg";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/yup";
 import * as yup from "yup";
-import {setTokens} from "@/composables/auth";
-import type {LoginForm} from "@/types/LoginForm";
+import { setTokens } from "@/composables/auth";
+import type { LoginForm } from "@/types/LoginForm";
+import { LOGIN_USER_MUTATION } from "@/graphql/mutations/user";
+
+useHead({ title: "Nuxt Dashboard | Register " });
+definePageMeta({ middleware: "un-auth" });
 
 
-useHead({title: "Nuxt Dashboard | Register "});
-definePageMeta({middleware: "un-auth"});
-
-
-// Login Logic with graphql
-const LOGIN_USER_MUTATION = gql`
-    mutation login($email: String!, $password: String!) {
-        login(email: $email, password: $password) {
-            access_token
-            refresh_token
-        }
-    }
-`;
 
 const showPassword = ref(false);
-const loginInfo = ref({
+const loginInfo = reactive({
     email: "john@mail.com",
     password: "changeme",
 });
 
-const { mutate: login, loading, error } = useMutation(LOGIN_USER_MUTATION , ()=>({ variables: loginInfo.value}));
+const { mutate: loginUser, loading, error } = useMutation(LOGIN_USER_MUTATION,
+    () => ({
+        variables: {
+            email: loginInfo.email,
+            password: loginInfo.password,
+        }
+    })
 
+);
 
 // Validation
 const schema = toTypedSchema(
@@ -49,14 +47,15 @@ const [password, passwordAttrs] = defineField("password", {
 });
 
 //// Handlers
-const handleSignIn = handleSubmit(async (values: LoginForm) => {
+const handleSignIn = async () => {
+
+    if (!loginInfo.email || !loginInfo.password) {
+        alert("Please fill in all fields");
+        return;
+    }
+
     try {
-        const { data } = await login({
-            variables: {
-                email: values.email,
-                password: values.password,
-            },
-        });
+        const { data } = await loginUser();
 
         if (data.login.access_token && data.login.refresh_token) {
             setTokens(data.login.access_token, data.login.refresh_token);
@@ -66,7 +65,7 @@ const handleSignIn = handleSubmit(async (values: LoginForm) => {
     } catch (err) {
         console.error("Login error:", err);
     }
-});
+}
 
 </script>
 
@@ -78,16 +77,10 @@ const handleSignIn = handleSubmit(async (values: LoginForm) => {
 
         <div class="form-wrapper" @submit.prevent="handleSignIn">
             <div style="width: 50vw; position: relative">
-                <spinner
-                    style="transform: translateY(-20%); height: 70vh"
-                    v-if="loading"
-                />
+                <spinner style="transform: translateY(-20%); height: 70vh" v-if="loading" />
             </div>
 
-            <ErrorComponent
-                v-if="error"
-                :error="{ myMessage: 'Failed to login', apiMessage: error }"
-            />
+            <ErrorComponent v-if="error" :error="{ myMessage: 'Failed to login', apiMessage: error }" />
 
             <div v-else class="container">
                 <h1>Sign In to your Account</h1>
@@ -95,35 +88,22 @@ const handleSignIn = handleSubmit(async (values: LoginForm) => {
                 <form>
                     <!-- Email -->
                     <div class="input-wrapper">
-                        <input
-                            v-model="email"
-                            v-bind="emailAttrs"
-                            type="email"
-                            placeholder="Email"
-                        />
+                        <input v-model="loginInfo.email" type="email" placeholder="Email" />
                         <img src="@/assets/icons/EnvelopeSimple.svg" />
                     </div>
-                    <ErrorMsg v-if="errors.email" :error="errors.email" />
+                    <!-- <ErrorMsg v-if="errors.email" :error="errors.email" /> -->
 
                     <!-- Password -->
                     <div class="input-wrapper">
-                        <input
-                            v-model="password"
-                            v-bind="passwordAttrs"
-                            :type="showPassword ? 'text' : 'password'"
-                            placeholder="Password"
-                        />
+                        <input v-model="loginInfo.password" :type="showPassword ? 'text' : 'password'"
+                            placeholder="Password" />
                         <img src="@/assets/icons/LockKey.svg" />
                         <div class="show-password">
-                            <img
-                                @click="showPassword = !showPassword"
-                                class="eye"
-                                style="right: 0 !important"
-                                :src="showPassword ? EyeSlash : EyeOpen"
-                            />
+                            <img @click="showPassword = !showPassword" class="eye" style="right: 0 !important"
+                                :src="showPassword ? EyeSlash : EyeOpen" />
                         </div>
                     </div>
-                    <ErrorMsg v-if="errors.password" :error="errors.password" />
+                    <!-- <ErrorMsg v-if="errors.password" :error="errors.password" /> -->
 
                     <div class="Remember-me-container">
                         <div class="Remember-me">
@@ -170,11 +150,9 @@ const handleSignIn = handleSubmit(async (values: LoginForm) => {
     transform: translate(-50%, -50%);
     border-radius: 50%;
 
-    background: linear-gradient(
-        179.94deg,
-        rgba(255, 255, 255, 0.06) -5.48%,
-        rgba(255, 255, 255, 0) 96.9%
-    );
+    background: linear-gradient(179.94deg,
+            rgba(255, 255, 255, 0.06) -5.48%,
+            rgba(255, 255, 255, 0) 96.9%);
 }
 
 .form-wrapper {
@@ -236,6 +214,7 @@ form {
     right: 13% !important;
     cursor: pointer;
 }
+
 .eye {
     width: 25px;
 }
@@ -250,10 +229,12 @@ input {
     font-size: 16px;
     outline: none;
 }
-.input-wrapper > input:focus {
+
+.input-wrapper>input:focus {
     border: 2px solid var(--secondary-color);
 }
-form > p {
+
+form>p {
     color: hsla(240, 2%, 53%, 1);
     font-size: 12px;
 }
@@ -272,6 +253,7 @@ form > p {
 .Remember-me {
     gap: 10px;
 }
+
 .Remember-me input {
     width: 20px;
     height: 20px;

@@ -3,13 +3,14 @@ import EyeSlash from "@/assets/icons/EyeSlash.svg";
 import EyeOpen from "@/assets/icons/EyeOpen.svg";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/yup";
-import {setTokens} from "@/composables/auth";
+import { setTokens } from "@/composables/auth";
 import * as yup from "yup";
 import type { RegisterForm } from "@/types/RegisterForm";
+import { CREATE_USER_MUTATION, LOGIN_USER_MUTATION, IS_EMAIL_AVAILABLE } from "@/graphql/mutations/user";
 
 
-useHead({ title: "Nuxt Dashboard | Register "});
-definePageMeta({ middleware: "un-auth"});
+useHead({ title: "Nuxt Dashboard | Register " });
+definePageMeta({ middleware: "un-auth" });
 
 
 const showPassword = ref(false);
@@ -23,76 +24,81 @@ const schema = toTypedSchema(
         password: yup.string().required().min(8),
     })
 );
-const { values, errors, defineField, handleSubmit } = useForm<RegisterForm>({validationSchema: schema,});
+const { values, errors, defineField, handleSubmit } = useForm<RegisterForm>({ validationSchema: schema, });
 const [username, usernameAttrs] = defineField("username");
-const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false});
-const [password, passwordAttrs] = defineField("password", { validateOnModelUpdate: false});
+const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false });
+const [password, passwordAttrs] = defineField("password", { validateOnModelUpdate: false });
+
+
 
 
 // Register Logic using GraphQL
-const CREATE_USER_MUTATION = gql`
-  mutation addUser($data: CreateUserDto!) {
-    addUser(data: $data) {
-      id
-      name
-      email
-      role
-      avatar
-    }
-  }
-`;
-const LOGIN_USER_MUTATION = gql`
-    mutation login($email: String!, $password: String!) {
-        login(email: $email, password: $password) {
-            access_token
-            refresh_token
-        }
-    }
-`;
-const loginInfo = ref({
-    email: "john@mail.com",
-    password: "changeme",
-});
-const variables = {
-  data: {
-    name: "New User",
-    email: "newuser@gmail.com",
+const userInfo = reactive({
+    username: "NewUser",
+    email: "NewUser@mail.com",
     password: "12345678",
     role: "admin",
-    avatar: "https://www.w3schools.com/howto/img_avatar.png",
-  },
-};
+    avatar: "https://via.placeholder.com/150",
+});
 
-const { mutate: addUser, loading, error} = useMutation(CREATE_USER_MUTATION, () => ({ variables}));
-const { mutate: loginUser} = useMutation(LOGIN_USER_MUTATION , ()=>({ variables: loginInfo.value }));
+const { mutate: addUser, loading, error } = useMutation(CREATE_USER_MUTATION, () => ({
+    variables: {
+        data: {
+            name: userInfo.username,
+            email: userInfo.email,
+            password: userInfo.password,
+            role: userInfo.role,
+            avatar: userInfo.avatar
+        }
+    }
+}));
+
+const { mutate: loginUser, loading: loading2, error: error2 } = useMutation(LOGIN_USER_MUTATION, () => ({
+    variables: {
+        email: userInfo.email,
+        password: userInfo.password
+    }
+}));
+
+
 
 // handlers
-const handleSignUp = handleSubmit(async (values: RegisterForm) => {
+const handleSignUp = async () => {
+
+    // TODO : Check if email is available
+
+    // const { data, error } = await useQuery(IS_EMAIL_AVAILABLE, () => ({
+    //     variables: {
+    //         email: userInfo.email
+    //     }
+    // }));
+    // console.log(error.value)
+    // return
+
+
+    if (!userInfo.username || !userInfo.email || !userInfo.password) {
+        alert("Please fill in all fields");
+        return;
+    }
 
     try {
-    const {data : registerResponse} = await addUser();
-    
-    if (registerResponse) {
-        
-        const {data : loginResponse} = await loginUser({
-            variables :{
-                email:registerResponse.addUser.email,
-                password:registerResponse.addUser.password
+        const { data: registerResponse } = await addUser() as any;
+
+        if (registerResponse) {
+            const { data: loginResponse } = await loginUser() as any;
+
+            if (loginResponse) {
+                setTokens(loginResponse.login.access_token, loginResponse.login.refresh_token);
+                // console.log("User added successfully", loginResponse);
+                navigateTo("/user/listings")
             }
-        });
-        
-        if (loginResponse) {
-            setTokens(loginResponse.login.access_token, loginResponse.login.refresh_token);
-            console.log("User added successfully", loginResponse);
-            navigateTo("/user/listings")
-        }
-        
-    };
-    
-  } catch (err) {
-    console.error("Error creating user:", err);
-  }
-});
+
+        };
+
+    } catch (err) {
+        console.error("Error creating user:", err);
+    }
+};
 
 </script>
 
@@ -102,66 +108,43 @@ const handleSignUp = handleSubmit(async (values: RegisterForm) => {
             <div class="circle"></div>
         </div>
 
-        <div  class="form-wrapper" @submit.prevent="handleSignUp">
+        <div class="form-wrapper" @submit.prevent="handleSignUp">
             <div style="width: 50vw; position: relative">
-                    <spinner
-                        style="transform: translateY(-20%); height: 100vh"
-                        v-if="loading"
-                    />
-                </div>
-    
-                <ErrorComponent
-                    v-if="error"
-                    :error="{ myMessage: 'Failed to login', apiMessage: error }"
-                />
+                <spinner style="transform: translateY(-20%); height: 100vh" v-if="loading || loading2" />
+            </div>
+
+            <ErrorComponent v-if="error || error2"
+                :error="{ myMessage: 'Failed to Register', apiMessage: error || error2 }" />
 
             <div v-else class="container">
                 <h1 style="margin-bottom: 20px">Sign Up for an Account</h1>
                 <form>
                     <!-- username -->
                     <div class="input-wrapper">
-                        <input
-                            v-model="username"
-                            v-bind="usernameAttrs"
-                            type="text"
-                            placeholder="Username"
-                        />
+                        <input v-model="userInfo.username" type="text" placeholder="Username" />
                         <img src="@/assets/icons/user.svg" />
                     </div>
-                    <ErrorMsg v-if="errors.username" :error="errors.username" />
+                    <!-- <ErrorMsg v-if="errors.username" :error="errors.username" /> -->
 
                     <!-- email -->
                     <div class="input-wrapper">
-                        <input
-                            v-model="email"
-                            v-bind="emailAttrs"
-                            type="email"
-                            placeholder="Email"
-                        />
+                        <input v-model="userInfo.email" type="email" placeholder="Email" />
                         <img src="@/assets/icons/EnvelopeSimple.svg" />
                     </div>
-                    <ErrorMsg v-if="errors.email" :error="errors.email" />
+                    <!-- <ErrorMsg v-if="errors.email" :error="errors.email" /> -->
 
                     <!-- password -->
                     <div class="input-wrapper">
-                        <input
-                            v-model="password"
-                            v-bind="passwordAttrs"
-                            :type="showPassword ? 'text' : 'password'"
-                            placeholder="Password"
-                        />
+                        <input v-model="userInfo.password" :type="showPassword ? 'text' : 'password'"
+                            placeholder="Password" />
                         <img src="@/assets/icons/LockKey.svg" />
                         <div class="show-password">
-                            <img
-                                @click="showPassword = !showPassword"
-                                class="eye"
-                                style="right: 0 !important"
-                                :src="showPassword ? EyeSlash : EyeOpen"
-                            />
+                            <img @click="showPassword = !showPassword" class="eye" style="right: 0 !important"
+                                :src="showPassword ? EyeSlash : EyeOpen" />
                         </div>
                     </div>
                     <!-- error message -->
-                    <ErrorMsg v-if="errors.password" :error="errors.password" />
+                    <!-- <ErrorMsg v-if="errors.password" :error="errors.password" /> -->
 
                     <div class="terms-and-conditions">
                         <CustomCheckBtn />
@@ -183,7 +166,7 @@ const handleSignUp = handleSubmit(async (values: RegisterForm) => {
 </template>
 
 <style>
-form > p {
+form>p {
     color: hsla(240, 2%, 53%, 1);
     font-size: 12px;
 }
@@ -193,6 +176,7 @@ form > p {
     align-items: center;
     gap: 10px;
 }
+
 .terms-and-conditions input {
     width: 20px;
     height: 20px;

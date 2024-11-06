@@ -3,21 +3,21 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/yup";
 import * as yup from "yup";
 import type { UserForm } from "@/types/UserForm";
-
+import { CREATE_USER_MUTATION } from "@/graphql/mutations/user";
 
 useHead({ title: "Dashboard | Create User" });
 definePageMeta({ layout: "dashboard", middleware: "auth" });
 
 
+
 const userInfo = reactive({
-  firstname: "test",
-  lastname: "user2",
-  email: "5Cj2P@example.com",
-  password: "12345678",
-  role: "admin",
+  firstname: "",
+  lastname: "",
+  email: "",
+  password: "",
+  role: "customer",
   avatar: "https://via.placeholder.com/150",
 });
-
 
 // Validation
 const schema = yup.object({
@@ -35,18 +35,6 @@ const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false 
 const [password, passwordAttrs] = defineField("password", { validateOnModelUpdate: false });
 
 
-// Create User Logic with graphql
-const CREATE_USER_MUTATION = gql`
-  mutation addUser($data: CreateUserDto!) {
-    addUser(data: $data) {
-      id
-      name
-      email
-      role
-      avatar
-    }
-  }
-`;
 
 const { mutate: addUser, loading, error } = useMutation(CREATE_USER_MUTATION, () => ({
   variables: {
@@ -62,6 +50,12 @@ const { mutate: addUser, loading, error } = useMutation(CREATE_USER_MUTATION, ()
 
 // Handlers
 const handleCreateUser = async () => {
+
+  if (!userInfo.firstname || !userInfo.lastname || !userInfo.email || !userInfo.password) {
+    alert("Please fill in all fields");
+    return;
+  }
+
   try {
     const result = await addUser();
 
@@ -109,7 +103,7 @@ watchEffect(() => {
     </header>
 
     <!-- Nav path -->
-    <div class="nav-path flex" style="gap: 10px; margin-bottom: 20px; color: #101828">
+    <div class="nav-path flex" style="gap: .625rem; margin-bottom: 1.25rem; color: #101828">
       <NuxtLink to="/user/listings">Users</NuxtLink>
       <img src="@/assets/icons/next-arrow.svg" alt="next-icon" />
       <NuxtLink to="/user/create">Add User</NuxtLink>
@@ -118,19 +112,19 @@ watchEffect(() => {
     <!-- Control Form -->
     <div class="control flex-between">
       <div>
-        <h2 style="font-weight: 500; font-size: 18px; margin-bottom: 6px">
+        <h2 style="font-weight: 500; font-size: 1.125rem; margin-bottom: .375rem">
           Add user account
         </h2>
         <p style="
-            font-size: 14px;
+            font-size: .875rem;
             font-weight: 400;
-            line-height: 16.8px;
+            line-height: 1.05rem;
             color: #858589;
           ">
           Add photo and personal details here
         </p>
       </div>
-      <div class="flex" style="gap: 10px">
+      <div class="flex" style="gap: .625rem">
         <button @click="resetForm">Rest</button>
         <button @click="handleCreateUser" class="add-user">Add</button>
       </div>
@@ -138,12 +132,12 @@ watchEffect(() => {
 
     <!-- Profile form -->
     <div class="profile-form">
-      <h2 style="margin: 20px 0px">Account info</h2>
-      <form @click.prevent="" class="flex-col-center" style="gap: 25px">
+      <h2 style="margin: 1.25rem 0rem">Account info</h2>
+      <form @click.prevent="" class="flex-col-center" style="gap: 1.5625rem">
         <!-- Name -->
         <div class="flex-between">
           <label for="name">Name</label>
-          <div class="flex-between" style="gap: 10px; width: 512px">
+          <div class="flex-between" style="gap: .625rem; width: 32rem">
             <div class="input-container flex">
               <input v-model="userInfo.firstname" v-bind="firstnameAttrs" type="text" id="name"
                 placeholder="First Name" />
@@ -185,7 +179,7 @@ watchEffect(() => {
         <div class="flex-between">
           <label for="photo">Photo</label>
 
-          <div class="flex" style="gap: 20px;width: 512px;">
+          <div class="flex" style="gap: 1.25rem;width: 32rem;">
             <div class="img-container">
               <img style="width: 100%; height: 100%; border-radius: 50%" src="@/assets/images/user2-img.png" alt="" />
               <span class="delete-btn flex-center">
@@ -199,9 +193,9 @@ watchEffect(() => {
       </form>
     </div>
 
-    <div class="flex-between" style="margin-top: 100px">
+    <div class="flex-between" style="margin-top: 6.25rem">
       <span></span>
-      <div class="flex" style="gap: 10px">
+      <div class="flex" style="gap: .625rem">
         <button @click="resetForm">Rest</button>
         <button @click="handleCreateUser" class="add-user">Add</button>
       </div>
@@ -213,7 +207,7 @@ watchEffect(() => {
 .container {
   width: 100%;
   height: 100%;
-  padding: 20px 30px;
+  padding: 1.25rem 1.875rem;
 }
 
 a {
@@ -224,19 +218,19 @@ button {
   border: none;
   background: none;
   cursor: pointer;
-  font-size: 14px;
+  font-size: .875rem;
   display: flex;
   align-items: center;
-  height: 40px;
-  padding: 10px 20px;
-  gap: 8px;
-  border-radius: 8px;
-  border: 1px solid #dddcd8;
+  height: 2.5rem;
+  padding: .625rem 1.25rem;
+  gap: .5rem;
+  border-radius: .5rem;
+  border: .0625rem solid #dddcd8;
 }
 
 button img {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 button.add-user {
@@ -245,57 +239,58 @@ button.add-user {
 }
 
 button.add-user img {
-  width: 25px;
-  height: 15px;
+  width: 1.5625rem;
+  height: .9375rem;
 }
 
 .users-table {
   width: 100%;
   padding: 0;
-  margin-top: 20px;
+  margin-top: 1.25rem;
 }
 
 form {
-  min-width: 800px;
-  max-width: 800px;
+  min-width: 50rem;
+  max-width: 50rem;
   max-width: 70%;
 }
 
 
 .input-container {
   position: relative;
-  flex: 1;
+  width: 32rem;
   justify-content: flex-end;
 }
 
 input:not([type="file"]) {
-  min-width: 244px;
-  max-width: 512px;
+  min-width: 15.25rem;
+  max-width: 32rem;
   width: 100%;
-  height: 44px;
-  border: 2px solid #dddcd8;
-  padding: 0 15px;
-  border-radius: 4px;
-  font-size: 16px;
+  height: 2.75rem;
+  border: .125rem solid #dddcd8;
+  padding: 0 .9375rem;
+  border-radius: .25rem;
+  font-size: 1rem;
   outline: none;
 }
 
 .input-wrapper>input:focus {
-  border: 2px solid var(--secondary-color);
+  border: .125rem solid var(--secondary-color);
 }
 
 .error-message {
   position: absolute;
-  top: -20px;
-  margin-top: 5px;
-  font-size: 11px;
-  margin-top: 0px !important;
+  top: -1.25rem;
+  left: 0;
+  margin-top: .3125rem;
+  font-size: .6875rem;
+  margin-top: 0rem !important;
 }
 
 .img-container {
   position: relative;
-  width: 58px;
-  height: 58px;
+  width: 3.625rem;
+  height: 3.625rem;
   aspect-ratio: 1/1;
   background: #cacaca;
   border-radius: 50%;
@@ -303,16 +298,16 @@ input:not([type="file"]) {
 
 .delete-btn {
   position: absolute;
-  bottom: -3px;
-  right: -4px;
-  width: 28px;
-  height: 28px;
+  bottom: -0.1875rem;
+  right: -0.25rem;
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: 50%;
   background: white;
   cursor: pointer;
   transition: all 0.2s ease-in-out;
-  border: 1px solid transparent;
-  padding: 10px;
+  border: .0625rem solid transparent;
+  padding: .625rem;
 }
 
 .delete-btn:hover {
@@ -321,12 +316,12 @@ input:not([type="file"]) {
 }
 
 .delete-btn img {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
 }
 
 label {
-  min-width: 200px;
+  min-width: 12.5rem;
 }
 
 h1,
