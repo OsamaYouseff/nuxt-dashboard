@@ -5,19 +5,10 @@ import * as yup from "yup";
 import type { UserForm } from "@/types/UserForm";
 import { CREATE_USER_MUTATION } from "@/graphql/mutations/user";
 
+// Page Configurations
 useHead({ title: "Dashboard | Create User" });
 definePageMeta({ layout: "dashboard", middleware: "auth" });
 
-
-
-const userInfo = reactive({
-  firstname: "",
-  lastname: "",
-  email: "",
-  password: "",
-  role: "customer",
-  avatar: "https://via.placeholder.com/150",
-});
 
 // Validation
 const schema = yup.object({
@@ -28,30 +19,30 @@ const schema = yup.object({
   role: yup.string().required(),
   avatar: yup.string().required(),
 });
-const { values, errors, defineField, handleSubmit } = useForm<UserForm>({ validationSchema: toTypedSchema(schema) });
+const { errors, defineField, resetForm } = useForm<UserForm>({ validationSchema: toTypedSchema(schema) });
 const [firstname, firstnameAttrs] = defineField("firstname");
 const [lastname, lastnameAttrs] = defineField("lastname");
 const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false });
 const [password, passwordAttrs] = defineField("password", { validateOnModelUpdate: false });
+const [role, roleAttrs] = defineField("role", { validateOnModelUpdate: false });
 
-
-
+// GraphQL API
 const { mutate: addUser, loading, error } = useMutation(CREATE_USER_MUTATION, () => ({
   variables: {
     data: {
-      name: `${userInfo.firstname} ${userInfo.lastname}`,
-      email: userInfo.email,
-      password: userInfo.password,
-      role: userInfo.role,
-      avatar: userInfo.avatar,
+      name: `${firstname.value} ${lastname.value}`,
+      email: email.value,
+      password: password.value,
+      role: "customer",
+      avatar: "https://e7.pngegg.com/pngimages/81/570/png-clipart-profile-logo-computer-icons-user-user-blue-heroes-thumbnail.png",
     }
   }
 }));
 
+
 // Handlers
 const handleCreateUser = async () => {
-
-  if (!userInfo.firstname || !userInfo.lastname || !userInfo.email || !userInfo.password) {
+  if (errors) {
     alert("Please fill in all fields");
     return;
   }
@@ -70,16 +61,7 @@ const handleCreateUser = async () => {
   }
 };
 
-const resetForm = () => {
-  userInfo.firstname = "";
-  userInfo.lastname = "";
-  userInfo.email = "";
-  userInfo.password = "";
-  userInfo.role = "customer";
-  userInfo.avatar = "https://via.placeholder.com/150";
-};
-
-// Watch for errors
+// Watch for errors 
 watchEffect(() => {
   if (error.value) {
     console.error("Mutation error:", error.value);
@@ -90,115 +72,114 @@ watchEffect(() => {
 </script>
 
 <template>
-  <spinner v-if="loading" />
 
-  <ErrorComponent v-if="error" :error="{ myMessage: 'Failed to Create User', apiMessage: error }" />
+  <div class="content-wrapper">
+    <spinner v-if="loading" />
 
-  <div v-else class="container">
-    <!-- header -->
-    <header>
-      <div class="flex">
-        <h1 style="font-weight: 600">Users</h1>
+    <ErrorComponent v-if="error" :error="{ myMessage: 'Failed to Create User', apiMessage: error }" />
+
+    <div v-else class="container">
+      <!-- header -->
+      <header>
+        <div class="flex">
+          <h1 style="font-weight: 600">Users</h1>
+        </div>
+      </header>
+
+      <!-- Nav path -->
+      <div class="nav-path flex" style="gap: .625rem; margin-bottom: 1.25rem; color: #101828">
+        <NuxtLink to="/user/listings">Users</NuxtLink>
+        <img src="@/assets/icons/next-arrow.svg" alt="next-icon" />
+        <NuxtLink to="/user/create">Add User</NuxtLink>
       </div>
-    </header>
 
-    <!-- Nav path -->
-    <div class="nav-path flex" style="gap: .625rem; margin-bottom: 1.25rem; color: #101828">
-      <NuxtLink to="/user/listings">Users</NuxtLink>
-      <img src="@/assets/icons/next-arrow.svg" alt="next-icon" />
-      <NuxtLink to="/user/create">Add User</NuxtLink>
-    </div>
 
-    <!-- Control Form -->
-    <div class="control flex-between">
-      <div>
-        <h2 style="font-weight: 500; font-size: 1.125rem; margin-bottom: .375rem">
-          Add user account
-        </h2>
-        <p style="
-            font-size: .875rem;
-            font-weight: 400;
-            line-height: 1.05rem;
-            color: #858589;
-          ">
-          Add photo and personal details here
-        </p>
-      </div>
-      <div class="flex" style="gap: .625rem">
-        <button @click="resetForm">Rest</button>
-        <button @click="handleCreateUser" class="add-user">Add</button>
-      </div>
-    </div>
+      <!-- Profile form -->
+      <div class="profile-form">
 
-    <!-- Profile form -->
-    <div class="profile-form">
-      <h2 style="margin: 1.25rem 0rem">Account info</h2>
-      <form @click.prevent="" class="flex-col-center" style="gap: 1.5625rem">
-        <!-- Name -->
         <div class="flex-between">
-          <label for="name">Name</label>
-          <div class="flex-between" style="gap: .625rem; width: 32rem">
+          <!-- Control Form -->
+          <div class="control flex-between">
+            <div>
+              <h2 style="font-weight: 500; font-size: 1.125rem; margin-bottom: .375rem">
+                Add user account
+              </h2>
+              <p style="
+                  font-size: .875rem;
+                  font-weight: 400;
+                  line-height: 1.05rem;
+                  color: #858589;
+                  min-width: 200px;
+                ">
+                Add photo and personal details here
+              </p>
+            </div>
+          </div>
+          <div class="flex" style="gap: .625rem ; justify-content: flex-end;">
+            <button @click="(e) => resetForm()">Rest</button>
+            <button @click="handleCreateUser" class="add-user">Add</button>
+          </div>
+
+        </div>
+        <h2 style="margin: 1.25rem 0rem">Account info</h2>
+
+        <form class="flex-col-center" style="gap: 1.5625rem">
+          <!-- Name -->
+          <div class="flex-between">
+            <label for="name">Name</label>
+            <div class="flex-between" style="gap: .625rem; width: 32rem">
+              <div class="input-container flex">
+                <input v-model="firstname" v-bind="firstnameAttrs" type="text" id="name" placeholder="First Name" />
+                <ErrorMsg v-show="errors.firstname" :error="errors.firstname" />
+              </div>
+
+              <div class="input-container flex">
+                <input v-model="lastname" v-bind="lastnameAttrs" type="text" id="name" placeholder="Last Name" />
+                <ErrorMsg v-show="errors.lastname" :error="errors.lastname" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Email and Password -->
+          <div class="flex-between">
+            <label for="email">Email address</label>
             <div class="input-container flex">
-              <input v-model="userInfo.firstname" v-bind="firstnameAttrs" type="text" id="name"
-                placeholder="First Name" />
-              <!-- TODO Enable Error message -->
-              <!-- <ErrorMsg v-show="errors.firstname" :error="errors.firstname" /> -->
+              <input v-model="email" v-bind="emailAttrs" type="email" id="email" placeholder="Email Address" />
+              <ErrorMsg v-show="errors.email" :error="errors.email" />
             </div>
+          </div>
 
+          <!-- Password -->
+          <div class="flex-between">
+            <label for="password">Password</label>
             <div class="input-container flex">
-              <input v-model="userInfo.lastname" v-bind="lastnameAttrs" type="text" id="name" placeholder="Last Name" />
-              <!-- <ErrorMsg v-show="errors.lastname" :error="errors.lastname" /> -->
+              <input v-model="password" v-bind="passwordAttrs" type="password" id="password" placeholder="Password" />
+              <ErrorMsg v-show="errors.password" :error="errors.password" />
             </div>
           </div>
-        </div>
-        <!-- Email and Password -->
-        <div class="flex-between">
-          <label for="email">Email address</label>
-          <div class="input-container flex">
-            <input v-model="userInfo.email" v-bind="emailAttrs" type="email" id="email" placeholder="Email Address" />
-            <!-- <ErrorMsg v-show="errors.email" :error="errors.email" /> -->
+
+          <!-- Role -->
+          <div class="flex-between">
+            <label for="role">Role</label>
+            <input disabled v-model="role" v-bind="roleAttrs" type="text" id="role" placeholder="customer" />
           </div>
-        </div>
-        <!-- Password -->
-        <div class="flex-between">
-          <label for="password">Password</label>
-          <div class="input-container flex">
-            <input v-model="userInfo.password" v-bind="passwordAttrs" type="password" id="password"
-              placeholder="Password" />
-            <!-- <ErrorMsg v-show="errors.password" :error="errors.password" /> -->
-          </div>
-        </div>
 
-        <!-- Role -->
-        <div class="flex-between">
-          <label for="role">Role</label>
-          <input disabled v-model="userInfo.role" type="text" id="role" placeholder="Role" />
-        </div>
-
-        <!-- Photo -->
-        <div class="flex-between">
-          <label for="photo">Photo</label>
-
-          <div class="flex" style="gap: 1.25rem;width: 32rem;">
-            <div class="img-container">
-              <img style="width: 100%; height: 100%; border-radius: 50%" src="@/assets/images/user2-img.png" alt="" />
-              <span class="delete-btn flex-center">
-                <img src="@/assets/icons/delete.svg" alt="" />
-              </span>
-            </div>
-
+          <!-- Photo -->
+          <div class="flex-between">
+            <label for="photo">Photo</label>
             <CustomFileInput />
           </div>
-        </div>
-      </form>
-    </div>
 
-    <div class="flex-between" style="margin-top: 6.25rem">
-      <span></span>
-      <div class="flex" style="gap: .625rem">
-        <button @click="resetForm">Rest</button>
-        <button @click="handleCreateUser" class="add-user">Add</button>
+        </form>
+        <div class="flex-between" style="margin-top: 6.25rem;width: 100%;">
+          <span></span>
+          <div class="flex" style="gap: .625rem">
+            <button @click="() => resetForm()">Rest</button>
+            <button @click="handleCreateUser" class="add-user">Add</button>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 </template>
@@ -287,38 +268,7 @@ input:not([type="file"]) {
   margin-top: 0rem !important;
 }
 
-.img-container {
-  position: relative;
-  width: 3.625rem;
-  height: 3.625rem;
-  aspect-ratio: 1/1;
-  background: #cacaca;
-  border-radius: 50%;
-}
 
-.delete-btn {
-  position: absolute;
-  bottom: -0.1875rem;
-  right: -0.25rem;
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 50%;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  border: .0625rem solid transparent;
-  padding: .625rem;
-}
-
-.delete-btn:hover {
-  background: #eee;
-  border-color: #e71f63;
-}
-
-.delete-btn img {
-  width: 1rem;
-  height: 1rem;
-}
 
 label {
   min-width: 12.5rem;

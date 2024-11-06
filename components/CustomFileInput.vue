@@ -1,14 +1,18 @@
 <script setup lang="ts">
+import defaultImg from "@/assets/images/user2-img.png"
+
 const fileInput = ref<HTMLInputElement | null>(null);
+const imageUrl = ref<string | null>(defaultImg);
+
 
 const triggerFileInput = () => {
     fileInput.value?.click();
 };
-
 const handleFileChange = (event: Event) => {
     const files = (event.target as HTMLInputElement).files;
     if (files && files.length) {
         const file = files[0];
+        imageUrl.value = URL.createObjectURL(file);
         console.log("Selected file:", file);
         // You can handle the file upload logic here
     }
@@ -16,26 +20,64 @@ const handleFileChange = (event: Event) => {
 </script>
 
 <template>
-    <div class="upload-wrapper" @click="triggerFileInput">
-        <input
-            type="file"
-            ref="fileInput"
-            @change="handleFileChange"
-            class="file-input"
-        />
-        <div class="upload-content flex-col-center">
-            <span class="upload-icon flex-center">
-                <img src="@/assets/icons/upload-icon.svg" alt="upload-icon" />
+    <div class="flex" style="gap: 1.25rem;width: 32rem;">
+        <div class="img-container">
+
+            <img v-if="imageUrl" style="width: 100%; height: 100%; border-radius: 50%" :src="imageUrl" alt="" />
+            <span v-if="imageUrl" class="delete-btn flex-center" @click="imageUrl = null">
+                <img src="@/assets/icons/delete.svg" alt="" />
             </span>
-            <p>
-                <span class="upload-text">Click to upload</span> or drag and
-                drop
-            </p>
+        </div>
+        <div class="upload-wrapper" @click="triggerFileInput">
+            <input type="file" ref="fileInput" @change="handleFileChange" class="file-input" />
+            <div class="upload-content flex-col-center">
+                <span class="upload-icon flex-center">
+                    <img src="@/assets/icons/upload-icon.svg" alt="upload-icon" />
+                </span>
+                <p>
+                    <span class="upload-text">Click to upload</span> or drag and
+                    drop
+                </p>
+            </div>
         </div>
     </div>
 </template>
 
 <style scoped>
+.img-container {
+    position: relative;
+    width: 3.625rem;
+    height: 3.625rem;
+    aspect-ratio: 1/1;
+    background: #cacaca;
+    border-radius: 50%;
+}
+
+.delete-btn {
+    position: absolute;
+    bottom: -0.1875rem;
+    right: -0.25rem;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: .0625rem solid transparent;
+    padding: .625rem;
+}
+
+.delete-btn:hover {
+    background: #eee;
+    border-color: #e71f63;
+}
+
+.delete-btn img {
+    width: 1rem;
+    height: 1rem;
+}
+
+
 .upload-wrapper {
     display: flex;
     align-items: center;

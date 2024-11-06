@@ -74,6 +74,7 @@ watch(
         <ErrorComponent v-if="error" :error="{ myMessage: 'Failed to show users Information', apiMessage: error }" />
 
         <div v-else>
+
             <!-- Nav path -->
             <div class="nav-path">
                 <NuxtLink to="/user/listings">Users</NuxtLink>

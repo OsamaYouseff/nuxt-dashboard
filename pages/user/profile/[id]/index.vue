@@ -2,8 +2,8 @@
 import edit from "@/assets/icons/edit.svg";
 import save from "@/assets/icons/download.svg";
 
-useHead({ title: "Dashboard | User Profile"});
-definePageMeta({ layout: "dashboard", middleware: "auth"});
+useHead({ title: "Dashboard | User Profile" });
+definePageMeta({ layout: "dashboard", middleware: "auth" });
 
 
 // Fetching User
@@ -43,18 +43,15 @@ watch(error, (newError: any) => {
 </script>
 
 <template>
-    <div>
+    <div class="content-wrapper">
         <div style="width: 88vw; position: relative">
             <spinner v-if="loading" />
         </div>
 
-        <ErrorComponent
-            v-if="error"
-            :error="{
-                myMessage: 'Failed to Show User Profile',
-                apiMessage: error,
-            }"
-        />
+        <ErrorComponent v-if="error" :error="{
+            myMessage: 'Failed to Show User Profile',
+            apiMessage: error,
+        }" />
 
         <div class="container">
             <!-- header -->
@@ -78,54 +75,26 @@ watch(error, (newError: any) => {
             </header>
 
             <!-- Nav path -->
-            <div
-                class="nav-path flex"
-                style="gap: 10px; margin-bottom: 20px; color: #101828"
-            >
+            <div class="nav-path flex" style="gap: 10px; margin-bottom: 20px; color: #101828">
                 <NuxtLink to="/user/listings">Users</NuxtLink>
                 <img src="@/assets/icons/next-arrow.svg" alt="next-icon" />
                 <NuxtLink to="/user/create">User Profile</NuxtLink>
             </div>
 
             <!-- Profile Header -->
-            <div
-                class="profile-header flex"
-                style="gap: 20px; margin-bottom: 20px"
-            >
-                <div
-                    class="img-container flex-center"
-                    style="width: 101px; height: 101px"
-                >
-                    <img
-                        v-if="!user?.avatar?.includes('lorem') || !user?.avatar"
-                        :src="user?.avatar"
-                        alt="user-img"
-                        style="width: 100%; height: 100%; border-radius: 50%"
-                    />
-                    <CustomImg
-                        style="margin: 0; scale: 2.4"
-                        :username="user.name"
-                        v-else
-                    />
+            <div class="profile-header flex" style="gap: 20px; margin-bottom: 20px">
+                <div class="img-container flex-center" style="width: 101px; height: 101px">
+                    <img v-if="!user?.avatar?.includes('lorem') || !user?.avatar" :src="user?.avatar" alt="user-img"
+                        style="width: 100%; height: 100%; border-radius: 50%" />
+                    <CustomImg style="margin: 0; scale: 2.4" :username="user.name" v-else />
                 </div>
                 <div>
-                    <h2
-                        class="flex"
-                        style="gap: 10px"
-                        :class="{ blocked: isUserBlocked }"
-                    >
-                        <img
-                            v-if="isUserBlocked"
-                            style="width: 23px"
-                            src="@/assets/icons/block3.svg"
-                            alt="block-icon"
-                        />
+                    <h2 class="flex" style="gap: 10px" :class="{ blocked: isUserBlocked }">
+                        <img v-if="isUserBlocked" style="width: 23px" src="@/assets/icons/block3.svg"
+                            alt="block-icon" />
                         {{ user?.name }}
                     </h2>
-                    <p
-                        style="font-size: 18px"
-                        :class="{ blocked: isUserBlocked }"
-                    >
+                    <p style="font-size: 18px" :class="{ blocked: isUserBlocked }">
                         U12345678{{ user?.id }}
                     </p>
                 </div>
@@ -142,10 +111,7 @@ watch(error, (newError: any) => {
                 <div class="flex-between">
                     <span></span>
                     <button @click="editMode = !editMode" class="edit">
-                        <img
-                            :src="editMode ? save : edit"
-                            alt="change-info-btn"
-                        />
+                        <img :src="editMode ? save : edit" alt="change-info-btn" />
 
                         {{ editMode ? "Save" : "Edit" }}
                     </button>
@@ -154,30 +120,16 @@ watch(error, (newError: any) => {
                 <form @click.prevent="">
                     <div style="margin-top: 20px">
                         <label for="name">Name</label>
-                        <input
-                            :disabled="!editMode"
-                            type="text"
-                            placeholder="Your name"
-                            :value="user?.name"
-                        />
+                        <input :disabled="!editMode" type="text" placeholder="Your name" :value="user?.name" />
                     </div>
                     <div style="margin-top: 20px">
                         <label for="name">Email address</label>
-                        <input
-                            :disabled="!editMode"
-                            type="emil"
-                            placeholder="Your Email address"
-                            :value="user?.email"
-                        />
+                        <input :disabled="!editMode" type="emil" placeholder="Your Email address"
+                            :value="user?.email" />
                     </div>
                     <div style="margin-top: 20px">
                         <label for="name">Role</label>
-                        <input
-                            :disabled="!editMode"
-                            type="text"
-                            placeholder="Your Role"
-                            :value="user?.role"
-                        />
+                        <input :disabled="!editMode" type="text" placeholder="Your Role" :value="user?.role" />
                     </div>
                 </form>
             </div>
@@ -243,6 +195,7 @@ button.block {
     padding-bottom: 10px;
     cursor: pointer;
 }
+
 .tabs span.active {
     border-bottom: 2px solid var(--secondary-color);
     color: var(--secondary-color);
@@ -267,6 +220,7 @@ label {
     color: #101828;
     font-weight: 500;
 }
+
 input {
     display: block;
     min-width: 244px;

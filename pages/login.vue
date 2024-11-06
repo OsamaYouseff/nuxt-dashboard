@@ -11,19 +11,19 @@ import { LOGIN_USER_MUTATION } from "@/graphql/mutations/user";
 useHead({ title: "Nuxt Dashboard | Register " });
 definePageMeta({ middleware: "un-auth" });
 
-
-
 const showPassword = ref(false);
-const loginInfo = reactive({
-    email: "john@mail.com",
-    password: "changeme",
-});
 
+
+
+// email: "john@mail.com",
+// password: "changeme",
+
+// GraphQL API
 const { mutate: loginUser, loading, error } = useMutation(LOGIN_USER_MUTATION,
     () => ({
         variables: {
-            email: loginInfo.email,
-            password: loginInfo.password,
+            email: email.value,
+            password: password.value,
         }
     })
 
@@ -36,36 +36,31 @@ const schema = toTypedSchema(
         password: yup.string().required().min(8),
     })
 );
-const { values, errors, defineField, handleSubmit } = useForm<LoginForm>({
+const { errors, defineField, handleSubmit } = useForm<LoginForm>({
     validationSchema: schema,
 });
-const [email, emailAttrs] = defineField("email", {
-    validateOnModelUpdate: false,
-});
+const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false });
 const [password, passwordAttrs] = defineField("password", {
     validateOnModelUpdate: false,
 });
 
 //// Handlers
-const handleSignIn = async () => {
+const handleSignIn = handleSubmit(
+    async () => {
 
-    if (!loginInfo.email || !loginInfo.password) {
-        alert("Please fill in all fields");
-        return;
-    }
+        try {
+            const { data } = await loginUser() as { data: { login: { access_token: string, refresh_token: string } } };;
 
-    try {
-        const { data } = await loginUser();
-
-        if (data.login.access_token && data.login.refresh_token) {
-            setTokens(data.login.access_token, data.login.refresh_token);
-            console.log("Login successful");
-            navigateTo("/user/listings");
+            if (data.login.access_token && data.login.refresh_token) {
+                setTokens(data.login.access_token, data.login.refresh_token);
+                console.log("Login successful");
+                navigateTo("/user/listings");
+            }
+        } catch (err) {
+            console.error("Login error:", err);
         }
-    } catch (err) {
-        console.error("Login error:", err);
     }
-}
+)
 
 </script>
 
@@ -88,14 +83,14 @@ const handleSignIn = async () => {
                 <form>
                     <!-- Email -->
                     <div class="input-wrapper">
-                        <input v-model="loginInfo.email" type="email" placeholder="Email" />
+                        <input v-model="email" v-bind="emailAttrs" type="email" placeholder="Email" />
                         <img src="@/assets/icons/EnvelopeSimple.svg" />
                     </div>
-                    <!-- <ErrorMsg v-if="errors.email" :error="errors.email" /> -->
+                    <ErrorMsg v-if="errors.email" :error="errors.email" />
 
                     <!-- Password -->
                     <div class="input-wrapper">
-                        <input v-model="loginInfo.password" :type="showPassword ? 'text' : 'password'"
+                        <input v-model="password" v-bind="passwordAttrs" :type="showPassword ? 'text' : 'password'"
                             placeholder="Password" />
                         <img src="@/assets/icons/LockKey.svg" />
                         <div class="show-password">
@@ -103,7 +98,7 @@ const handleSignIn = async () => {
                                 :src="showPassword ? EyeSlash : EyeOpen" />
                         </div>
                     </div>
-                    <!-- <ErrorMsg v-if="errors.password" :error="errors.password" /> -->
+                    <ErrorMsg v-if="errors.password" :error="errors.password" />
 
                     <div class="Remember-me-container">
                         <div class="Remember-me">

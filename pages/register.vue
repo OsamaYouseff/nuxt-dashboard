@@ -38,49 +38,34 @@ const userInfo = reactive({
     email: "NewUser@mail.com",
     password: "12345678",
     role: "admin",
-    avatar: "https://via.placeholder.com/150",
+    avatar: "https://e7.pngegg.com/pngimages/81/570/png-clipart-profile-logo-computer-icons-user-user-blue-heroes-thumbnail.png",
 });
 
 const { mutate: addUser, loading, error } = useMutation(CREATE_USER_MUTATION, () => ({
     variables: {
         data: {
-            name: userInfo.username,
-            email: userInfo.email,
-            password: userInfo.password,
-            role: userInfo.role,
-            avatar: userInfo.avatar
+            name: username.value,
+            email: email.value,
+            password: password.value,
+            role: "admin",
+            avatar: "https://e7.pngegg.com/pngimages/81/570/png-clipart-profile-logo-computer-icons-user-user-blue-heroes-thumbnail.png"
         }
     }
 }));
 
-const { mutate: loginUser, loading: loading2, error: error2 } = useMutation(LOGIN_USER_MUTATION, () => ({
-    variables: {
-        email: userInfo.email,
-        password: userInfo.password
-    }
-}));
+const { mutate: loginUser, loading: loading2, error: error2 } = useMutation(LOGIN_USER_MUTATION,
+    () => ({
+        variables: {
+            email: email.value,
+            password: password.value,
+        }
+    })
+);
 
 
 
 // handlers
-const handleSignUp = async () => {
-
-    // TODO : Check if email is available
-
-    // const { data, error } = await useQuery(IS_EMAIL_AVAILABLE, () => ({
-    //     variables: {
-    //         email: userInfo.email
-    //     }
-    // }));
-    // console.log(error.value)
-    // return
-
-
-    if (!userInfo.username || !userInfo.email || !userInfo.password) {
-        alert("Please fill in all fields");
-        return;
-    }
-
+const handleSignUp = handleSubmit(async () => {
     try {
         const { data: registerResponse } = await addUser() as any;
 
@@ -98,7 +83,8 @@ const handleSignUp = async () => {
     } catch (err) {
         console.error("Error creating user:", err);
     }
-};
+}
+);
 
 </script>
 
@@ -121,21 +107,21 @@ const handleSignUp = async () => {
                 <form>
                     <!-- username -->
                     <div class="input-wrapper">
-                        <input v-model="userInfo.username" type="text" placeholder="Username" />
+                        <input v-model="username" v-bind="usernameAttrs" type="text" placeholder="Username" />
                         <img src="@/assets/icons/user.svg" />
                     </div>
-                    <!-- <ErrorMsg v-if="errors.username" :error="errors.username" /> -->
+                    <ErrorMsg v-if="errors.username" :error="errors.username" />
 
                     <!-- email -->
                     <div class="input-wrapper">
-                        <input v-model="userInfo.email" type="email" placeholder="Email" />
+                        <input v-model="email" v-bind="emailAttrs" type="email" placeholder="Email" />
                         <img src="@/assets/icons/EnvelopeSimple.svg" />
                     </div>
-                    <!-- <ErrorMsg v-if="errors.email" :error="errors.email" /> -->
+                    <ErrorMsg v-if="errors.email" :error="errors.email" />
 
                     <!-- password -->
                     <div class="input-wrapper">
-                        <input v-model="userInfo.password" :type="showPassword ? 'text' : 'password'"
+                        <input v-model="password" v-bind="passwordAttrs" :type="showPassword ? 'text' : 'password'"
                             placeholder="Password" />
                         <img src="@/assets/icons/LockKey.svg" />
                         <div class="show-password">
@@ -144,7 +130,7 @@ const handleSignUp = async () => {
                         </div>
                     </div>
                     <!-- error message -->
-                    <!-- <ErrorMsg v-if="errors.password" :error="errors.password" /> -->
+                    <ErrorMsg v-if="errors.password" :error="errors.password" />
 
                     <div class="terms-and-conditions">
                         <CustomCheckBtn />
