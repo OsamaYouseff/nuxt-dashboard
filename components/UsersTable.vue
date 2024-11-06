@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type {User} from "@/types/User";
+import type { User } from "@/types/User";
 
 const props = defineProps<{
     users: User[];
@@ -99,14 +99,14 @@ const checkedAllUsers = () => {
                                             margin-right: 5px;
                                             background: #00000014;    
                                         ">
-                                    <img  style="
+                                        <img style="
                                             max-width: 100%;
                                             max-height: 40px;
                                             border-radius: 50%;
                                         " :src="person.avatar" alt="user-img" />
                                     </div>
 
-                                    
+
                                     <CustomImg v-else :username="person.name" />
 
                                     <div>
@@ -162,7 +162,7 @@ const checkedAllUsers = () => {
             </tbody>
         </table>
 
-        <div v-if="props.users.length" class="pagination">
+        <div class="pagination">
             <CustomPagination :pageInfo="props.pageInfo" />
         </div>
     </div>

@@ -51,11 +51,7 @@ const goToPage = (page: number) => {
 <template>
     <div v-if="props.pageInfo.totalPages > 1" class="pagination">
         <div style="min-width: 150px">
-            <button
-                class="btn"
-                @click="goToPrevPage"
-                :disabled="props.pageInfo.page <= 1"
-            >
+            <button class="btn" @click="goToPrevPage" :disabled="props.pageInfo.page <= 1">
                 <img src="@/assets/icons/left-arrow.svg" alt="left-arrow" />
                 Previous
             </button>
@@ -63,56 +59,30 @@ const goToPage = (page: number) => {
 
         <div class="flex-center" style="flex: 1; gap: 10px">
             <!-- if total pages is less than 7 -->
-            <div
-                v-if="props.pageInfo.totalPages >= paginationLimit"
-                class="flex"
-            >
-                <button
-                    @click="goToPage(i)"
-                    v-for="i in startRange"
-                    :key="i"
-                    class="page-btn"
-                    :class="{ active: i === props.pageInfo.page }"
-                >
+            <div v-if="props.pageInfo.totalPages >= paginationLimit" class="flex">
+                <button @click="goToPage(i)" v-for="i in startRange" :key="i" class="page-btn"
+                    :class="{ active: i === props.pageInfo.page }">
                     {{ i }}
                 </button>
                 <span style="margin: 0 5px">...</span>
-                <button
-                    v-if="!isNumberExist(props.pageInfo.page)"
-                    class="page-btn active"
-                >
+                <button v-if="!isNumberExist(props.pageInfo.page)" class="page-btn active">
                     {{ props.pageInfo.page }}
                 </button>
                 <span style="margin: 0 5px">...</span>
-                <button
-                    @click="goToPage(i)"
-                    v-for="i in endRange"
-                    :key="i"
-                    class="page-btn"
-                    :class="{ active: i === props.pageInfo.page }"
-                >
+                <button @click="goToPage(i)" v-for="i in endRange" :key="i" class="page-btn"
+                    :class="{ active: i === props.pageInfo.page }">
                     {{ i }}
                 </button>
             </div>
 
-            <button
-                v-else
-                @click="goToPage(i)"
-                v-for="i in totalPages"
-                :key="i"
-                class="page-btn"
-                :class="{ active: i === props.pageInfo.page }"
-            >
+            <button v-else @click="goToPage(i)" v-for="i in totalPages" :key="i" class="page-btn"
+                :class="{ active: i === props.pageInfo.page }">
                 {{ i }}
             </button>
         </div>
 
         <div class="flex" style="min-width: 150px; justify-content: flex-end">
-            <button
-                @click="goToNextPage"
-                :disabled="props.pageInfo.page >= props.pageInfo.totalPages"
-                class="btn"
-            >
+            <button @click="goToNextPage" :disabled="props.pageInfo.page >= props.pageInfo.totalPages" class="btn">
                 Next
                 <img src="@/assets/icons/right-arrow.svg" alt="right-arrow" />
             </button>
