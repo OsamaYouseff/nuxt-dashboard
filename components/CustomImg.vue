@@ -23,6 +23,7 @@ const props = defineProps({
     margin-right: 5px;
     background: #f4f1f7;
 }
+
 span {
     color: #7f56d9;
     font-weight: bolder;

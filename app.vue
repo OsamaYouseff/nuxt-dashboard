@@ -15,11 +15,13 @@
     margin: 0;
     font-family: "Poppins", sans-serif;
 }
+
 body {
     margin: 0;
     padding: 0;
     overflow-x: hidden;
 }
+
 a {
     color: inherit;
     text-decoration: none;
@@ -35,11 +37,13 @@ a {
     display: flex;
     align-items: center;
 }
+
 .flex-center {
     display: flex;
     justify-content: center;
     align-items: center;
 }
+
 .flex-col-center {
     display: flex;
     justify-content: center;
@@ -51,6 +55,7 @@ a {
     justify-content: space-between;
     align-items: center;
 }
+
 .flex-col-between {
     display: flex;
     justify-content: space-between;

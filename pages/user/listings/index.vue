@@ -104,7 +104,7 @@ watch(
                 </div>
 
                 <!-- Table -->
-                <div class="users-list">
+                <div class="users-list" style="overflow: auto; ">
                     <UsersTable :users="users" :pageInfo="pageInfo" />
                 </div>
             </div>
@@ -115,8 +115,10 @@ watch(
 <style scoped>
 .container {
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     padding: 20px 30px;
+    margin-bottom: 20px;
+
 }
 
 button {

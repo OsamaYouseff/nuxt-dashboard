@@ -21,107 +21,60 @@ const handleLogout = () => {
                     <nav>
                         <ul>
                             <li>
-                                <NuxtLink
-                                    @click="toggleNav('home')"
-                                    :class="{ active: currentPage === 'home' }"
-                                    to="/user/listings"
-                                >
-                                    <img
-                                        src="@/assets/icons/house.svg"
-                                        alt="nav-icon"
-                                    />
+                                <NuxtLink @click="toggleNav('home')" :class="{ active: currentPage === 'home' }"
+                                    to="/user/listings">
+                                    <img src="@/assets/icons/house.svg" alt="nav-icon" />
                                     Home
                                 </NuxtLink>
                             </li>
                             <li>
-                                <NuxtLink
-                                    @click="toggleNav('users')"
-                                    :class="{ active: currentPage === 'users' }"
-                                    to="/user/listings"
-                                >
-                                    <img
-                                        src="@/assets/icons/UsersFour.svg"
-                                        alt="nav-icon"
-                                    />
+                                <NuxtLink @click="toggleNav('users')" :class="{ active: currentPage === 'users' }"
+                                    to="/user/listings">
+                                    <img src="@/assets/icons/UsersFour.svg" alt="nav-icon" />
 
                                     Users
                                 </NuxtLink>
                             </li>
                             <li>
-                                <NuxtLink
-                                    @click="toggleNav('experts')"
-                                    :class="{
-                                        active: currentPage === 'experts',
-                                    }"
-                                    to="/user/listings"
-                                >
-                                    <img
-                                        src="@/assets/icons/SealCheck.svg"
-                                        alt="nav-icon"
-                                    />
+                                <NuxtLink @click="toggleNav('experts')" :class="{
+                                    active: currentPage === 'experts',
+                                }" to="/user/listings">
+                                    <img src="@/assets/icons/SealCheck.svg" alt="nav-icon" />
 
                                     Experts
                                 </NuxtLink>
                             </li>
                             <li>
-                                <NuxtLink
-                                    @click="toggleNav('content')"
-                                    :class="{
-                                        active: currentPage === 'content',
-                                    }"
-                                    to="/user/listings"
-                                    class="flex-between"
-                                >
+                                <NuxtLink @click="toggleNav('content')" :class="{
+                                    active: currentPage === 'content',
+                                }" to="/user/listings" class="flex-between">
                                     <div class="flex" style="gap: 10px">
-                                        <img
-                                            src="@/assets/icons/SquareHalf.svg"
-                                            alt="nav-icon"
-                                        />
+                                        <img src="@/assets/icons/SquareHalf.svg" alt="nav-icon" />
 
                                         Content
                                     </div>
-                                    <img
-                                        src="@/assets/icons/chevron-down.svg"
-                                        alt=""
-                                    />
+                                    <img src="@/assets/icons/chevron-down.svg" alt="" />
                                 </NuxtLink>
                             </li>
                             <li>
-                                <NuxtLink
-                                    @click="toggleNav('rooms')"
-                                    :class="{ active: currentPage === 'rooms' }"
-                                    to="/user/listings"
-                                >
-                                    <img
-                                        src="@/assets/icons/ChatsCircle.svg"
-                                        alt="nav-icon"
-                                    />
+                                <NuxtLink @click="toggleNav('rooms')" :class="{ active: currentPage === 'rooms' }"
+                                    to="/user/listings">
+                                    <img src="@/assets/icons/ChatsCircle.svg" alt="nav-icon" />
 
                                     Rooms
                                 </NuxtLink>
                             </li>
                             <li>
-                                <NuxtLink
-                                    @click="toggleNav('app-management')"
-                                    :class="{
-                                        active:
-                                            currentPage === 'app-management',
-                                    }"
-                                    to="/user/listings"
-                                    class="flex-between"
-                                >
+                                <NuxtLink @click="toggleNav('app-management')" :class="{
+                                    active:
+                                        currentPage === 'app-management',
+                                }" to="/user/listings" class="flex-between">
                                     <div class="flex" style="gap: 10px">
-                                        <img
-                                            src="@/assets/icons/NotePencil.svg"
-                                            alt="nav-icon"
-                                        />
+                                        <img src="@/assets/icons/NotePencil.svg" alt="nav-icon" />
 
                                         App management
                                     </div>
-                                    <img
-                                        src="@/assets/icons/chevron-down.svg"
-                                        alt=""
-                                    />
+                                    <img src="@/assets/icons/chevron-down.svg" alt="" />
                                 </NuxtLink>
                             </li>
                         </ul>
@@ -138,11 +91,7 @@ const handleLogout = () => {
                             </div>
                         </div>
 
-                        <img
-                            @click="handleLogout"
-                            src="@/assets/icons/icon.svg"
-                            alt=""
-                        />
+                        <img @click="handleLogout" src="@/assets/icons/icon.svg" alt="" />
                     </div>
                 </div>
             </div>
@@ -221,6 +170,6 @@ a.active {
     flex: 1;
     background: #fcfcfd;
     min-height: 100vh;
-    overflow-x: hidden;
+    max-width: calc(100vw - 270px);
 }
 </style>
