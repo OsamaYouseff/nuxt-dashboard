@@ -97,7 +97,7 @@ watchEffect(() => {
       <!-- Profile form -->
       <div class="profile-form">
 
-        <div class="flex-between">
+        <div class="flex-between" style="border-bottom: 1px solid #EAEAEA; padding-bottom: 20px;">
           <!-- Control Form -->
           <div class="control flex-between">
             <div>
