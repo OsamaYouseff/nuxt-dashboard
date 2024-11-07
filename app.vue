@@ -25,6 +25,12 @@ body {
 a {
     color: inherit;
     text-decoration: none;
+    font-weight: normal;
+}
+
+p,
+button {
+    font-weight: normal !important;
 }
 
 :root {

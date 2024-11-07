@@ -143,6 +143,7 @@ button img {
 }
 
 button.add-user {
+    min-width: 132px;
     background: linear-gradient(90deg, #ef3e2c 0%, #e71f63 100%);
     color: white;
 }

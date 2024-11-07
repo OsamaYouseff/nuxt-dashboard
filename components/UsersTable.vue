@@ -165,6 +165,7 @@ const checkedAllUsers = () => {
         <div v-if="props.pageInfo" class="pagination">
             <CustomPagination :pageInfo="props.pageInfo" />
         </div>
+
     </div>
 </template>
 
@@ -205,5 +206,9 @@ td {
 tr {
     cursor: pointer;
     border-bottom: 1px solid #eaecf0;
+}
+
+p {
+    font-weight: normal;
 }
 </style>
