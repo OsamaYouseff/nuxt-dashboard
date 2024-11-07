@@ -25,7 +25,6 @@ const users: User[] | any = computed(() => {
 if (result.value) pageInfo.totalPages = Math.trunc(result.value?.users?.length / 7);
 
 
-
 // Add watchers for debugging
 watch(result, (newResult: any) => {
     // console.log("Query result:", newResult);
@@ -67,11 +66,12 @@ watch(
             </div>
         </header>
 
-        <div style="width: 88vw; position: relative">
-            <spinner v-if="loading" />
+        <div v-if="loading" style="width: 88vw; position: relative">
+            <spinner />
         </div>
 
-        <ErrorComponent v-if="error" :error="{ myMessage: 'Failed to show users Information', apiMessage: error }" />
+        <ErrorComponent v-else-if="error"
+            :error="{ myMessage: 'Failed to show users Information', apiMessage: error }" />
 
         <div v-else>
 
@@ -107,6 +107,12 @@ watch(
                 <!-- Table -->
                 <div class="users-list" style="overflow: auto; ">
                     <UsersTable :users="users" :pageInfo="pageInfo" />
+
+                    <div v-if="loading" style="width: 88vw; position: relative">
+                        <spinner />
+                    </div>
+                    <CustomPagination v-else :pageInfo="pageInfo" />
+
                 </div>
             </div>
         </div>
@@ -157,6 +163,14 @@ button.add-user img {
     width: 100%;
     padding: 0;
     margin-top: 20px;
+}
+
+.users-list {
+    min-width: 1100px;
+    background: #ffffff;
+    border: 1px solid #dddcd8;
+    padding: 15px;
+    border-radius: 12px;
 }
 
 .tabs {

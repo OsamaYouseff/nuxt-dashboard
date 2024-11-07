@@ -161,23 +161,10 @@ const checkedAllUsers = () => {
                 </tr>
             </tbody>
         </table>
-
-        <div v-if="props.pageInfo" class="pagination">
-            <CustomPagination :pageInfo="props.pageInfo" />
-        </div>
-
     </div>
 </template>
 
 <style scoped>
-.table {
-    min-width: 1100px;
-    background: #ffffff;
-    border: 1px solid #dddcd8;
-    padding: 15px;
-    border-radius: 12px;
-}
-
 table {
     width: 100%;
     min-width: 1000px;
