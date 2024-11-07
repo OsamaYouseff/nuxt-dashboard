@@ -208,7 +208,9 @@ tr {
     border-bottom: 1px solid #eaecf0;
 }
 
-p {
+p,
+a {
     font-weight: normal;
+    color: initial;
 }
 </style>

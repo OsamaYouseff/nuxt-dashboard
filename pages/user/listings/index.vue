@@ -204,4 +204,8 @@ button.add-user img {
     left: 10px;
     transform: translateY(-50%);
 }
+
+a {
+    color: initial;
+}
 </style>
