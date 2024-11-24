@@ -118,7 +118,7 @@ const handleLogout = () => {
 }
 
 nav ul {
-    margin-top: 60px;
+    margin-top: 15px;
     padding: 10px;
     display: flex;
     flex-direction: column;
