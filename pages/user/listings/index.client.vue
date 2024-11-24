@@ -173,7 +173,7 @@ const value2 = ref(2);
         <div class="filters flex-between" style="margin-bottom: 20px">
           <div class="search-bar">
             <img src="@/assets/icons/MagnifyingGlass.svg" alt="search-icon" />
-            <input @change="filterUsers" type="text" placeholder="Search" />
+            <input @input="filterUsers" type="text" placeholder="Search" />
           </div>
           <div class="filters-btns flex" style="gap: 10px">
             <button>Jan 6, 2022 – Jan 13, 2022</button>
