@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { User } from "@/types/User";
 import { GET_USERS_QUERY } from "@/graphql/mutations/user";
+const { locale } = useI18n();
 
 useHead({ title: "Dashboard | All Users" });
 definePageMeta({ layout: "dashboard", middleware: "auth" });
@@ -37,6 +38,14 @@ const users: User[] | any = computed(() => {
 
 /// handlers
 
+const changeLocale = (lang: any) => {
+  locale.value = lang;
+
+  const dir = lang === "ar" ? "rtl" : "ltr";
+  document.documentElement.setAttribute("dir", dir);
+
+  localStorage.setItem("locale", lang);
+};
 const handelChangeTab = (tab: string) => {
   switch (tab) {
     case "active":
@@ -46,6 +55,11 @@ const handelChangeTab = (tab: string) => {
       currentTab.value = "blocked";
       break;
   }
+};
+
+const handleLocaleChange = (event: any) => {
+  const selectedLang = event.target.value;
+  changeLocale(selectedLang);
 };
 
 // Add watchers for debugging
@@ -86,6 +100,19 @@ watch(
               Add user
             </button>
           </nuxt-link>
+
+          <div class="flex-center">
+            <select
+              class="form-select"
+              name="lang"
+              id="language"
+              @change="handleLocaleChange"
+              :value="locale"
+            >
+              <option value="en">English</option>
+              <option value="ar">العربية</option>
+            </select>
+          </div>
         </div>
       </div>
     </header>
