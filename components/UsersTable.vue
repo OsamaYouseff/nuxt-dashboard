@@ -2,6 +2,8 @@
 import type { User } from "@/types/User";
 import block from "../assets/icons/block.svg";
 import unblock from "../assets/icons/unblock.svg";
+import {toggleBlockUser} from "@/composables/users";
+
 
 const props = defineProps<{
   users: User[];
@@ -61,29 +63,10 @@ const checkedAllUsers = () => {
     .forEach((el: Element, index) => {
       const inputEl = el as HTMLInputElement;
       if (index === 0) inputEl.checked = !inputEl.checked;
-      if (inputEl.checked === checkedAll.value) inputEl.click();
+      if (inputEl.checked !== checkedAll.value) inputEl.click();
     });
 };
 
-const toggleBlockUser = (id: number) => {
-  console.log(props.blockedUsersIds);
-
-  if (!props.blockedUsersIds.includes(id)) {
-    localStorage.setItem(
-      "blockedUsersIds",
-      JSON.stringify([...props.blockedUsersIds, id])
-    );
-  } else {
-    localStorage.setItem(
-      "blockedUsersIds",
-      JSON.stringify([
-        ...props.blockedUsersIds.filter((item: number) => item !== id),
-      ])
-    );
-  }
-
-  window.location.reload();
-};
 </script>
 
 <template>

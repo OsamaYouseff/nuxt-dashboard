@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { User } from "@/types/User";
 import { GET_USERS_QUERY } from "@/graphql/mutations/user";
+import { toRawType } from "element-plus/es/utils";
 
 const { locale } = useI18n();
 
@@ -61,18 +62,25 @@ const handelChangeTab = (tab: string) => {
       break;
   }
 };
-
 const handleLocaleChange = (selectedLang: string) => {
   changeLocale(selectedLang);
+};
+
+const filterUsers = () => {
+  console.log("test");
 };
 
 // Add watchers for debugging
 watch(result, (newResult: any) => {
   if (result.value)
-    pageInfo.totalPages = Math.ceil(users?.value.length / 7) + 1;
-
+    if (currentTab.value === "blocked") {
+      pageInfo.totalPages = Math.trunc(blockedUsers?.value?.length / 7);
+    } else {
+      pageInfo.totalPages = Math.ceil(users?.value.length / 7) + 1;
+    }
   // console.log("Query result:", newResult);
 });
+
 watch(error, (newError: any) => {
   if (newError) {
     console.error("GraphQL error:", newError);
@@ -80,8 +88,7 @@ watch(error, (newError: any) => {
 });
 watch(
   () => pageInfo.page,
-  (newPage: number) => {
-  }
+  (newPage: number) => {}
 );
 
 const value2 = ref(2);
@@ -166,7 +173,7 @@ const value2 = ref(2);
         <div class="filters flex-between" style="margin-bottom: 20px">
           <div class="search-bar">
             <img src="@/assets/icons/MagnifyingGlass.svg" alt="search-icon" />
-            <input type="text" placeholder="Search" />
+            <input @change="filterUsers" type="text" placeholder="Search" />
           </div>
           <div class="filters-btns flex" style="gap: 10px">
             <button>Jan 6, 2022 – Jan 13, 2022</button>
