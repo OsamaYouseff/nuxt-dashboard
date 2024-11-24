@@ -7,9 +7,6 @@ const toggleNav = (page: string) => {
   currentPage.value = page;
 };
 
-
-
-
 const handleLogout = () => {
   localStorage.removeItem("accessToken");
   localStorage.removeItem("refreshToken");
@@ -18,8 +15,6 @@ const handleLogout = () => {
 
 onMounted(() => {
   const storedLocale = localStorage.getItem("locale") as "en" | "ar" | null;
-
-  console.log(storedLocale);
   if (storedLocale) {
     locale.value = storedLocale;
     const dir = storedLocale === "ar" ? "rtl" : "ltr";

@@ -49,7 +49,6 @@ const columns = [
   {
     key: "actions",
     width: 40,
-    label:""
   },
 ];
 
@@ -111,7 +110,7 @@ const toggleBlockUser = (id: number) => {
             <div v-if="column.key === 'name'">
               <CustomCheckBtn @click="checkedAllUsers" :checked="checkedAll" />
             </div>
-            {{ $t(`${column.label}` ) }}
+            {{ column.label ? $t(`${column.label}`) : "" }}
           </th>
         </tr>
       </thead>

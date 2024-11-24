@@ -49,7 +49,7 @@ const goToPage = (page: number) => {
 </script>
 
 <template>
-    <div v-if="props.pageInfo.totalPages > 1" class="pagination">
+    <div v-if="props.pageInfo.totalPages >= 1" class="pagination">
         <div style="min-width: 150px">
             <button class="btn" @click="goToPrevPage" :disabled="props.pageInfo.page <= 1">
                 <img src="@/assets/icons/left-arrow.svg" alt="left-arrow" />

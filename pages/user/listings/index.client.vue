@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import type { User } from "@/types/User";
 import { GET_USERS_QUERY } from "@/graphql/mutations/user";
+
 const { locale } = useI18n();
 
 useHead({ title: "Dashboard | All Users" });
 definePageMeta({ layout: "dashboard", middleware: "auth" });
-const currentTab = ref<string>("active");
+const currentTab = ref<string>(localStorage.getItem("currentTab") || "active");
 
 const { result, loading, error } = useQuery(GET_USERS_QUERY);
 
@@ -15,19 +16,16 @@ const pageInfo = reactive({
   limit: 7,
   totalPages: 1,
 });
-
 const blockedUsersIds = ref(
   (await JSON.parse(localStorage.getItem("blockedUsersIds"))) ?? []
 );
-
-const blockedUsers : User[] | any = computed(() => {
+const blockedUsers: User[] | any = computed(() => {
   const from = (pageInfo.page - 1) * pageInfo.limit;
   const to = from + pageInfo.limit;
   return result.value?.users
     .filter((user: User) => blockedUsersIds.value.includes(user.id))
     .slice(from, to);
 });
-
 const users: User[] | any = computed(() => {
   const from = (pageInfo.page - 1) * pageInfo.limit;
   const to = from + pageInfo.limit;
@@ -50,15 +48,21 @@ const handelChangeTab = (tab: string) => {
   switch (tab) {
     case "active":
       currentTab.value = "active";
+      localStorage.setItem("currentTab", "active");
+      pageInfo.page = 1;
+      pageInfo.totalPages = Math.ceil(users?.value.length / 7) + 1;
       break;
     case "blocked":
       currentTab.value = "blocked";
+      pageInfo.page = 1;
+      localStorage.setItem("currentTab", "blocked");
+      pageInfo.totalPages = Math.trunc(blockedUsers?.value.length / 7);
+
       break;
   }
 };
 
-const handleLocaleChange = (event: any) => {
-  const selectedLang = event.target.value;
+const handleLocaleChange = (selectedLang: string) => {
   changeLocale(selectedLang);
 };
 
@@ -66,6 +70,7 @@ const handleLocaleChange = (event: any) => {
 watch(result, (newResult: any) => {
   if (result.value)
     pageInfo.totalPages = Math.ceil(users?.value.length / 7) + 1;
+
   // console.log("Query result:", newResult);
 });
 watch(error, (newError: any) => {
@@ -76,9 +81,10 @@ watch(error, (newError: any) => {
 watch(
   () => pageInfo.page,
   (newPage: number) => {
-    // console.log("Page changed:", newPage);
   }
 );
+
+const value2 = ref(2);
 </script>
 
 <template>
@@ -101,17 +107,22 @@ watch(
             </button>
           </nuxt-link>
 
-          <div class="flex-center">
-            <select
-              class="form-select"
-              name="lang"
-              id="language"
-              @change="handleLocaleChange"
-              :value="locale"
-            >
-              <option value="en">English</option>
-              <option value="ar">العربية</option>
-            </select>
+          <div
+            class="flex-center"
+            style="gap: 5px; font-weight: bolder"
+            :style="{ direction: locale === 'en' ? 'ltr' : 'rtl' }"
+          >
+            <span>En</span>
+            <el-switch
+              @click="handleLocaleChange(locale === 'en' ? 'ar' : 'en')"
+              v-model="value2"
+              class="ml-2"
+              style="
+                --el-switch-on-color: #ef3e2c;
+                --el-switch-off-color: #e71f63;
+              "
+            />
+            <span>ع</span>
           </div>
         </div>
       </div>
