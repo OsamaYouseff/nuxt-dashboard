@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { User } from "@/types/User";
 import { GET_USERS_QUERY } from "@/graphql/mutations/user";
-
+import { handelFilterUsers } from "@/composables/users";
+import type { N } from "@nuxtjs/apollo/dist/shared/apollo.edd48338";
 const { locale } = useI18n();
 
 useHead({ title: "Dashboard | All Users" });
@@ -11,8 +12,8 @@ const currentTab = ref<string>(localStorage.getItem("currentTab") || "active");
 const { result, loading, error } = useQuery(GET_USERS_QUERY);
 
 //// states
-const value2 = ref(2);
-const searchValue = ref("");
+const langValue = ref<number>(2);
+const searchValue = ref<any>("");
 
 // Pagination Logic
 const pageInfo = reactive({
@@ -20,35 +21,42 @@ const pageInfo = reactive({
   limit: 7,
   totalPages: 1,
 });
+
+const from = ref<number>(((pageInfo.page - 1) * pageInfo.limit) | 1);
+const to = ref<number>((from.value + pageInfo.limit) | 1);
 const blockedUsersIds = ref(
   (await JSON.parse(localStorage.getItem("blockedUsersIds"))) ?? []
 );
 let blockedUsers: User[] | any = computed(() => {
-  const from = (pageInfo.page - 1) * pageInfo.limit;
-  const to = from + pageInfo.limit;
-  return result.value?.users
-    .filter((user: User) => blockedUsersIds.value.includes(user.id))
-    .slice(from, to);
+  from.value = (pageInfo.page - 1) * pageInfo.limit;
+  to.value = from.value + pageInfo.limit;
+  return handelFilterUsers(
+    result,
+    "blocked",
+    blockedUsersIds.value,
+    searchValue.value
+  );
 });
-let users: User[] | any = computed(() => {
-  const from = (pageInfo.page - 1) * pageInfo.limit;
-  const to = from + pageInfo.limit;
 
-  if (searchValue.value.trim() !== "") {
-    return result.value?.users
-      .filter((user: User) => !blockedUsersIds.value.includes(user.id))
-      .filter((user: User) =>
-        user.name
-          .toLocaleLowerCase()
-          .includes(searchValue.value.toLocaleLowerCase())
-      )
-      .slice(from, to);
+let users: User[] | any = computed(() => {
+  from.value = (pageInfo.page - 1) * pageInfo.limit;
+  to.value = from.value + pageInfo.limit;
+  return handelFilterUsers(
+    result,
+    "active",
+    blockedUsersIds.value,
+    searchValue.value
+  );
+});
+
+const filterPaginatedUsers = computed(() => {
+  if (currentTab.value === "active") {
+    return users.value.slice(from.value, to.value);
   } else {
-    return result.value?.users
-      .filter((user: User) => !blockedUsersIds.value.includes(user.id))
-      .slice(from, to);
+    return blockedUsers.value.slice(from.value, to.value);
   }
 });
+
 /// handlers
 
 //// language changing logic
@@ -66,14 +74,13 @@ const handelChangeTab = (tab: string) => {
       currentTab.value = "active";
       localStorage.setItem("currentTab", "active");
       pageInfo.page = 1;
-      pageInfo.totalPages = Math.ceil(users?.value.length / 7) + 1;
+      pageInfo.totalPages = Math.floor(result.value?.users?.length / 7);
       break;
     case "blocked":
       currentTab.value = "blocked";
       pageInfo.page = 1;
       localStorage.setItem("currentTab", "blocked");
       pageInfo.totalPages = Math.trunc(blockedUsers?.value.length / 7);
-
       break;
   }
 };
@@ -84,35 +91,36 @@ const handleLocaleChange = (selectedLang: string) => {
 ///// filter users logic
 const filterUsers = (event: any) => {
   searchValue.value = event.target.value;
+
+  if (currentTab.value === "blocked") {
+    pageInfo.totalPages = Math.ceil(blockedUsers?.value.length / 7);
+  } else {
+    pageInfo.totalPages = Math.ceil(users?.value.length / 7);
+  }
 };
 
 // Add watchers for debugging
 watch(result, (newResult: any) => {
-  if (result.value)
-    if (currentTab.value === "blocked") {
-      pageInfo.totalPages = Math.trunc(blockedUsers?.value?.length / 7);
-    } else {
-      pageInfo.totalPages = Math.ceil(users?.value.length / 7) + 1;
-    }
-  // console.log("Query result:", newResult);
+  if (currentTab.value === "blocked") {
+    pageInfo.totalPages = Math.floor(blockedUsers?.value.length / 7);
+  } else {
+    pageInfo.totalPages = Math.floor(result?.value?.users?.length / 7);
+  }
 });
 
-watch(users, (filteredUsers: any) => {
-  pageInfo.totalPages = Math.ceil(filteredUsers?.length / 7) + 1;
-  // if (currentTab.value === "active"){
-  // }else {
-
-  // }
-});
 watch(error, (newError: any) => {
   if (newError) {
     console.error("GraphQL error:", newError);
   }
 });
-watch(
-  () => pageInfo.page,
-  (newPage: number) => {}
-);
+
+onMounted(() => {
+  if (currentTab.value === "blocked") {
+    pageInfo.totalPages = Math.floor(blockedUsers?.value.length / 7);
+  } else {
+    pageInfo.totalPages = Math.floor(result?.value?.users?.length / 7);
+  }
+});
 </script>
 
 <template>
@@ -138,12 +146,12 @@ watch(
           <div
             class="flex-center"
             style="gap: 5px; font-weight: bolder"
-            :style="{ direction: locale === 'en' ? 'ltr' : 'rtl' }"
+            :style="{ flexDirection: locale === 'en' ? 'row' : 'row-reverse' }"
           >
             <span>En</span>
             <el-switch
               @click="handleLocaleChange(locale === 'en' ? 'ar' : 'en')"
-              v-model="value2"
+              v-model="langValue"
               class="ml-2"
               style="
                 --el-switch-on-color: #ef3e2c;
@@ -208,7 +216,7 @@ watch(
         <!-- Table -->
         <div class="users-list" style="overflow: auto">
           <UsersTable
-            :users="currentTab == 'active' ? users : blockedUsers"
+            :users="filterPaginatedUsers"
             :blockedUsers="blockedUsers"
             :blockedUsersIds="blockedUsersIds"
             :pageInfo="pageInfo"

@@ -20,40 +20,49 @@ export const toggleBlockUser = (id: number) => {
   window.location.reload();
 };
 
-export const filterUsers = (
+export const handelFilterUsers = (
   result: globalThis.Ref<any, any>,
   type: string = "active",
   blockedUsersIds: number[],
-  searchValue: string = "",
-  from: number = 0,
-  to: number = 10
+  searchValue: string = ""
 ): User[] => {
-  let filteredUsers = null;
+  if (!result.value?.users) {
+    return [];
+  }
 
-  switch (type) {
-    case "active":
-      if (searchValue.trim() !== "") {
+  if (searchValue.trim() !== "") {
+    switch (type) {
+      case "active":
         return result.value?.users
           .filter((user: User) => !blockedUsersIds.includes(user.id))
           .filter((user: User) =>
             user.name
               .toLocaleLowerCase()
               .includes(searchValue.toLocaleLowerCase())
-          )
-          .slice(from, to);
-      } else {
+          );
+
+      case "blocked":
         return result.value?.users
-          .filter((user: User) => !blockedUsersIds.includes(user.id))
-          .slice(from, to);
-      }
-    case "blocked":
-      return result.value?.users
-        .filter((user: User) => blockedUsersIds.includes(user.id))
-        .filter((user: User) =>
-          user.name
-            .toLocaleLowerCase()
-            .includes(searchValue.toLocaleLowerCase())
-        )
-        .slice(from, to);
+          .filter((user: User) => blockedUsersIds.includes(user.id))
+          .filter((user: User) =>
+            user.name
+              .toLocaleLowerCase()
+              .includes(searchValue.toLocaleLowerCase())
+          );
+    }
+  } else {
+    switch (type) {
+      case "active":
+        return result.value?.users.filter(
+          (user: User) => !blockedUsersIds.includes(user.id)
+        );
+
+      case "blocked":
+        return result.value?.users.filter((user: User) =>
+          blockedUsersIds.includes(user.id)
+        );
+    }
   }
+
+  return result.value?.users;
 };

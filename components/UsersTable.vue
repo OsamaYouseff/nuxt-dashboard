@@ -2,8 +2,7 @@
 import type { User } from "@/types/User";
 import block from "../assets/icons/block.svg";
 import unblock from "../assets/icons/unblock.svg";
-import {toggleBlockUser} from "@/composables/users";
-
+import { toggleBlockUser } from "@/composables/users";
 
 const props = defineProps<{
   users: User[];
@@ -66,7 +65,6 @@ const checkedAllUsers = () => {
       if (inputEl.checked !== checkedAll.value) inputEl.click();
     });
 };
-
 </script>
 
 <template>
