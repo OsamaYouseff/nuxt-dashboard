@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { User } from "@/types/User";
 import { GET_USERS_QUERY } from "@/graphql/mutations/user";
-import { toRawType } from "element-plus/es/utils";
 
 const { locale } = useI18n();
 
@@ -10,6 +9,10 @@ definePageMeta({ layout: "dashboard", middleware: "auth" });
 const currentTab = ref<string>(localStorage.getItem("currentTab") || "active");
 
 const { result, loading, error } = useQuery(GET_USERS_QUERY);
+
+//// states
+const value2 = ref(2);
+const searchValue = ref("");
 
 // Pagination Logic
 const pageInfo = reactive({
@@ -20,23 +23,35 @@ const pageInfo = reactive({
 const blockedUsersIds = ref(
   (await JSON.parse(localStorage.getItem("blockedUsersIds"))) ?? []
 );
-const blockedUsers: User[] | any = computed(() => {
+let blockedUsers: User[] | any = computed(() => {
   const from = (pageInfo.page - 1) * pageInfo.limit;
   const to = from + pageInfo.limit;
   return result.value?.users
     .filter((user: User) => blockedUsersIds.value.includes(user.id))
     .slice(from, to);
 });
-const users: User[] | any = computed(() => {
+let users: User[] | any = computed(() => {
   const from = (pageInfo.page - 1) * pageInfo.limit;
   const to = from + pageInfo.limit;
-  return result.value?.users
-    .filter((user: User) => !blockedUsersIds.value.includes(user.id))
-    .slice(from, to);
-});
 
+  if (searchValue.value.trim() !== "") {
+    return result.value?.users
+      .filter((user: User) => !blockedUsersIds.value.includes(user.id))
+      .filter((user: User) =>
+        user.name
+          .toLocaleLowerCase()
+          .includes(searchValue.value.toLocaleLowerCase())
+      )
+      .slice(from, to);
+  } else {
+    return result.value?.users
+      .filter((user: User) => !blockedUsersIds.value.includes(user.id))
+      .slice(from, to);
+  }
+});
 /// handlers
 
+//// language changing logic
 const changeLocale = (lang: any) => {
   locale.value = lang;
 
@@ -66,8 +81,9 @@ const handleLocaleChange = (selectedLang: string) => {
   changeLocale(selectedLang);
 };
 
-const filterUsers = () => {
-  console.log("test");
+///// filter users logic
+const filterUsers = (event: any) => {
+  searchValue.value = event.target.value;
 };
 
 // Add watchers for debugging
@@ -81,6 +97,13 @@ watch(result, (newResult: any) => {
   // console.log("Query result:", newResult);
 });
 
+watch(users, (filteredUsers: any) => {
+  pageInfo.totalPages = Math.ceil(filteredUsers?.length / 7) + 1;
+  // if (currentTab.value === "active"){
+  // }else {
+
+  // }
+});
 watch(error, (newError: any) => {
   if (newError) {
     console.error("GraphQL error:", newError);
@@ -90,8 +113,6 @@ watch(
   () => pageInfo.page,
   (newPage: number) => {}
 );
-
-const value2 = ref(2);
 </script>
 
 <template>
