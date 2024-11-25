@@ -57,7 +57,7 @@ const goToPage = (page: number) => {
 watch(
   () => props.pageInfo,
   (newPageInfo) => {
-    console.log("Page info changed:", newPageInfo);
+    // console.log("Page info changed:", newPageInfo);
   },
   { deep: true } // Ensure the watcher reacts to nested changes
 );

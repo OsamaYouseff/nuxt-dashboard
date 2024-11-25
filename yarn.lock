@@ -401,6 +401,65 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cloudinary-util/types@npm:1.6.0":
+  version: 1.6.0
+  resolution: "@cloudinary-util/types@npm:1.6.0"
+  checksum: 10c0/4ee14676c68664ab4d438059ab59d1ff1bc5134463d79d0062230a2b564b3108611c98ea00437e28291a16ee6789685445ffb5086e4c8327a8646e49a17beb4e
+  languageName: node
+  linkType: hard
+
+"@cloudinary-util/types@npm:2.0.0-beta.1":
+  version: 2.0.0-beta.1
+  resolution: "@cloudinary-util/types@npm:2.0.0-beta.1"
+  checksum: 10c0/935f07fa69ed39f79aa693b627657b385119b7a5ea6291a375398633604c7eea477d6bfc9048430808158be6457c4cd473e51f5363e5519074fb4bad1bd52d81
+  languageName: node
+  linkType: hard
+
+"@cloudinary-util/url-loader@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "@cloudinary-util/url-loader@npm:6.0.0"
+  dependencies:
+    "@cloudinary-util/types": "npm:1.6.0"
+    "@cloudinary-util/util": "npm:4.1.0"
+    "@cloudinary/url-gen": "npm:1.15.0"
+  checksum: 10c0/22e836bf51644f8775c99806cbfb6f2a824c3dd033a0eaa3175520c90b8855020b9eed125d5697c273c9534f5b8174d629933524d5384c4d08f4d745f2f189b5
+  languageName: node
+  linkType: hard
+
+"@cloudinary-util/util@npm:4.1.0":
+  version: 4.1.0
+  resolution: "@cloudinary-util/util@npm:4.1.0"
+  checksum: 10c0/9f7f54f9acbe0888b037eb39250a3e3fd903a91c3b9edb991d9b055655be75bd105656851d38dda2e57a8153a66f3897ce26e14aaa967dc5f5867d78e71934bb
+  languageName: node
+  linkType: hard
+
+"@cloudinary/transformation-builder-sdk@npm:^1.10.0, @cloudinary/transformation-builder-sdk@npm:^1.15.1":
+  version: 1.16.0
+  resolution: "@cloudinary/transformation-builder-sdk@npm:1.16.0"
+  dependencies:
+    "@cloudinary/url-gen": "npm:^1.7.0"
+  checksum: 10c0/c44173643bf09c4d2915cd393d67a2ee600b96050f1112f1acc19670cd0e5f51157613ffb8e49af747b877fc388f16631efd6607d003ea38670a29836a9628e5
+  languageName: node
+  linkType: hard
+
+"@cloudinary/url-gen@npm:1.15.0":
+  version: 1.15.0
+  resolution: "@cloudinary/url-gen@npm:1.15.0"
+  dependencies:
+    "@cloudinary/transformation-builder-sdk": "npm:^1.10.0"
+  checksum: 10c0/4b50b690f40b117068d7396906e9bbda36bd4b8e6143bbc8ad57709cf18f7b3953611a414f56f6551680277e683c3e82f581b01d67e6d06ff88125f8c8f447d6
+  languageName: node
+  linkType: hard
+
+"@cloudinary/url-gen@npm:^1.7.0":
+  version: 1.21.0
+  resolution: "@cloudinary/url-gen@npm:1.21.0"
+  dependencies:
+    "@cloudinary/transformation-builder-sdk": "npm:^1.15.1"
+  checksum: 10c0/e8b776c0f116a53830b55322f2c23475d7da633bd11b9863dfb4cca1ef82ebc25b1a201f40bf70ecf955d111f295eebae1774d44743d09fc8dbe429334313044
+  languageName: node
+  linkType: hard
+
 "@ctrl/tinycolor@npm:^3.4.1":
   version: 3.6.1
   resolution: "@ctrl/tinycolor@npm:3.6.1"
@@ -1242,7 +1301,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nuxt/kit@npm:3.14.1592, @nuxt/kit@npm:^3.10.3, @nuxt/kit@npm:^3.13.1, @nuxt/kit@npm:^3.13.2, @nuxt/kit@npm:^3.14.0":
+"@nuxt/kit@npm:3.14.1592, @nuxt/kit@npm:^3.10.3, @nuxt/kit@npm:^3.11.2, @nuxt/kit@npm:^3.13.1, @nuxt/kit@npm:^3.13.2, @nuxt/kit@npm:^3.14.0":
   version: 3.14.1592
   resolution: "@nuxt/kit@npm:3.14.1592"
   dependencies:
@@ -1380,6 +1439,19 @@ __metadata:
     jiti: "npm:^1.21.0"
     ohash: "npm:^1.1.3"
   checksum: 10c0/ce8843144139b76999e2e6ec8611e08d3cb5ac5d8093571714c9094d261283c2c4d18029d56b4fddcb1d38ad5b0804022e5796c470dd05b33bdf4cc4bedad23c
+  languageName: node
+  linkType: hard
+
+"@nuxtjs/cloudinary@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "@nuxtjs/cloudinary@npm:4.0.0"
+  dependencies:
+    "@cloudinary-util/types": "npm:2.0.0-beta.1"
+    "@cloudinary-util/url-loader": "npm:^6.0.0"
+    "@nuxt/kit": "npm:^3.11.2"
+    "@unpic/vue": "npm:^0.0.48"
+    defu: "npm:^6.1.4"
+  checksum: 10c0/6f95780b61f6f3d8d54c38e765535d30757956b9378da325ed9860f8f52dc9708c8854f198baf54263abc6e637c810c7680240382939965a8ab3b5fe60ca1624
   languageName: node
   linkType: hard
 
@@ -2092,6 +2164,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@unpic/core@npm:0.0.47":
+  version: 0.0.47
+  resolution: "@unpic/core@npm:0.0.47"
+  dependencies:
+    unpic: "npm:^3.17.0"
+  checksum: 10c0/18bf965d36f5f37f519b41fc4d4871e2ee964ef74c6106523225536b4ed8f92c29ceca0de91e4f3b9c3ed10d3485658af5d5b1a5d8fb52dd5aff379f0f008afc
+  languageName: node
+  linkType: hard
+
+"@unpic/vue@npm:^0.0.48":
+  version: 0.0.48
+  resolution: "@unpic/vue@npm:0.0.48"
+  dependencies:
+    "@unpic/core": "npm:0.0.47"
+    vue: "npm:^3.4.19"
+  checksum: 10c0/f4b25b7dd06349c5c4f2b9a708a148ad6d965c3f97efe054ab62bc33a8f4fe435e2f3ee8ae9c50a892d9cc6bd2e28a6ffab0dcb710218c175d4930565f87b856
+  languageName: node
+  linkType: hard
+
 "@vee-validate/yup@npm:^4.14.6":
   version: 4.14.7
   resolution: "@vee-validate/yup@npm:4.14.7"
@@ -2702,6 +2793,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"asynckit@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "asynckit@npm:0.4.0"
+  checksum: 10c0/d73e2ddf20c4eb9337e1b3df1a0f6159481050a5de457c55b14ea2e5cb6d90bb69e004c9af54737a5ee0917fcf2c9e25de67777bbe58261847846066ba75bc9d
+  languageName: node
+  linkType: hard
+
 "autoprefixer@npm:^10.4.20":
   version: 10.4.20
   resolution: "autoprefixer@npm:10.4.20"
@@ -2717,6 +2815,17 @@ __metadata:
   bin:
     autoprefixer: bin/autoprefixer
   checksum: 10c0/e1f00978a26e7c5b54ab12036d8c13833fad7222828fc90914771b1263f51b28c7ddb5803049de4e77696cbd02bb25cfc3634e80533025bb26c26aacdf938940
+  languageName: node
+  linkType: hard
+
+"axios@npm:^1.7.7":
+  version: 1.7.7
+  resolution: "axios@npm:1.7.7"
+  dependencies:
+    follow-redirects: "npm:^1.15.6"
+    form-data: "npm:^4.0.0"
+    proxy-from-env: "npm:^1.1.0"
+  checksum: 10c0/4499efc89e86b0b49ffddc018798de05fab26e3bf57913818266be73279a6418c3ce8f9e934c7d2d707ab8c095e837fc6c90608fb7715b94d357720b5f568af7
   languageName: node
   linkType: hard
 
@@ -3028,6 +3137,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cloudinary@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "cloudinary@npm:2.5.1"
+  dependencies:
+    lodash: "npm:^4.17.21"
+    q: "npm:^1.5.1"
+  checksum: 10c0/7ae2addf925003c3e6b6846413f23934437e42ecde586adbfba8adfc5dce98660c500173c0fbe677690d8b5ea367ec3326e62048045574e88d04555b7725fb1b
+  languageName: node
+  linkType: hard
+
 "cluster-key-slot@npm:^1.1.0":
   version: 1.1.2
   resolution: "cluster-key-slot@npm:1.1.2"
@@ -3071,6 +3190,15 @@ __metadata:
   version: 1.4.0
   resolution: "colorette@npm:1.4.0"
   checksum: 10c0/4955c8f7daafca8ae7081d672e4bd89d553bd5782b5846d5a7e05effe93c2f15f7e9c0cb46f341b59f579a39fcf436241ff79594899d75d5f3460c03d607fe9e
+  languageName: node
+  linkType: hard
+
+"combined-stream@npm:^1.0.8":
+  version: 1.0.8
+  resolution: "combined-stream@npm:1.0.8"
+  dependencies:
+    delayed-stream: "npm:~1.0.0"
+  checksum: 10c0/0dbb829577e1b1e839fa82b40c07ffaf7de8a09b935cadd355a73652ae70a88b4320db322f6634a4ad93424292fa80973ac6480986247f1734a1137debf271d5
   languageName: node
   linkType: hard
 
@@ -3478,6 +3606,13 @@ __metadata:
   version: 6.1.4
   resolution: "defu@npm:6.1.4"
   checksum: 10c0/2d6cc366262dc0cb8096e429368e44052fdf43ed48e53ad84cc7c9407f890301aa5fcb80d0995abaaf842b3949f154d060be4160f7a46cb2bc2f7726c81526f5
+  languageName: node
+  linkType: hard
+
+"delayed-stream@npm:~1.0.0":
+  version: 1.0.0
+  resolution: "delayed-stream@npm:1.0.0"
+  checksum: 10c0/d758899da03392e6712f042bec80aa293bbe9e9ff1b2634baae6a360113e708b91326594c8a486d475c69d6259afb7efacdc3537bfcda1c6c648e390ce601b19
   languageName: node
   linkType: hard
 
@@ -4161,6 +4296,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"follow-redirects@npm:^1.15.6":
+  version: 1.15.9
+  resolution: "follow-redirects@npm:1.15.9"
+  peerDependenciesMeta:
+    debug:
+      optional: true
+  checksum: 10c0/5829165bd112c3c0e82be6c15b1a58fa9dcfaede3b3c54697a82fe4a62dd5ae5e8222956b448d2f98e331525f05d00404aba7d696de9e761ef6e42fdc780244f
+  languageName: node
+  linkType: hard
+
 "foreground-child@npm:^3.1.0":
   version: 3.3.0
   resolution: "foreground-child@npm:3.3.0"
@@ -4168,6 +4313,17 @@ __metadata:
     cross-spawn: "npm:^7.0.0"
     signal-exit: "npm:^4.0.1"
   checksum: 10c0/028f1d41000553fcfa6c4bb5c372963bf3d9bf0b1f25a87d1a6253014343fb69dfb1b42d9625d7cf44c8ba429940f3d0ff718b62105d4d4a4f6ef8ca0a53faa2
+  languageName: node
+  linkType: hard
+
+"form-data@npm:^4.0.0":
+  version: 4.0.1
+  resolution: "form-data@npm:4.0.1"
+  dependencies:
+    asynckit: "npm:^0.4.0"
+    combined-stream: "npm:^1.0.8"
+    mime-types: "npm:^2.1.12"
+  checksum: 10c0/bb102d570be8592c23f4ea72d7df9daa50c7792eb0cf1c5d7e506c1706e7426a4e4ae48a35b109e91c85f1c0ec63774a21ae252b66f4eb981cb8efef7d0463c8
   languageName: node
   linkType: hard
 
@@ -5361,6 +5517,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mime-db@npm:1.52.0":
+  version: 1.52.0
+  resolution: "mime-db@npm:1.52.0"
+  checksum: 10c0/0557a01deebf45ac5f5777fe7740b2a5c309c6d62d40ceab4e23da9f821899ce7a900b7ac8157d4548ddbb7beffe9abc621250e6d182b0397ec7f10c7b91a5aa
+  languageName: node
+  linkType: hard
+
+"mime-types@npm:^2.1.12":
+  version: 2.1.35
+  resolution: "mime-types@npm:2.1.35"
+  dependencies:
+    mime-db: "npm:1.52.0"
+  checksum: 10c0/82fb07ec56d8ff1fc999a84f2f217aa46cb6ed1033fefaabd5785b9a974ed225c90dc72fff460259e66b95b73648596dbcc50d51ed69cdf464af2d237d3149b2
+  languageName: node
+  linkType: hard
+
 "mime@npm:1.6.0":
   version: 1.6.0
   resolution: "mime@npm:1.6.0"
@@ -5568,9 +5740,12 @@ __metadata:
   dependencies:
     "@element-plus/nuxt": "npm:^1.1.0"
     "@nuxtjs/apollo": "npm:^5.0.0-alpha.14"
+    "@nuxtjs/cloudinary": "npm:^4.0.0"
     "@nuxtjs/i18n": "npm:^9.1.0"
     "@vee-validate/yup": "npm:^4.14.6"
     "@vue/apollo-composable": "npm:^4.0.0-beta.12"
+    axios: "npm:^1.7.7"
+    cloudinary: "npm:^2.5.1"
     element-plus: "npm:^2.8.8"
     graphql: "npm:^16.8.1"
     graphql-tag: "npm:^2.12.6"
@@ -6665,6 +6840,20 @@ __metadata:
   version: 2.0.1
   resolution: "protocols@npm:2.0.1"
   checksum: 10c0/016cc58a596e401004a028a2f7005e3444bf89ee8f606409c411719374d1e8bba0464fc142a065cce0d19f41669b2f7ffe25a8bde4f16ce3b6eb01fabc51f2e7
+  languageName: node
+  linkType: hard
+
+"proxy-from-env@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "proxy-from-env@npm:1.1.0"
+  checksum: 10c0/fe7dd8b1bdbbbea18d1459107729c3e4a2243ca870d26d34c2c1bcd3e4425b7bcc5112362df2d93cc7fb9746f6142b5e272fd1cc5c86ddf8580175186f6ad42b
+  languageName: node
+  linkType: hard
+
+"q@npm:^1.5.1":
+  version: 1.5.1
+  resolution: "q@npm:1.5.1"
+  checksum: 10c0/7855fbdba126cb7e92ef3a16b47ba998c0786ec7fface236e3eb0135b65df36429d91a86b1fff3ab0927b4ac4ee88a2c44527c7c3b8e2a37efbec9fe34803df4
   languageName: node
   linkType: hard
 
@@ -7850,6 +8039,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"unpic@npm:^3.17.0":
+  version: 3.20.0
+  resolution: "unpic@npm:3.20.0"
+  checksum: 10c0/c7e1c358f65a7f188f823e3f9c724e3eff8c215c50e5edb53e6da6dd291d42ce72a1f30deb7b079071e7df8c9ef36d0519fc515c4cd4a328f818fa409154f8f0
+  languageName: node
+  linkType: hard
+
 "unplugin-vue-router@npm:^0.10.8":
   version: 0.10.8
   resolution: "unplugin-vue-router@npm:0.10.8"
@@ -8320,7 +8516,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vue@npm:^3.4, vue@npm:^3.5.13":
+"vue@npm:^3.4, vue@npm:^3.4.19, vue@npm:^3.5.13":
   version: 3.5.13
   resolution: "vue@npm:3.5.13"
   dependencies:

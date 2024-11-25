@@ -17,7 +17,9 @@ export const toggleBlockUser = (id: number) => {
     );
   }
 
-  window.location.reload();
+  localStorage.setItem("currentTab", "blocked");
+
+  window.location.href = "/user/listings";
 };
 
 export const handelFilterUsers = (

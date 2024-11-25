@@ -148,7 +148,9 @@ onMounted(() => {
             style="gap: 5px; font-weight: bolder"
             :style="{ flexDirection: locale === 'en' ? 'row' : 'row-reverse' }"
           >
-            <span>En</span>
+            <span class="lang-icon"
+              ><img src="@/assets/icons/en.png" alt="ar-icon"
+            /></span>
             <el-switch
               @click="handleLocaleChange(locale === 'en' ? 'ar' : 'en')"
               v-model="langValue"
@@ -158,7 +160,9 @@ onMounted(() => {
                 --el-switch-off-color: #e71f63;
               "
             />
-            <span>ع</span>
+            <span class="lang-icon"
+              ><img src="@/assets/icons/ar.png" alt="ar-icon"
+            /></span>
           </div>
         </div>
       </div>
@@ -333,5 +337,15 @@ button.add-user img {
 
 a {
   color: initial;
+}
+
+.lang-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.lang-icon img {
+  width: 100%;
+  height: 100%;
 }
 </style>

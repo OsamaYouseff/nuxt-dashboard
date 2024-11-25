@@ -27,9 +27,6 @@ const user = computed(() => result?.value?.user);
 const isUserBlocked = ref<boolean>(false);
 const editMode = ref<boolean>(false);
 
-
-
-
 const checkUserBlocked = (): boolean => {
   const blockedUsers = localStorage.getItem("blockedUsersIds");
   if (blockedUsers) {
