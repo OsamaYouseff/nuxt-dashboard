@@ -12,6 +12,25 @@ import { useForm } from "vee-validate";
 useHead({ title: "Dashboard | Create User" });
 definePageMeta({ layout: "dashboard", middleware: "auth" });
 
+const route = useRoute();
+const USER_QUERY = gql`
+    query GetUser {
+        user (id: ${route.params.id || 1}) {
+            id
+            email
+            password
+            name
+            role
+            avatar
+            creationAt
+            updatedAt
+        }
+    }
+`;
+
+const { result, loading, error } = useQuery(USER_QUERY);
+const user = computed(() => result?.value?.user);
+
 // Validation Schema
 const schema = toTypedSchema(
   yup.object({
@@ -42,6 +61,7 @@ const [role, roleAttrs] = defineField("role", { validateOnModelUpdate: false });
 
 // Cloudinary image URL ref
 const imageUrl = ref("");
+const userMode = ref("create");
 
 // Handle form submission and image upload
 // const handleCreateUser = handleSubmit(async () => {
@@ -136,22 +156,52 @@ const handleCreateUser = async () => {
   }
 };
 
+const fillFormData = () => {
+  firstname.value = user.value.name.split(" ")[0];
+  lastname.value = user.value.name.split(" ")[1];
+  email.value = user.value.email;
+  password.value = user.value.password;
+  role.value = user.value.role;
+  imageUrl.value = user.value.avatar;
+};
+
 // Watch for errors
-// watchEffect(() => {
-//   if (error.value) {
-//     console.error("Mutation error:", error.value);
-//   }
-// });
+watchEffect(() => {
+  if (error.value) {
+    console.error("Mutation error:", error.value);
+  }
+});
+
+watch(result, (newResult: any) => {
+  if (newResult) {
+    fillFormData();
+  }
+});
+
+onMounted(async () => {
+  const mode = useRoute().params.mode;
+
+  if (mode === "create") {
+    userMode.value = "create";
+    resetForm();
+  } else if (mode === "edit") {
+    userMode.value = "edit";
+    resetForm();
+    fillFormData();
+  } else {
+    navigateTo("/error");
+  }
+});
 </script>
 
 <template>
   <div class="content-wrapper">
-    <!-- <spinner v-if="loading" />
+    <spinner v-if="loading" />
 
     <ErrorComponent
       v-if="error"
       :error="{ myMessage: 'Failed to Create User', apiMessage: error }"
-    /> -->
+    />
 
     <div class="container">
       <!-- header -->
@@ -168,7 +218,7 @@ const handleCreateUser = async () => {
       >
         <NuxtLink to="/user/listings">Users</NuxtLink>
         <img src="@/assets/icons/next-arrow.svg" alt="next-icon" />
-        <NuxtLink to="/user/create">Add User</NuxtLink>
+        <NuxtLink :to="`/user/${userMode}`">{{ userMode }} user</NuxtLink>
       </div>
 
       <!-- Profile form -->
@@ -204,7 +254,9 @@ const handleCreateUser = async () => {
           </div>
           <div class="flex" style="gap: 0.625rem; justify-content: flex-end">
             <button @click="(e) => resetForm()">Rest</button>
-            <button @click="handleCreateUser" class="add-user">Add</button>
+            <button @click="handleCreateUser" class="add-user">
+              {{ userMode }}
+            </button>
           </div>
         </div>
         <h2 style="margin: 1.25rem 0rem">Account info</h2>
@@ -284,14 +336,16 @@ const handleCreateUser = async () => {
           <!-- Photo -->
           <div class="flex-between">
             <label for="photo">Photo</label>
-            <CustomFileInput />
+            <CustomFileInput :currentImgUrl="imageUrl" />
           </div>
         </form>
         <div class="flex-between" style="margin-top: 6.25rem; width: 100%">
           <span></span>
           <div class="flex" style="gap: 0.625rem">
             <button @click="() => resetForm()">Rest</button>
-            <button @click="handleCreateUser" class="add-user">Add</button>
+            <button @click="handleCreateUser" class="add-user">
+              {{ userMode }}
+            </button>
           </div>
         </div>
       </div>

@@ -184,9 +184,10 @@ const checkedAllUsers = () => {
             <!-- Created At -->
             <div v-else-if="column.key === 'creationAt'">
               <NuxtLink :to="`/user/profile/${person.id}`" style="flex-grow: 1">
-
                 <p>
-                  {{ new Date(person.creationAt).toLocaleString().split(",")[0] }}
+                  {{
+                    new Date(person.creationAt).toLocaleString().split(",")[0]
+                  }}
                 </p>
               </NuxtLink>
             </div>
@@ -220,11 +221,11 @@ const checkedAllUsers = () => {
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <NuxtLink :to="`/user/profile/${person.id}`">
+                    <NuxtLink :to="`/user/edit/${person.id}`">
                       <el-dropdown-item>Edit</el-dropdown-item>
                     </NuxtLink>
-                    <el-dropdown-item @click="handleDeleteUser(person.id)"
-                      >Delete</el-dropdown-item
+                    <el-dropdown-item @click="handleDeleteUser(person.id)">
+                      Delete</el-dropdown-item
                     >
                   </el-dropdown-menu>
                 </template>

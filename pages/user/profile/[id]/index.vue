@@ -104,7 +104,7 @@ watch(error, (newError: any) => {
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
-                    <NuxtLink :to="`/user/profile/${user.id}`">
+                    <NuxtLink :to="`/user/edit/${user.id}`">
                       <el-dropdown-item>Edit</el-dropdown-item>
                     </NuxtLink>
                     <el-dropdown-item @click="handleDeleteUser(user.id)"
@@ -125,7 +125,7 @@ watch(error, (newError: any) => {
       >
         <NuxtLink to="/user/listings">Users</NuxtLink>
         <img src="@/assets/icons/next-arrow.svg" alt="next-icon" />
-        <NuxtLink to="/user/create">User Profile</NuxtLink>
+        <NuxtLink style="cursor: pointer;">User Profile</NuxtLink>
       </div>
 
       <!-- Profile Header -->
@@ -176,11 +176,12 @@ watch(error, (newError: any) => {
       <div class="info">
         <div class="flex-between">
           <span></span>
-          <button @click="editMode = !editMode" class="edit">
-            <img :src="editMode ? save : edit" alt="change-info-btn" />
-
-            {{ editMode ? "Save" : "Edit" }}
-          </button>
+          <NuxtLink :to="`/user/edit/${user.id}`">
+            <button class="edit">
+              <img :src="edit" alt="change-info-btn" />
+              Edit
+            </button>
+          </NuxtLink>
         </div>
         <h2 style="font-size: 20px">Account info</h2>
         <form @click.prevent="">

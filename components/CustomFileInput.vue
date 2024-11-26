@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import defaultImg from "@/assets/images/user2-img.jpg";
 
-
+const props = defineProps({
+  currentImgUrl: {
+    type: String,
+    default: defaultImg,
+  },
+});
 
 const fileInput = ref<HTMLInputElement | null>(null);
 const imageUrl = ref<string | null>(defaultImg);
@@ -13,11 +18,17 @@ const handleFileChange = (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
   if (files && files.length) {
     const file = files[0];
-
+    console.log("Selected file:", file);
     imageUrl.value = URL.createObjectURL(file);
-    // console.log("Selected file:", file);
   }
 };
+
+watch(
+  () => props.currentImgUrl,
+  (newUrl) => {
+    imageUrl.value = newUrl;
+  }
+);
 </script>
 
 <template>
