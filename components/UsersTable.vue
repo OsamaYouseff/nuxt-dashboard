@@ -62,7 +62,7 @@ const checkedAllUsers = () => {
     .forEach((el: Element, index) => {
       const inputEl = el as HTMLInputElement;
       if (index === 0) inputEl.checked = !inputEl.checked;
-      if (inputEl.checked !== checkedAll.value) inputEl.click();
+      if (inputEl.checked === checkedAll.value) inputEl.click();
     });
 };
 </script>
@@ -107,10 +107,14 @@ const checkedAllUsers = () => {
             }"
           >
             <!-- Name -->
-            <div class="flex" v-if="column.key === 'name'" style="gap: 10px">
+            <div
+              class="flex"
+              v-if="column.key === 'name'"
+              style="gap: 10px; justify-content: flex-start"
+            >
               <CustomCheckBtn :checked="checkedAll" />
-              <NuxtLink :to="`/user/profile/${person.id}`">
-                <div class="flex-center">
+              <NuxtLink :to="`/user/profile/${person.id}`" style="flex-grow: 1">
+                <div class="flex">
                   <div
                     v-if="!person.avatar.includes('lorem')"
                     class="flex-center"
@@ -145,9 +149,11 @@ const checkedAllUsers = () => {
 
             <!-- Email -->
             <div v-else-if="column.key === 'email'">
-              <p>
-                {{ person.email }}
-              </p>
+              <NuxtLink :to="`/user/profile/${person.id}`" style="flex-grow: 1">
+                <p>
+                  {{ person.email }}
+                </p>
+              </NuxtLink>
             </div>
 
             <!-- Username -->
@@ -163,19 +169,26 @@ const checkedAllUsers = () => {
 
             <!-- Mobile Number -->
             <div v-else-if="column.key === 'mobileNumber'">
-              <p>+20 1234567843</p>
+              <NuxtLink :to="`/user/profile/${person.id}`" style="flex-grow: 1">
+                <p>+20 1234567843</p>
+              </NuxtLink>
             </div>
 
             <!-- Region -->
             <div v-else-if="column.key === 'region'">
-              <p>Egypt, Cairo</p>
+              <NuxtLink :to="`/user/profile/${person.id}`" style="flex-grow: 1">
+                <p>Egypt, Cairo</p>
+              </NuxtLink>
             </div>
 
             <!-- Created At -->
             <div v-else-if="column.key === 'creationAt'">
-              <p>
-                {{ new Date(person.creationAt).toLocaleString().split(",")[0] }}
-              </p>
+              <NuxtLink :to="`/user/profile/${person.id}`" style="flex-grow: 1">
+
+                <p>
+                  {{ new Date(person.creationAt).toLocaleString().split(",")[0] }}
+                </p>
+              </NuxtLink>
             </div>
 
             <!-- Actions -->

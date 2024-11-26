@@ -7,7 +7,9 @@ const { locale } = useI18n();
 
 useHead({ title: "Dashboard | All Users" });
 definePageMeta({ layout: "dashboard", middleware: "auth" });
-const currentTab = ref<string>(localStorage.getItem("currentTab") || "active");
+
+const usersStatus = useRoute().query.users;
+const currentTab = ref<any>(usersStatus || "active");
 
 const { result, loading, error } = useQuery(GET_USERS_QUERY);
 
@@ -69,11 +71,11 @@ const changeLocale = (lang: any) => {
   localStorage.setItem("locale", lang);
 };
 const handelChangeTab = (tab: string) => {
+  pageInfo.page = 1;
   switch (tab) {
     case "active":
       currentTab.value = "active";
-      localStorage.setItem("currentTab", "active");
-      pageInfo.page = 1;
+      navigateTo("/user/listings?users=active");
       pageInfo.totalPages = pageInfo.totalPages = getPagesCount(
         result.value?.users?.length,
         pageInfo.limit
@@ -82,8 +84,7 @@ const handelChangeTab = (tab: string) => {
       break;
     case "blocked":
       currentTab.value = "blocked";
-      pageInfo.page = 1;
-      localStorage.setItem("currentTab", "blocked");
+      navigateTo("/user/listings?users=blocked");
       pageInfo.totalPages = pageInfo.totalPages = getPagesCount(
         blockedUsers.value.length,
         pageInfo.limit
@@ -166,24 +167,25 @@ onMounted(() => {
 
           <div
             class="flex-center"
-            style="gap: 5px; font-weight: bolder"
-            :style="{ flexDirection: locale === 'en' ? 'row' : 'row-reverse' }"
+            style="gap: 5px; font-weight: bolder; cursor: pointer"
           >
-            <span class="lang-icon"
-              ><img src="@/assets/icons/en.png" alt="ar-icon"
-            /></span>
-            <el-switch
-              @click="handleLocaleChange(locale === 'en' ? 'ar' : 'en')"
+            <span
+              @click="handleLocaleChange('en')"
+              v-if="locale === 'ar'"
+              class="lang-icon"
+              >EN</span
+            >
+            <span @click="handleLocaleChange('ar')" v-else class="lang-icon"
+              >AR</span
+            >
+            <!-- <el-switch
               v-model="langValue"
               class="ml-2"
               style="
                 --el-switch-on-color: #ef3e2c;
                 --el-switch-off-color: #e71f63;
               "
-            />
-            <span class="lang-icon"
-              ><img src="@/assets/icons/ar.png" alt="ar-icon"
-            /></span>
+            /> -->
           </div>
         </div>
       </div>
@@ -361,8 +363,11 @@ a {
 }
 
 .lang-icon {
-  width: 30px;
-  height: 30px;
+  background: white;
+  padding: 4px 8px;
+  color: #ef3e2c;
+  border: 1px solid #e71f63;
+  border-radius: 6px;
 }
 
 .lang-icon img {

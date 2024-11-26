@@ -10,16 +10,14 @@ export const toggleBlockUser = (id: number) => {
       "blockedUsersIds",
       JSON.stringify([...blockedUsersIds, id])
     );
-    localStorage.setItem("currentTab", "blocked");
+    window.location.href = "/user/listings?users=blocked";
   } else {
     localStorage.setItem(
       "blockedUsersIds",
       JSON.stringify([...blockedUsersIds.filter((item: number) => item !== id)])
     );
-    localStorage.setItem("currentTab", "active");
+    window.location.href = "/user/listings?users=active";
   }
-
-  window.location.href = "/user/listings";
 };
 
 export const handelFilterUsers = (
