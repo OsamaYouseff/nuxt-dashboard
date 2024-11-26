@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { CREATE_USER_MUTATION } from "@/graphql/mutations/user";
+import {
+  CREATE_USER_MUTATION,
+  UPDATE_USER_MUTATION,
+} from "@/graphql/mutations/user";
 import { useMutation } from "@vue/apollo-composable";
 import type { UserForm } from "@/types/UserForm";
 import { uploadImage } from "~/composables/useCloudinary";
@@ -29,6 +32,7 @@ const USER_QUERY = gql`
 `;
 
 const { result, loading, error } = useQuery(USER_QUERY);
+
 const user = computed(() => result?.value?.user);
 
 // Validation Schema
@@ -117,8 +121,12 @@ const handleCreateUser = async () => {
   if (file) {
     imageUrl.value = await uploadImage(file);
   }
+  // Proceed with creating the user after the image upload completes
+  if (!firstname.value || !lastname.value || !email.value || !password.value) {
+    alert("Please fill in all fields");
+    return;
+  }
 
-  // GraphQL Mutation
   const {
     mutate: addUser,
     loading,
@@ -136,23 +144,42 @@ const handleCreateUser = async () => {
       },
     },
   }));
-
-  // Proceed with creating the user after the image upload completes
-  if (!firstname.value || !lastname.value || !email.value || !password.value) {
-    alert("Please fill in all fields");
-    return;
-  }
-
-  try {
-    const result = await addUser();
-    if (result) {
-      console.log("User added successfully", result);
-      resetForm();
-      alert("User has been created successfully");
-      navigateTo("/user/listings");
+  const { mutate: updateUser } = useMutation(UPDATE_USER_MUTATION, () => ({
+    variables: {
+      id: user.value?.id,
+      data: {
+        name: `${firstname.value} ${lastname.value}`,
+        email: email.value,
+        password: password.value,
+        role: role.value || "customer",
+        avatar:
+          imageUrl.value ||
+          "https://e7.pngegg.com/pngimages/81/570/png-clipart-profile-logo-computer-icons-user-user-blue-heroes-thumbnail.png",
+      },
+    },
+  }));
+  if (userMode.value === "create") {
+    try {
+      const result = await addUser();
+      if (result) {
+        console.log("User added successfully", result);
+        alert("User has been created successfully");
+        navigateTo("/user/listings");
+      }
+    } catch (err) {
+      console.error("Error creating user:", err);
     }
-  } catch (err) {
-    console.error("Error creating user:", err);
+  } else {
+    try {
+      const result = await updateUser();
+      if (result) {
+        console.log("User updated successfully", result);
+        alert("User has been updated successfully");
+        navigateTo("/user/listings");
+      }
+    } catch (err) {
+      console.error("Error updating user:", err);
+    }
   }
 };
 

@@ -52,11 +52,11 @@ export const GET_MY_PROFILE_QUERY = gql`
 `;
 
 
-export const UPDATE_USER = gql`
+export const UPDATE_USER_MUTATION = gql`
   mutation updateUser($id: Int!, $data: UpdateUserDto!) {
     updateUser(id: $id, data: $data) {
       id
-      name
+      na
       email
       role
       avatar
