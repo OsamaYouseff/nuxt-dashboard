@@ -2,7 +2,7 @@
 import type { User } from "@/types/User";
 import { GET_USERS_QUERY } from "@/graphql/mutations/user";
 import { handelFilterUsers } from "@/composables/users";
-import type { N } from "@nuxtjs/apollo/dist/shared/apollo.edd48338";
+import { getPagesCount } from "@/composables/useGeneral";
 const { locale } = useI18n();
 
 useHead({ title: "Dashboard | All Users" });
@@ -74,13 +74,20 @@ const handelChangeTab = (tab: string) => {
       currentTab.value = "active";
       localStorage.setItem("currentTab", "active");
       pageInfo.page = 1;
-      pageInfo.totalPages = Math.floor(result.value?.users?.length / 7);
+      pageInfo.totalPages = pageInfo.totalPages = getPagesCount(
+        result.value?.users?.length,
+        pageInfo.limit
+      );
+
       break;
     case "blocked":
       currentTab.value = "blocked";
       pageInfo.page = 1;
       localStorage.setItem("currentTab", "blocked");
-      pageInfo.totalPages = Math.trunc(blockedUsers?.value.length / 7);
+      pageInfo.totalPages = pageInfo.totalPages = getPagesCount(
+        blockedUsers.value.length,
+        pageInfo.limit
+      );
       break;
   }
 };
@@ -93,18 +100,29 @@ const filterUsers = (event: any) => {
   searchValue.value = event.target.value;
 
   if (currentTab.value === "blocked") {
-    pageInfo.totalPages = Math.ceil(blockedUsers?.value.length / 7);
+    pageInfo.totalPages = getPagesCount(
+      blockedUsers.value.length,
+      pageInfo.limit
+    );
+    pageInfo.page = 1;
   } else {
-    pageInfo.totalPages = Math.ceil(users?.value.length / 7);
+    pageInfo.totalPages = pageInfo.totalPages = getPagesCount(
+      users?.value.length,
+      pageInfo.limit
+    );
+    pageInfo.page = 1;
   }
 };
 
 // Add watchers for debugging
 watch(result, (newResult: any) => {
   if (currentTab.value === "blocked") {
-    pageInfo.totalPages = Math.floor(blockedUsers?.value.length / 7);
+    pageInfo.totalPages = getPagesCount(
+      blockedUsers.value.length,
+      pageInfo.limit
+    );
   } else {
-    pageInfo.totalPages = Math.floor(result?.value?.users?.length / 7);
+    pageInfo.totalPages = getPagesCount(users?.value.length, pageInfo.limit);
   }
 });
 
@@ -116,9 +134,12 @@ watch(error, (newError: any) => {
 
 onMounted(() => {
   if (currentTab.value === "blocked") {
-    pageInfo.totalPages = Math.floor(blockedUsers?.value.length / 7);
+    pageInfo.totalPages = getPagesCount(
+      blockedUsers.value.length,
+      pageInfo.limit
+    );
   } else {
-    pageInfo.totalPages = Math.floor(result?.value?.users?.length / 7);
+    pageInfo.totalPages = getPagesCount(users?.value.length, pageInfo.limit);
   }
 });
 </script>

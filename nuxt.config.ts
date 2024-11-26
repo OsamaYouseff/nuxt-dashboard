@@ -1,6 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+
 export default defineNuxtConfig({
-  // devtools: { enabled: true },
   modules: ["@nuxtjs/apollo", "@nuxtjs/i18n", "@element-plus/nuxt"],
   i18n: {
     locales: [
@@ -19,7 +19,6 @@ export default defineNuxtConfig({
         direction: "rtl",
       },
     ],
-    // lazy: true,
     langDir: "locales/",
     defaultLocale: "en",
   },
@@ -27,6 +26,13 @@ export default defineNuxtConfig({
     clients: {
       default: {
         httpEndpoint: "https://api.escuelajs.co/graphql",
+        httpLinkOptions: {
+          headers: {
+            Authorization: process.client
+              ? `Bearer ${localStorage.getItem("accessToken")}`
+              : "",
+          },
+        },
       },
     },
   },

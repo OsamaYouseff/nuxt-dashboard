@@ -83,15 +83,36 @@ watch(error, (newError: any) => {
               class="block"
               :style="{ background: !isUserBlocked ? '#673AB7' : '' }"
             >
-              <img src="@/assets/icons/block2.svg" alt="edit" />
+              <img src="@/assets/icons/block2.svg" alt="block-icon" />
               {{ isUserBlocked ? "Unblock" : "Block" }}
             </button>
-            <button class="delete">
-              <img src="@/assets/icons/delete2.svg" alt="edit" />
-              Edit
+            <button @click="handleDeleteUser(user.id)" class="delete">
+              <img src="@/assets/icons/delete2.svg" alt="delete-icon" />
+              delete
             </button>
-            <button style="padding: 10px">
-              <img src="@/assets/icons/Dropdown.svg" alt="edit" />
+            <button style="padding: 0px">
+              <el-dropdown
+                style="width: 100%; height: 100%; padding: 10px"
+                class="flex-center"
+              >
+                <span class="el-dropdown-link">
+                  <img
+                    style="cursor: pointer"
+                    src="@/assets/icons/Dropdown.svg"
+                    alt="edit"
+                  />
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <NuxtLink :to="`/user/profile/${user.id}`">
+                      <el-dropdown-item>Edit</el-dropdown-item>
+                    </NuxtLink>
+                    <el-dropdown-item @click="handleDeleteUser(user.id)"
+                      >Delete</el-dropdown-item
+                    >
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </button>
           </div>
         </div>

@@ -1,7 +1,18 @@
 <script setup lang="ts">
 const { locale } = useI18n();
-
 const currentPage = ref<string>("users");
+import {GET_MY_PROFILE_QUERY} from "@/graphql/mutations/user";
+
+
+// const { result, loading, error } = useQuery(GET_MY_PROFILE_QUERY);
+
+// console.log(result)
+
+
+// const user = computed(() => result?.value?.user);
+
+
+
 
 const toggleNav = (page: string) => {
   currentPage.value = page;
@@ -109,7 +120,7 @@ onMounted(() => {
           </nav>
           <div class="user flex-between">
             <div class="flex">
-              <img src="@/assets/images/user-img.jpg" alt="" />
+              <img src="@/assets/images/user2-img.jpg" alt="" />
               <div style="margin-left: 10px">
                 <p style="font-size: 14px; font-weight: bold">John Doe</p>
                 <p style="font-size: 14px">Super admin</p>

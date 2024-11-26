@@ -1,29 +1,37 @@
 <script setup lang="ts">
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/yup";
-import * as yup from "yup";
-import type { UserForm } from "@/types/UserForm";
+import { ref } from "vue";
 import { CREATE_USER_MUTATION } from "@/graphql/mutations/user";
-import { useCloudinary } from "~/composables/useCloudinary";
+import { useMutation } from "@vue/apollo-composable";
+import type { UserForm } from "@/types/UserForm";
+import { uploadImage } from "~/composables/useCloudinary";
+import * as yup from "yup";
+import { toTypedSchema } from "@vee-validate/yup";
+import { useForm } from "vee-validate";
 
 // Page Configurations
 useHead({ title: "Dashboard | Create User" });
 definePageMeta({ layout: "dashboard", middleware: "auth" });
 
-// Validation
-const schema = yup.object({
-  firstname: yup.string().required().min(3).trim(),
-  lastname: yup.string().required().min(3).trim(),
-  email: yup.string().email().required().trim(),
-  password: yup.string().required().min(8),
-  role: yup.string().required().trim(),
-  avatar: yup.string(),
+// Validation Schema
+const schema = toTypedSchema(
+  yup.object({
+    firstname: yup.string().required().min(3).trim(),
+    lastname: yup.string().required().min(3).trim(),
+    email: yup.string().email().required().trim(),
+    password: yup.string().required().min(8),
+    role: yup.string().required().trim(),
+    avatar: yup.string(),
+  })
+);
+const { errors, defineField, resetForm, handleSubmit } = useForm<UserForm>({
+  validationSchema: schema,
 });
-const { errors, defineField, resetForm } = useForm<UserForm>({
-  validationSchema: toTypedSchema(schema),
+const [firstname, firstnameAttrs] = defineField("firstname", {
+  validateOnModelUpdate: false,
 });
-const [firstname, firstnameAttrs] = defineField("firstname");
-const [lastname, lastnameAttrs] = defineField("lastname");
+const [lastname, lastnameAttrs] = defineField("lastname", {
+  validateOnModelUpdate: false,
+});
 const [email, emailAttrs] = defineField("email", {
   validateOnModelUpdate: false,
 });
@@ -32,37 +40,91 @@ const [password, passwordAttrs] = defineField("password", {
 });
 const [role, roleAttrs] = defineField("role", { validateOnModelUpdate: false });
 
-// GraphQL API
-const {
-  mutate: addUser,
-  loading,
-  error,
-} = useMutation(CREATE_USER_MUTATION, () => ({
-  variables: {
-    data: {
-      name: `${firstname.value} ${lastname.value}`,
-      email: email.value,
-      password: password.value,
-      role: "customer",
-      avatar: `https://e7.pngegg.com/pngimages/81/570/png-clipart-profile-logo-computer-icons-user-user-blue-heroes-thumbnail.png`,
-    },
-  },
-}));
+// Cloudinary image URL ref
+const imageUrl = ref("");
 
-const { uploadImage } = useCloudinary();
-const uploadedImageUrl = ref<string | null>(null);
+// Handle form submission and image upload
+// const handleCreateUser = handleSubmit(async () => {
+//   const fileInput = document.querySelector(
+//     "input[type=file]"
+//   ) as HTMLInputElement;
+//   const file = fileInput?.files?.[0];
 
-// Handlers
+//   // Upload image to Cloudinary
+//   if (file) {
+//     imageUrl.value = await uploadImage(file);
+//   }
+
+//   // GraphQL Mutation
+//   const {
+//     mutate: addUser,
+//     loading,
+//     error,
+//   } = useMutation(CREATE_USER_MUTATION, () => ({
+//     variables: {
+//       data: {
+//         name: `${firstname.value} ${lastname.value}`,
+//         email: email.value,
+//         password: password.value,
+//         role: role.value || "customer",
+//         avatar:
+//           imageUrl.value ||
+//           "https://e7.pngegg.com/pngimages/81/570/png-clipart-profile-logo-computer-icons-user-user-blue-heroes-thumbnail.png",
+//       },
+//     },
+//   }));
+
+//   try {
+//     const result = await addUser();
+//     if (result) {
+//       console.log("User added successfully", result);
+//       resetForm();
+//       alert("User has been created successfully");
+//       navigateTo("/user/listings");
+//     }
+//   } catch (err) {
+//     console.error("Error creating user:", err);
+//   }
+// });
+
 const handleCreateUser = async () => {
-  const file = document.querySelector("input[type=file]").files[0]
-  
+  const fileInput = document.querySelector(
+    "input[type=file]"
+  ) as HTMLInputElement;
+  const file = fileInput?.files?.[0];
+
+  // Upload image to Cloudinary
+  if (file) {
+    imageUrl.value = await uploadImage(file);
+  }
+
+  // GraphQL Mutation
+  const {
+    mutate: addUser,
+    loading,
+    error,
+  } = useMutation(CREATE_USER_MUTATION, () => ({
+    variables: {
+      data: {
+        name: `${firstname.value} ${lastname.value}`,
+        email: email.value,
+        password: password.value,
+        role: role.value || "customer",
+        avatar:
+          imageUrl.value ||
+          "https://e7.pngegg.com/pngimages/81/570/png-clipart-profile-logo-computer-icons-user-user-blue-heroes-thumbnail.png",
+      },
+    },
+  }));
+
+  // Proceed with creating the user after the image upload completes
   if (!firstname.value || !lastname.value || !email.value || !password.value) {
     alert("Please fill in all fields");
     return;
   }
+
   try {
     const result = await addUser();
-
     if (result) {
       console.log("User added successfully", result);
       resetForm();
@@ -75,23 +137,23 @@ const handleCreateUser = async () => {
 };
 
 // Watch for errors
-watchEffect(() => {
-  if (error.value) {
-    console.error("Mutation error:", error.value);
-  }
-});
+// watchEffect(() => {
+//   if (error.value) {
+//     console.error("Mutation error:", error.value);
+//   }
+// });
 </script>
 
 <template>
   <div class="content-wrapper">
-    <spinner v-if="loading" />
+    <!-- <spinner v-if="loading" />
 
     <ErrorComponent
       v-if="error"
       :error="{ myMessage: 'Failed to Create User', apiMessage: error }"
-    />
+    /> -->
 
-    <div v-else class="container">
+    <div class="container">
       <!-- header -->
       <header>
         <div class="flex">
@@ -110,7 +172,7 @@ watchEffect(() => {
       </div>
 
       <!-- Profile form -->
-      <div class="profile-form">
+      <div class="profile-form" @submit.prevent="handleCreateUser">
         <div
           class="flex-between"
           style="border-bottom: 1px solid #eaeaea; padding-bottom: 20px"
@@ -313,7 +375,7 @@ input:not([type="file"]) {
 
 .error-message {
   position: absolute;
-  top: -1.25rem;
+  bottom: -1.4rem;
   left: 0;
   margin-top: 0.3125rem;
   font-size: 0.6875rem;

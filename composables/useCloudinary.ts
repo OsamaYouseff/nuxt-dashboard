@@ -1,26 +1,25 @@
-import axios from "axios";
+export const uploadImage = async (file: File) => {
+  let imgUrl = "";
 
-export const useCloudinary = () => {
-  const uploadImage = async (file: File) => {
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", process.env.CLOUDINARY_UPLOAD_PRESET!);
-      formData.append("cloud_name", process.env.CLOUDINARY_CLOUD_NAME!);
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", "my_upload_preset"); // Replace with your actual preset
 
-      const response = await axios.post(
-        `CLOUDINARY_URL=cloudinary://<454913899919423>:<S0-c2X59DK9ul-5j30T9FeWfpNM>@doqwzxenw`,
-        formData
-      );
+  try {
+    const response = await fetch(
+      "https://api.cloudinary.com/v1_1/doqwzxenw/image/upload", // Your Cloudinary URL
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
-      return response.data.secure_url; // Returns the URL of the uploaded image
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      throw error;
-    }
-  };
+    const data = await response.json();
+    imgUrl = data.secure_url; // Cloudinary's hosted URL for the uploaded image
+    console.log("Uploaded image URL:", imgUrl);
+  } catch (err) {
+    console.error("Error uploading image:", err);
+  }
 
-  return {
-    uploadImage,
-  };
+  return imgUrl;
 };

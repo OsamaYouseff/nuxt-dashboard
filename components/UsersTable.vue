@@ -2,7 +2,7 @@
 import type { User } from "@/types/User";
 import block from "../assets/icons/block.svg";
 import unblock from "../assets/icons/unblock.svg";
-import { toggleBlockUser } from "@/composables/users";
+import { toggleBlockUser, handleDeleteUser } from "@/composables/users";
 
 const props = defineProps<{
   users: User[];
@@ -197,12 +197,25 @@ const checkedAllUsers = () => {
                   alt="unblock-icon"
                 />
               </dir>
-
-              <img
-                style="cursor: pointer"
-                src="@/assets/icons/Dropdown.svg"
-                alt="edit"
-              />
+              <el-dropdown class="flex-center" style="height: 24px">
+                <span class="el-dropdown-link" style="height: 24px; margin: 0">
+                  <img
+                    style="cursor: pointer"
+                    src="@/assets/icons/Dropdown.svg"
+                    alt="edit"
+                  />
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <NuxtLink :to="`/user/profile/${person.id}`">
+                      <el-dropdown-item>Edit</el-dropdown-item>
+                    </NuxtLink>
+                    <el-dropdown-item @click="handleDeleteUser(person.id)"
+                      >Delete</el-dropdown-item
+                    >
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
             </div>
           </td>
         </tr>

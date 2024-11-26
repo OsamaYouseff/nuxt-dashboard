@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import EyeSlash from "@/assets/icons/EyeSlash.svg";
 import EyeOpen from "@/assets/icons/EyeOpen.svg";
-import { useForm } from "vee-validate";
-import { toTypedSchema } from "@vee-validate/yup";
-import * as yup from "yup";
 import { setTokens } from "@/composables/auth";
 import type { LoginForm } from "@/types/LoginForm";
 import { LOGIN_USER_MUTATION } from "@/graphql/mutations/user";
+import { useForm } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/yup";
+import * as yup from "yup";
 
 useHead({ title: "Nuxt Dashboard | Register " });
 definePageMeta({ middleware: "un-auth" });
@@ -32,7 +32,7 @@ const { mutate: loginUser, loading, error } = useMutation(LOGIN_USER_MUTATION,
 // Validation
 const schema = toTypedSchema(
     yup.object({
-        email: yup.string().required().email(),
+        email: yup.string().required().email().trim(),
         password: yup.string().required().min(8),
     })
 );
@@ -53,6 +53,7 @@ const handleSignIn = handleSubmit(
 
             if (data.login.access_token && data.login.refresh_token) {
                 setTokens(data.login.access_token, data.login.refresh_token);
+                console.log(data.login)
                 console.log("Login successful");
                 navigateTo("/user/listings");
             }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import defaultImg from "@/assets/images/user2-img.png";
+import defaultImg from "@/assets/images/user2-img.jpg";
 
 
 
