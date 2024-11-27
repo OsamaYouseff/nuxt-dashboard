@@ -51,12 +51,10 @@ const [lastname, lastnameAttrs] = defineField("lastname", { validateOnModelUpdat
 const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false });
 const [password, passwordAttrs] = defineField("password", { validateOnModelUpdate: false });
 const [role, roleAttrs] = defineField("role", { validateOnModelUpdate: false });
-const [avatar, avatarAttrs] = defineField("avatar", { validateOnModelUpdate: false });
 
 
 
 const handleCreateUser = async () => {
-
   const {
     mutate: addUser,
   } = useMutation(CREATE_USER_MUTATION, () => ({
@@ -92,7 +90,7 @@ const handleEditUser = async () => {
   const { mutate: updateUser } = useMutation(UPDATE_USER_MUTATION, () => ({
     variables: {
       id: user.value?.id,
-      data: {
+      changes: {
         name: `${firstname.value} ${lastname.value}`,
         email: email.value,
         password: password.value,
@@ -118,22 +116,26 @@ const handleEditUser = async () => {
 }
 const handleUserActions = async () => {
 
+  // TODO: check if there any changes or not first 
+
+
+
   const isValid = await validate();
 
   if (!isValid) {
     console.log('Form has errors:', errors);
     return;
   }
-
   // handle uploading image
   const fileInput = document.querySelector("input[type=file]") as HTMLInputElement;
   const file = fileInput?.files?.[0];
 
-
-  // Upload image to Cloudinary
-  if (file || fileInput?.files?.length > 0) {
-    imageUrl.value = await uploadImage(file);
-  } else return
+  if (user.value.avatar !== imageUrl.value) {
+    // Upload image to Cloudinary
+    if (file || fileInput?.files?.length > 0) {
+      imageUrl.value = await uploadImage(file);
+    } else return
+  }
 
   if (userMode.value === "create") await handleCreateUser();
   else await handleEditUser();

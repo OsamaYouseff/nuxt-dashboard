@@ -1,8 +1,10 @@
 ## - link of mutaion https://apollo.vuejs.org/guide-composable/mutation.html#mutation-state
 
+00000 - check if there any changes or not first and then decide if you will make a request or not.
+
 1 - don't forget to put all the value of your cloudinary in .env file
 
-2 - don't forget to fix edit graphQl request.
+2 - don't forget to fix edit graphQl request. (done)
 
 3 - try to send the file info from custom input component not targeting it from DOM 
 

@@ -18,7 +18,6 @@ const triggerFileInput = () => {
 };
 const handleFileChange = (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
-
   if (files && files.length) {
     const file = files[0];
 
