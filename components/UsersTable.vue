@@ -21,7 +21,6 @@ const columns = [
     width: 140,
     label: "Name",
   },
-
   {
     key: "email",
     width: 160,

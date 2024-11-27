@@ -18,17 +18,12 @@ const langValue = ref<number>(2);
 const searchValue = ref<any>("");
 
 // Pagination Logic
-const pageInfo = reactive({
-  page: 1,
-  limit: 7,
-  totalPages: 1,
-});
-
+const pageInfo = reactive({ page: 1, limit: 7, totalPages: 1 });
 const from = ref<number>(((pageInfo.page - 1) * pageInfo.limit) | 1);
 const to = ref<number>((from.value + pageInfo.limit) | 1);
-const blockedUsersIds = ref<number[] | undefined>(
-  await JSON.parse(localStorage.getItem("blockedUsersIds")) ?? []
-);
+const blockedUsersIds = ref<number[]>(await JSON.parse(localStorage.getItem("blockedUsersIds")) ?? []);
+
+//// computed values
 let blockedUsers: User[] | any = computed(() => {
   from.value = (pageInfo.page - 1) * pageInfo.limit;
   to.value = from.value + pageInfo.limit;
@@ -59,17 +54,16 @@ const filterPaginatedUsers = computed(() => {
   }
 });
 
-/// handlers
 
+/// handlers
 //// language changing logic
 const changeLocale = (lang: any) => {
   locale.value = lang;
-
   const dir = lang === "ar" ? "rtl" : "ltr";
   document.documentElement.setAttribute("dir", dir);
-
   localStorage.setItem("locale", lang);
 };
+
 const handelChangeTab = (tab: string) => {
   pageInfo.page = 1;
   switch (tab) {

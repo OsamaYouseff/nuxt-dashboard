@@ -1,13 +1,10 @@
 ## - link of mutaion https://apollo.vuejs.org/guide-composable/mutation.html#mutation-state
 
-1 - make a validation for the forms (done)
+1 - don't forget to put all the value of your cloudinary in .env file
 
-2 - fix the images uploading in the file (done)
+2 - don't forget to fix edit graphQl request.
 
-3 - get rid of the haydation failure
+3 - try to send the file info from custom input component not targeting it from DOM 
 
-4 - add the link for other sections like home experts etc... (done)
-
-5 - 
-
+4 - implement the logic of adding form to fromData object.
 
