@@ -93,11 +93,11 @@ const checkedAllUsers = () => {
             minWidth: `${column.width}px`,
             maxWidth: `${column.width}px`,
           }">
-            <!-- Name -->
-            <div class="flex" v-if="column.key === 'name'" style="gap: 10px; justify-content: flex-start">
-              <CustomCheckBtn :checked="checkedAll" />
-              <NuxtLink :to="`/user/profile/${person.id}`" style="flex-grow: 1">
-                <div class="flex">
+            <a :href="`/user/profile/${person.id}`">
+              <!-- Name -->
+              <div class=" flex" v-if="column.key === 'name'" style="gap: 10px; justify-content: flex-start">
+                <CustomCheckBtn :checked="checkedAll" />
+                <div class="flex" style="flex-grow: 1">
                   <div v-if="!person.avatar.includes('lorem')" class="flex-center" style="
                       width: 40px;
                       height: 40px !important;
@@ -119,72 +119,60 @@ const checkedAllUsers = () => {
                     <p>U12367{{ person.id }}</p>
                   </div>
                 </div>
-              </NuxtLink>
-            </div>
+              </div>
+              <!-- Email -->
+              <div v-else-if="column.key === 'email'">
+                <p>{{ person.email }}</p>
+              </div>
 
-            <!-- Email -->
-            <div v-else-if="column.key === 'email'">
-              <NuxtLink :to="`/user/profile/${person.id}`" style="flex-grow: 1">
-                <p>
-                  {{ person.email }}
-                </p>
-              </NuxtLink>
-            </div>
-
-            <!-- Username -->
-            <div class="flex" v-else-if="column.key === 'username'" style="gap: 10px">
-              <NuxtLink :to="`/user/profile/${person.id}`">
+              <!-- Username -->
+              <div class="flex" v-else-if="column.key === 'username'" style="gap: 10px">
                 <p>@{{ person.name }}</p>
-              </NuxtLink>
-            </div>
+              </div>
 
-            <!-- Mobile Number -->
-            <div v-else-if="column.key === 'mobileNumber'">
-              <NuxtLink :to="`/user/profile/${person.id}`" style="flex-grow: 1">
+              <!-- Mobile Number -->
+              <div v-else-if="column.key === 'mobileNumber'">
                 <p>+20 1234567843</p>
-              </NuxtLink>
-            </div>
+              </div>
 
-            <!-- Region -->
-            <div v-else-if="column.key === 'region'">
-              <NuxtLink :to="`/user/profile/${person.id}`" style="flex-grow: 1">
+              <!-- Region -->
+              <div v-else-if="column.key === 'region'">
                 <p>Egypt, Cairo</p>
-              </NuxtLink>
-            </div>
+              </div>
 
-            <!-- Created At -->
-            <div v-else-if="column.key === 'creationAt'">
-              <NuxtLink :to="`/user/profile/${person.id}`" style="flex-grow: 1">
+              <!-- Created At -->
+              <div v-else-if="column.key === 'creationAt'">
                 <p>
                   {{
                     new Date(person.creationAt).toLocaleString().split(",")[0]
                   }}
                 </p>
-              </NuxtLink>
-            </div>
+              </div>
 
-            <!-- Actions -->
-            <div class="flex-center actions" style="gap: 10px" v-else-if="column.key === 'actions'">
-              <dir @click="toggleBlockUser(person.id)" class="block">
-                <img v-show="!props.blockedUsersIds.includes(person.id)" :src="block" alt="block-icon" />
-                <img v-show="props.blockedUsersIds.includes(person.id)" style="max-width: 18px" :src="unblock"
-                  alt="unblock-icon" />
-              </dir>
-              <el-dropdown class="flex-center edit-menu" style="height: 24px">
-                <span class="el-dropdown-link" style="height: 24px; margin: 0">
-                  <img style="cursor: pointer" src="@/assets/icons/Dropdown.svg" alt="edit" />
-                </span>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <NuxtLink :to="`/user/edit/${person.id}`">
-                      <el-dropdown-item>Edit</el-dropdown-item>
-                    </NuxtLink>
-                    <el-dropdown-item @click="handleDeleteUser(person.id)">
-                      Delete</el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </div>
+              <!-- Actions -->
+              <div class="flex-center actions" style="gap: 10px" v-else-if="column.key === 'actions'">
+                <dir @click="toggleBlockUser(person.id)" class="block">
+                  <img v-show="!props.blockedUsersIds.includes(person.id)" :src="block" alt="block-icon" />
+                  <img v-show="props.blockedUsersIds.includes(person.id)" style="max-width: 18px" :src="unblock"
+                    alt="unblock-icon" />
+                </dir>
+                <el-dropdown class="flex-center edit-menu" style="height: 24px">
+                  <span class="el-dropdown-link" style="height: 24px; margin: 0">
+                    <img style="cursor: pointer" src="@/assets/icons/Dropdown.svg" alt="edit" />
+                  </span>
+                  <template #dropdown>
+                    <el-dropdown-menu>
+                      <NuxtLink :to="`/user/edit/${person.id}`">
+                        <el-dropdown-item>Edit</el-dropdown-item>
+                      </NuxtLink>
+                      <el-dropdown-item @click="handleDeleteUser(person.id)">
+                        Delete</el-dropdown-item>
+                    </el-dropdown-menu>
+                  </template>
+                </el-dropdown>
+              </div>
+
+            </a>
           </td>
         </tr>
       </tbody>
