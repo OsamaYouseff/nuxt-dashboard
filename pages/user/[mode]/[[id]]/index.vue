@@ -15,6 +15,7 @@ definePageMeta({ layout: "dashboard", middleware: "auth" });
 const route = useRoute();
 const userMode = ref("create");
 const imageUrl = ref("");
+const imgFile = ref<File | null>(null);
 
 const GET_USER_QUERY = gql`
     query GetUser {
@@ -53,8 +54,30 @@ const [password, passwordAttrs] = defineField("password", { validateOnModelUpdat
 const [role, roleAttrs] = defineField("role", { validateOnModelUpdate: false });
 
 
+const isFormChanged = () => {
+  if (firstname.value !== user.value.name.split(" ")[0]) return true;
+  else if (lastname.value !== user.value.name.split(" ")[1]) return true;
+  else if (email.value !== user.value.email) return true;
+  else if (role.value !== user.value.role) return true;
+  else if (password.value !== user.value.password) return true;
+  else if (user.value.avatar !== imageUrl.value) return true;
+  return false;
+}
+const fillFormData = () => {
 
+  if (userMode.value === "create") return
+  firstname.value = user.value.name.split(" ")[0];
+  lastname.value = user.value.name.split(" ")[1];
+  email.value = user.value.email;
+  password.value = user.value.password;
+  role.value = user.value.role;
+  imageUrl.value = user.value.avatar;
+};
+
+
+// Form Handlers
 const handleCreateUser = async () => {
+
   const {
     mutate: addUser,
   } = useMutation(CREATE_USER_MUTATION, () => ({
@@ -70,8 +93,6 @@ const handleCreateUser = async () => {
       },
     },
   }));
-
-
   try {
     const result = await addUser();
     if (result) {
@@ -115,40 +136,34 @@ const handleEditUser = async () => {
 
 }
 const handleUserActions = async () => {
+  // check if there any changes or not in form 
+  if (!isFormChanged()) {
+    alert("No changes detected");
+    return;
+  }
 
-  // TODO: check if there any changes or not first 
-
-
-
+  // manual form validation
   const isValid = await validate();
-
   if (!isValid) {
     console.log('Form has errors:', errors);
     return;
   }
-  // handle uploading image
-  const fileInput = document.querySelector("input[type=file]") as HTMLInputElement;
-  const file = fileInput?.files?.[0];
 
+  // handle uploading image
+  // const fileInput = document.querySelector("input[type=file]") as HTMLInputElement;
+  // const file = fileInput?.files?.[0];
   if (user.value.avatar !== imageUrl.value) {
     // Upload image to Cloudinary
-    if (file || fileInput?.files?.length > 0) {
-      imageUrl.value = await uploadImage(file);
+    if (imgFile.value) {
+      imageUrl.value = await uploadImage(imgFile.value);
     } else return
   }
 
+  // invoke mutation
   if (userMode.value === "create") await handleCreateUser();
   else await handleEditUser();
 };
-const fillFormData = () => {
-  if (userMode.value === "create") return
-  firstname.value = user.value.name.split(" ")[0];
-  lastname.value = user.value.name.split(" ")[1];
-  email.value = user.value.email;
-  password.value = user.value.password;
-  role.value = user.value.role;
-  imageUrl.value = user.value.avatar;
-};
+
 
 // Watchers
 watchEffect(() => {
@@ -277,7 +292,8 @@ onMounted(async () => {
           <div class="flex-between">
             <label for="photo">Photo</label>
             <div class="input-container flex">
-              <CustomFileInput :currentImgUrl="imageUrl" />
+              <CustomFileInput :currentImgUrl="imageUrl" @update:currentImgUrl="imageUrl = $event"
+                @update:imgFile="imgFile = $event" />
               <ErrorMsg v-show="errors.avatar" :error="errors.avatar" />
             </div>
           </div>

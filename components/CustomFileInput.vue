@@ -13,6 +13,10 @@ const acceptedTypes = ["image/png", "image/jpeg", "image/jpg"];
 const fileInput = ref<HTMLInputElement | null>(null);
 const imageUrl = ref<string | null>(defaultImg);
 
+
+// custom emit
+
+const emit = defineEmits(["update:imgFile", "update:currentImgUrl"]);
 const triggerFileInput = () => {
   fileInput.value?.click();
 };
@@ -20,10 +24,13 @@ const handleFileChange = (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
   if (files && files.length) {
     const file = files[0];
-
     if (acceptedTypes.includes(file.type)) {
       console.log("Selected file:", file);
       imageUrl.value = URL.createObjectURL(file);
+
+      emit("update:imgFile", file);
+      emit("update:currentImgUrl", imageUrl.value);
+
     } else {
       alert("Selected file is not an image.");
     }
