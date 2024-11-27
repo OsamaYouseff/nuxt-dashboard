@@ -37,6 +37,14 @@ const handleFileChange = (event: Event) => {
   }
 };
 
+
+const handleDeleteImg = () => {
+  imageUrl.value = null;
+  emit("update:imgFile", null);
+  emit("update:currentImgUrl", imageUrl.value);
+}
+
+
 watch(
   () => props.currentImgUrl,
   (newUrl) => {

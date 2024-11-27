@@ -294,7 +294,7 @@ onMounted(async () => {
             <div class="input-container flex">
               <CustomFileInput :currentImgUrl="imageUrl" @update:currentImgUrl="imageUrl = $event"
                 @update:imgFile="imgFile = $event" />
-              <ErrorMsg v-show="errors.avatar" :error="errors.avatar" />
+              <ErrorMsg v-show="!imgFile && !imageUrl" :error="errors.avatar" />
             </div>
           </div>
         </form>
