@@ -40,22 +40,22 @@ const checkUserBlocked = (): boolean => {
   return false;
 };
 
-// Add watchers for debugging
-watch(result, (newResult: any) => {
+//// watchers
+watch(result, () => {
   checkUserBlocked();
 });
-
 onMounted(() => {
   if (user.value) {
     checkUserBlocked();
   }
 });
-
 watch(error, (newError: any) => {
   if (newError) {
     console.error("GraphQL error:", newError);
   }
+
 });
+
 </script>
 
 <template>
@@ -64,13 +64,10 @@ watch(error, (newError: any) => {
       <spinner v-if="loading" />
     </div>
 
-    <ErrorComponent
-      v-if="error"
-      :error="{
-        myMessage: 'Failed to Show User Profile',
-        apiMessage: error,
-      }"
-    />
+    <ErrorComponent v-if="error" :error="{
+      myMessage: 'Failed to Show User Profile',
+      apiMessage: error,
+    }" />
 
     <div class="container">
       <!-- header -->
@@ -78,11 +75,8 @@ watch(error, (newError: any) => {
         <div class="flex-between">
           <h1 style="font-weight: 600">Users</h1>
           <div class="btns flex" style="gap: 10px">
-            <button
-              @click="toggleBlockUser(user.id)"
-              class="block"
-              :style="{ background: !isUserBlocked ? '#673AB7' : '' }"
-            >
+            <button @click="toggleBlockUser(user.id)" class="block"
+              :style="{ background: !isUserBlocked ? '#673AB7' : '' }">
               <img src="@/assets/icons/block2.svg" alt="block-icon" />
               {{ isUserBlocked ? "Unblock" : "Block" }}
             </button>
@@ -91,25 +85,16 @@ watch(error, (newError: any) => {
               delete
             </button>
             <button style="padding: 0px">
-              <el-dropdown
-                style="width: 100%; height: 100%; padding: 10px"
-                class="flex-center"
-              >
+              <el-dropdown class="flex-center edit-menu" style="width: 100%; height: 100%; padding: 10px; ">
                 <span class="el-dropdown-link">
-                  <img
-                    style="cursor: pointer"
-                    src="@/assets/icons/Dropdown.svg"
-                    alt="edit"
-                  />
+                  <img style="cursor: pointer" src="@/assets/icons/Dropdown.svg" alt="edit" />
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
                     <NuxtLink :to="`/user/edit/${user.id}`">
                       <el-dropdown-item>Edit</el-dropdown-item>
                     </NuxtLink>
-                    <el-dropdown-item @click="handleDeleteUser(user.id)"
-                      >Delete</el-dropdown-item
-                    >
+                    <el-dropdown-item @click="handleDeleteUser(user.id)">Delete</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>
@@ -119,10 +104,7 @@ watch(error, (newError: any) => {
       </header>
 
       <!-- Nav path -->
-      <div
-        class="nav-path flex"
-        style="gap: 10px; margin-bottom: 20px; color: #101828"
-      >
+      <div class="nav-path flex" style="gap: 10px; margin-bottom: 20px; color: #101828">
         <NuxtLink to="/user/listings">Users</NuxtLink>
         <img src="@/assets/icons/next-arrow.svg" alt="next-icon" />
         <NuxtLink style="cursor: pointer;">User Profile</NuxtLink>
@@ -130,34 +112,14 @@ watch(error, (newError: any) => {
 
       <!-- Profile Header -->
       <div class="profile-header flex" style="gap: 20px; margin-bottom: 20px">
-        <div
-          class="img-container flex-center"
-          style="width: 101px; height: 101px"
-        >
-          <img
-            v-if="!user?.avatar?.includes('lorem') || !user?.avatar"
-            :src="user?.avatar"
-            alt="user-img"
-            style="width: 100%; height: 100%; border-radius: 50%"
-          />
-          <CustomImg
-            style="margin: 0; scale: 2.4"
-            :username="user.name"
-            v-else
-          />
+        <div class="img-container flex-center" style="width: 101px; height: 101px">
+          <img v-if="!user?.avatar?.includes('lorem') || !user?.avatar" :src="user?.avatar" alt="user-img"
+            style="width: 100%; height: 100%; border-radius: 50%" />
+          <CustomImg style="margin: 0; scale: 2.4" :username="user.name" v-else />
         </div>
         <div>
-          <h2
-            class="flex"
-            style="gap: 10px"
-            :class="{ blocked: isUserBlocked }"
-          >
-            <img
-              v-if="isUserBlocked"
-              style="width: 23px"
-              src="@/assets/icons/block3.svg"
-              alt="block-icon"
-            />
+          <h2 class="flex" style="gap: 10px" :class="{ blocked: isUserBlocked }">
+            <img v-if="isUserBlocked" style="width: 23px" src="@/assets/icons/block3.svg" alt="block-icon" />
             {{ user?.name }}
           </h2>
           <p style="font-size: 18px" :class="{ blocked: isUserBlocked }">
@@ -187,30 +149,15 @@ watch(error, (newError: any) => {
         <form @click.prevent="">
           <div style="margin-top: 20px">
             <label for="name">Name</label>
-            <input
-              :disabled="!editMode"
-              type="text"
-              placeholder="Your name"
-              :value="user?.name"
-            />
+            <input :disabled="!editMode" type="text" placeholder="Your name" :value="user?.name" />
           </div>
           <div style="margin-top: 20px">
             <label for="name">Email address</label>
-            <input
-              :disabled="!editMode"
-              type="emil"
-              placeholder="Your Email address"
-              :value="user?.email"
-            />
+            <input :disabled="!editMode" type="emil" placeholder="Your Email address" :value="user?.email" />
           </div>
           <div style="margin-top: 20px">
             <label for="name">Role</label>
-            <input
-              :disabled="!editMode"
-              type="text"
-              placeholder="Your Role"
-              :value="user?.role"
-            />
+            <input :disabled="!editMode" type="text" placeholder="Your Role" :value="user?.role" />
           </div>
         </form>
       </div>

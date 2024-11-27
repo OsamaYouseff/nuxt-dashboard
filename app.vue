@@ -67,4 +67,8 @@ button {
     justify-content: space-between;
     align-items: center;
 }
+
+.edit-menu:focus-within {
+    outline: none;
+}
 </style>

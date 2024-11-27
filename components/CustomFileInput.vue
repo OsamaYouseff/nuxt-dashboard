@@ -8,6 +8,8 @@ const props = defineProps({
   },
 });
 
+
+const acceptedTypes = ["image/png", "image/jpeg", "image/jpg"];
 const fileInput = ref<HTMLInputElement | null>(null);
 const imageUrl = ref<string | null>(defaultImg);
 
@@ -16,10 +18,16 @@ const triggerFileInput = () => {
 };
 const handleFileChange = (event: Event) => {
   const files = (event.target as HTMLInputElement).files;
+
   if (files && files.length) {
     const file = files[0];
-    console.log("Selected file:", file);
-    imageUrl.value = URL.createObjectURL(file);
+
+    if (acceptedTypes.includes(file.type)) {
+      console.log("Selected file:", file);
+      imageUrl.value = URL.createObjectURL(file);
+    } else {
+      alert("Selected file is not an image.");
+    }
   }
 };
 
@@ -34,27 +42,13 @@ watch(
 <template>
   <div class="flex" style="gap: 1.25rem; width: 32rem">
     <div class="img-container">
-      <img
-        v-if="imageUrl"
-        style="width: 100%; height: 100%; border-radius: 50%"
-        :src="imageUrl"
-        alt=""
-      />
-      <span
-        v-if="imageUrl"
-        class="delete-btn flex-center"
-        @click="imageUrl = null"
-      >
+      <img v-if="imageUrl" style="width: 100%; height: 100%; border-radius: 50%" :src="imageUrl" alt="" />
+      <span v-if="imageUrl" class="delete-btn flex-center" @click="imageUrl = null">
         <img src="@/assets/icons/delete.svg" alt="" />
       </span>
     </div>
     <div class="upload-wrapper" @click="triggerFileInput">
-      <input
-        type="file"
-        ref="fileInput"
-        @change="handleFileChange"
-        class="file-input"
-      />
+      <input type="file" ref="fileInput" @change="handleFileChange" class="file-input" />
       <div class="upload-content flex-col-center">
         <span class="upload-icon flex-center">
           <img src="@/assets/icons/upload-icon.svg" alt="upload-icon" />

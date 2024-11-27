@@ -72,22 +72,13 @@ const checkedAllUsers = () => {
     <!-- Header -->
     <div class="flex-between" style="padding: 0 10px; margin-bottom: 10px">
       <h2 style="font-size: 18px; font-weight: 500">All Users</h2>
-      <img
-        style="cursor: pointer"
-        src="@/assets/icons/Dropdown.svg"
-        alt="edit"
-      />
+      <img style="cursor: pointer" src="@/assets/icons/Dropdown.svg" alt="edit" />
     </div>
     <!-- Table -->
     <table key="users-table">
       <thead class="table-header">
         <tr>
-          <th
-            :class="{ flex: column.key === 'name' }"
-            style="gap: 20px"
-            v-for="column in columns"
-            :key="column.key"
-          >
+          <th :class="{ flex: column.key === 'name' }" style="gap: 20px" v-for="column in columns" :key="column.key">
             <div v-if="column.key === 'name'">
               <CustomCheckBtn @click="checkedAllUsers" :checked="checkedAll" />
             </div>
@@ -98,43 +89,27 @@ const checkedAllUsers = () => {
 
       <tbody>
         <tr v-for="person in props.users" :key="person.id">
-          <td
-            v-for="column in columns"
-            :key="column.key"
-            :style="{
-              minWidth: `${column.width}px`,
-              maxWidth: `${column.width}px`,
-            }"
-          >
+          <td v-for="column in columns" :key="column.key" :style="{
+            minWidth: `${column.width}px`,
+            maxWidth: `${column.width}px`,
+          }">
             <!-- Name -->
-            <div
-              class="flex"
-              v-if="column.key === 'name'"
-              style="gap: 10px; justify-content: flex-start"
-            >
+            <div class="flex" v-if="column.key === 'name'" style="gap: 10px; justify-content: flex-start">
               <CustomCheckBtn :checked="checkedAll" />
               <NuxtLink :to="`/user/profile/${person.id}`" style="flex-grow: 1">
                 <div class="flex">
-                  <div
-                    v-if="!person.avatar.includes('lorem')"
-                    class="flex-center"
-                    style="
+                  <div v-if="!person.avatar.includes('lorem')" class="flex-center" style="
                       width: 40px;
                       height: 40px !important;
                       border-radius: 50%;
                       margin-right: 5px;
                       background: #00000014;
-                    "
-                  >
-                    <img
-                      style="
+                    ">
+                    <img style="
                         max-width: 100%;
                         max-height: 40px;
                         border-radius: 50%;
-                      "
-                      :src="person.avatar"
-                      alt="user-img"
-                    />
+                      " :src="person.avatar" alt="user-img" />
                   </div>
 
                   <CustomImg v-else :username="person.name" />
@@ -157,11 +132,7 @@ const checkedAllUsers = () => {
             </div>
 
             <!-- Username -->
-            <div
-              class="flex"
-              v-else-if="column.key === 'username'"
-              style="gap: 10px"
-            >
+            <div class="flex" v-else-if="column.key === 'username'" style="gap: 10px">
               <NuxtLink :to="`/user/profile/${person.id}`">
                 <p>@{{ person.name }}</p>
               </NuxtLink>
@@ -193,31 +164,15 @@ const checkedAllUsers = () => {
             </div>
 
             <!-- Actions -->
-            <div
-              class="flex-center actions"
-              style="gap: 10px"
-              v-else-if="column.key === 'actions'"
-            >
+            <div class="flex-center actions" style="gap: 10px" v-else-if="column.key === 'actions'">
               <dir @click="toggleBlockUser(person.id)" class="block">
-                <img
-                  v-show="!props.blockedUsersIds.includes(person.id)"
-                  :src="block"
-                  alt="block-icon"
-                />
-                <img
-                  v-show="props.blockedUsersIds.includes(person.id)"
-                  style="max-width: 18px"
-                  :src="unblock"
-                  alt="unblock-icon"
-                />
+                <img v-show="!props.blockedUsersIds.includes(person.id)" :src="block" alt="block-icon" />
+                <img v-show="props.blockedUsersIds.includes(person.id)" style="max-width: 18px" :src="unblock"
+                  alt="unblock-icon" />
               </dir>
-              <el-dropdown class="flex-center" style="height: 24px">
+              <el-dropdown class="flex-center edit-menu" style="height: 24px">
                 <span class="el-dropdown-link" style="height: 24px; margin: 0">
-                  <img
-                    style="cursor: pointer"
-                    src="@/assets/icons/Dropdown.svg"
-                    alt="edit"
-                  />
+                  <img style="cursor: pointer" src="@/assets/icons/Dropdown.svg" alt="edit" />
                 </span>
                 <template #dropdown>
                   <el-dropdown-menu>
@@ -225,8 +180,7 @@ const checkedAllUsers = () => {
                       <el-dropdown-item>Edit</el-dropdown-item>
                     </NuxtLink>
                     <el-dropdown-item @click="handleDeleteUser(person.id)">
-                      Delete</el-dropdown-item
-                    >
+                      Delete</el-dropdown-item>
                   </el-dropdown-menu>
                 </template>
               </el-dropdown>

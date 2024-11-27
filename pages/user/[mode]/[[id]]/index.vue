@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import {
-  CREATE_USER_MUTATION,
-  UPDATE_USER_MUTATION,
-} from "@/graphql/mutations/user";
+import { CREATE_USER_MUTATION, UPDATE_USER_MUTATION } from "@/graphql/mutations/user";
 import { useMutation } from "@vue/apollo-composable";
 import type { UserForm } from "@/types/UserForm";
 import { uploadImage } from "~/composables/useCloudinary";
@@ -16,7 +13,10 @@ useHead({ title: "Dashboard | Create User" });
 definePageMeta({ layout: "dashboard", middleware: "auth" });
 
 const route = useRoute();
-const USER_QUERY = gql`
+const userMode = ref("create");
+const imageUrl = ref("");
+
+const GET_USER_QUERY = gql`
     query GetUser {
         user (id: ${route.params.id || 1}) {
             id
@@ -30,10 +30,9 @@ const USER_QUERY = gql`
         }
     }
 `;
-
-const { result, loading, error } = useQuery(USER_QUERY);
-
+const { result, loading, error } = useQuery(GET_USER_QUERY);
 const user = computed(() => result?.value?.user);
+
 
 // Validation Schema
 const schema = toTypedSchema(
@@ -43,94 +42,23 @@ const schema = toTypedSchema(
     email: yup.string().email().required().trim(),
     password: yup.string().required().min(8),
     role: yup.string().required().trim(),
-    avatar: yup.string(),
+    avatar: yup.string().required().trim(),
   })
 );
-const { errors, defineField, resetForm, handleSubmit } = useForm<UserForm>({
-  validationSchema: schema,
-});
-const [firstname, firstnameAttrs] = defineField("firstname", {
-  validateOnModelUpdate: false,
-});
-const [lastname, lastnameAttrs] = defineField("lastname", {
-  validateOnModelUpdate: false,
-});
-const [email, emailAttrs] = defineField("email", {
-  validateOnModelUpdate: false,
-});
-const [password, passwordAttrs] = defineField("password", {
-  validateOnModelUpdate: false,
-});
+const { errors, defineField, resetForm, validate } = useForm<UserForm>({ validationSchema: schema });
+const [firstname, firstnameAttrs] = defineField("firstname", { validateOnModelUpdate: false });
+const [lastname, lastnameAttrs] = defineField("lastname", { validateOnModelUpdate: false });
+const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false });
+const [password, passwordAttrs] = defineField("password", { validateOnModelUpdate: false });
 const [role, roleAttrs] = defineField("role", { validateOnModelUpdate: false });
+const [avatar, avatarAttrs] = defineField("avatar", { validateOnModelUpdate: false });
 
-// Cloudinary image URL ref
-const imageUrl = ref("");
-const userMode = ref("create");
 
-// Handle form submission and image upload
-// const handleCreateUser = handleSubmit(async () => {
-//   const fileInput = document.querySelector(
-//     "input[type=file]"
-//   ) as HTMLInputElement;
-//   const file = fileInput?.files?.[0];
-
-//   // Upload image to Cloudinary
-//   if (file) {
-//     imageUrl.value = await uploadImage(file);
-//   }
-
-//   // GraphQL Mutation
-//   const {
-//     mutate: addUser,
-//     loading,
-//     error,
-//   } = useMutation(CREATE_USER_MUTATION, () => ({
-//     variables: {
-//       data: {
-//         name: `${firstname.value} ${lastname.value}`,
-//         email: email.value,
-//         password: password.value,
-//         role: role.value || "customer",
-//         avatar:
-//           imageUrl.value ||
-//           "https://e7.pngegg.com/pngimages/81/570/png-clipart-profile-logo-computer-icons-user-user-blue-heroes-thumbnail.png",
-//       },
-//     },
-//   }));
-
-//   try {
-//     const result = await addUser();
-//     if (result) {
-//       console.log("User added successfully", result);
-//       resetForm();
-//       alert("User has been created successfully");
-//       navigateTo("/user/listings");
-//     }
-//   } catch (err) {
-//     console.error("Error creating user:", err);
-//   }
-// });
 
 const handleCreateUser = async () => {
-  const fileInput = document.querySelector(
-    "input[type=file]"
-  ) as HTMLInputElement;
-  const file = fileInput?.files?.[0];
-
-  // Upload image to Cloudinary
-  if (file) {
-    imageUrl.value = await uploadImage(file);
-  }
-  // Proceed with creating the user after the image upload completes
-  if (!firstname.value || !lastname.value || !email.value || !password.value) {
-    alert("Please fill in all fields");
-    return;
-  }
 
   const {
     mutate: addUser,
-    loading,
-    error,
   } = useMutation(CREATE_USER_MUTATION, () => ({
     variables: {
       data: {
@@ -144,6 +72,23 @@ const handleCreateUser = async () => {
       },
     },
   }));
+
+
+  try {
+    const result = await addUser();
+    if (result) {
+      console.log("User added successfully", result);
+      alert("User has been created successfully");
+      // navigateTo("/user/listings");
+      window.location.href = "/user/listings";
+    }
+  } catch (err) {
+    console.error("Error creating user:", err);
+  }
+
+
+}
+const handleEditUser = async () => {
   const { mutate: updateUser } = useMutation(UPDATE_USER_MUTATION, () => ({
     variables: {
       id: user.value?.id,
@@ -158,32 +103,43 @@ const handleCreateUser = async () => {
       },
     },
   }));
-  if (userMode.value === "create") {
-    try {
-      const result = await addUser();
-      if (result) {
-        console.log("User added successfully", result);
-        alert("User has been created successfully");
-        navigateTo("/user/listings");
-      }
-    } catch (err) {
-      console.error("Error creating user:", err);
-    }
-  } else {
-    try {
-      const result = await updateUser();
-      if (result) {
-        console.log("User updated successfully", result);
-        alert("User has been updated successfully");
-        navigateTo("/user/listings");
-      }
-    } catch (err) {
-      console.error("Error updating user:", err);
-    }
-  }
-};
 
+  try {
+    const result = await updateUser();
+    if (result) {
+      console.log("User updated successfully", result);
+      alert("User has been updated successfully");
+      navigateTo("/user/listings");
+    }
+  } catch (err) {
+    console.error("Error updating user:", err);
+  }
+
+}
+const handleUserActions = async () => {
+
+  const isValid = await validate();
+
+  if (!isValid) {
+    console.log('Form has errors:', errors);
+    return;
+  }
+
+  // handle uploading image
+  const fileInput = document.querySelector("input[type=file]") as HTMLInputElement;
+  const file = fileInput?.files?.[0];
+
+
+  // Upload image to Cloudinary
+  if (file || fileInput?.files?.length > 0) {
+    imageUrl.value = await uploadImage(file);
+  } else return
+
+  if (userMode.value === "create") await handleCreateUser();
+  else await handleEditUser();
+};
 const fillFormData = () => {
+  if (userMode.value === "create") return
   firstname.value = user.value.name.split(" ")[0];
   lastname.value = user.value.name.split(" ")[1];
   email.value = user.value.email;
@@ -192,13 +148,12 @@ const fillFormData = () => {
   imageUrl.value = user.value.avatar;
 };
 
-// Watch for errors
+// Watchers
 watchEffect(() => {
   if (error.value) {
     console.error("Mutation error:", error.value);
   }
 });
-
 watch(result, (newResult: any) => {
   if (newResult) {
     fillFormData();
@@ -206,8 +161,7 @@ watch(result, (newResult: any) => {
 });
 
 onMounted(async () => {
-  const mode = useRoute().params.mode;
-
+  const mode = route.params.mode;
   if (mode === "create") {
     userMode.value = "create";
     resetForm();
@@ -225,10 +179,7 @@ onMounted(async () => {
   <div class="content-wrapper">
     <spinner v-if="loading" />
 
-    <ErrorComponent
-      v-if="error"
-      :error="{ myMessage: 'Failed to Create User', apiMessage: error }"
-    />
+    <ErrorComponent v-if="error" :error="{ myMessage: 'Failed to Create User', apiMessage: error }" />
 
     <div class="container">
       <!-- header -->
@@ -239,49 +190,39 @@ onMounted(async () => {
       </header>
 
       <!-- Nav path -->
-      <div
-        class="nav-path flex"
-        style="gap: 0.625rem; margin-bottom: 1.25rem; color: #101828"
-      >
+      <div class="nav-path flex" style="gap: 0.625rem; margin-bottom: 1.25rem; color: #101828">
         <NuxtLink to="/user/listings">Users</NuxtLink>
         <img src="@/assets/icons/next-arrow.svg" alt="next-icon" />
         <NuxtLink :to="`/user/${userMode}`">{{ userMode }} user</NuxtLink>
       </div>
 
       <!-- Profile form -->
-      <div class="profile-form" @submit.prevent="handleCreateUser">
-        <div
-          class="flex-between"
-          style="border-bottom: 1px solid #eaeaea; padding-bottom: 20px"
-        >
+      <div class="profile-form">
+        <div class="flex-between" style="border-bottom: 1px solid #eaeaea; padding-bottom: 20px">
           <!-- Control Form -->
           <div class="control flex-between">
             <div>
-              <h2
-                style="
+              <h2 style="
                   font-weight: 500;
                   font-size: 1.125rem;
                   margin-bottom: 0.375rem;
-                "
-              >
+                ">
                 Add user account
               </h2>
-              <p
-                style="
+              <p style="
                   font-size: 0.875rem;
                   font-weight: 400;
                   line-height: 1.05rem;
                   color: #858589;
                   min-width: 200px;
-                "
-              >
+                ">
                 Add photo and personal details here
               </p>
             </div>
           </div>
           <div class="flex" style="gap: 0.625rem; justify-content: flex-end">
             <button @click="(e) => resetForm()">Rest</button>
-            <button @click="handleCreateUser" class="add-user">
+            <button @click="handleUserActions" class="add-user">
               {{ userMode }}
             </button>
           </div>
@@ -294,24 +235,13 @@ onMounted(async () => {
             <label for="name">Name</label>
             <div class="flex-between" style="gap: 0.625rem; width: 32rem">
               <div class="input-container flex">
-                <input
-                  v-model="firstname"
-                  v-bind="firstnameAttrs"
-                  type="text"
-                  id="firstname"
-                  placeholder="First Name"
-                />
+                <input v-model="firstname" v-bind="firstnameAttrs" type="text" id="firstname"
+                  placeholder="First Name" />
                 <ErrorMsg v-show="errors.firstname" :error="errors.firstname" />
               </div>
 
               <div class="input-container flex">
-                <input
-                  v-model="lastname"
-                  v-bind="lastnameAttrs"
-                  type="text"
-                  id="lastname"
-                  placeholder="Last Name"
-                />
+                <input v-model="lastname" v-bind="lastnameAttrs" type="text" id="lastname" placeholder="Last Name" />
                 <ErrorMsg v-show="errors.lastname" :error="errors.lastname" />
               </div>
             </div>
@@ -321,13 +251,7 @@ onMounted(async () => {
           <div class="flex-between">
             <label for="email">Email address</label>
             <div class="input-container flex">
-              <input
-                v-model="email"
-                v-bind="emailAttrs"
-                type="email"
-                id="email"
-                placeholder="Email Address"
-              />
+              <input v-model="email" v-bind="emailAttrs" type="email" id="email" placeholder="Email Address" />
               <ErrorMsg v-show="errors.email" :error="errors.email" />
             </div>
           </div>
@@ -336,13 +260,7 @@ onMounted(async () => {
           <div class="flex-between">
             <label for="password">Password</label>
             <div class="input-container flex">
-              <input
-                v-model="password"
-                v-bind="passwordAttrs"
-                type="password"
-                id="password"
-                placeholder="Password"
-              />
+              <input v-model="password" v-bind="passwordAttrs" type="password" id="password" placeholder="Password" />
               <ErrorMsg v-show="errors.password" :error="errors.password" />
             </div>
           </div>
@@ -350,27 +268,23 @@ onMounted(async () => {
           <!-- Role -->
           <div class="flex-between">
             <label for="role">Role</label>
-            <input
-              disabled
-              v-model="role"
-              v-bind="roleAttrs"
-              type="text"
-              id="role"
-              placeholder="customer"
-            />
+            <input disabled v-model="role" v-bind="roleAttrs" type="text" id="role" placeholder="customer" />
           </div>
 
           <!-- Photo -->
           <div class="flex-between">
             <label for="photo">Photo</label>
-            <CustomFileInput :currentImgUrl="imageUrl" />
+            <div class="input-container flex">
+              <CustomFileInput :currentImgUrl="imageUrl" />
+              <ErrorMsg v-show="errors.avatar" :error="errors.avatar" />
+            </div>
           </div>
         </form>
         <div class="flex-between" style="margin-top: 6.25rem; width: 100%">
           <span></span>
           <div class="flex" style="gap: 0.625rem">
             <button @click="() => resetForm()">Rest</button>
-            <button @click="handleCreateUser" class="add-user">
+            <button @click="handleUserActions" class="add-user">
               {{ userMode }}
             </button>
           </div>
@@ -450,7 +364,7 @@ input:not([type="file"]) {
   outline: none;
 }
 
-.input-wrapper > input:focus {
+.input-wrapper>input:focus {
   border: 0.125rem solid var(--secondary-color);
 }
 

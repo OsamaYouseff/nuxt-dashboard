@@ -26,8 +26,8 @@ const pageInfo = reactive({
 
 const from = ref<number>(((pageInfo.page - 1) * pageInfo.limit) | 1);
 const to = ref<number>((from.value + pageInfo.limit) | 1);
-const blockedUsersIds = ref(
-  (await JSON.parse(localStorage.getItem("blockedUsersIds"))) ?? []
+const blockedUsersIds = ref<number[] | undefined>(
+  await JSON.parse(localStorage.getItem("blockedUsersIds")) ?? []
 );
 let blockedUsers: User[] | any = computed(() => {
   from.value = (pageInfo.page - 1) * pageInfo.limit;
@@ -165,19 +165,9 @@ onMounted(() => {
             </button>
           </nuxt-link>
 
-          <div
-            class="flex-center"
-            style="gap: 5px; font-weight: bolder; cursor: pointer"
-          >
-            <span
-              @click="handleLocaleChange('en')"
-              v-if="locale === 'ar'"
-              class="lang-icon"
-              >EN</span
-            >
-            <span @click="handleLocaleChange('ar')" v-else class="lang-icon"
-              >AR</span
-            >
+          <div class="flex-center" style="gap: 5px; font-weight: bolder; cursor: pointer">
+            <span @click="handleLocaleChange('en')" v-if="locale === 'ar'" class="lang-icon">EN</span>
+            <span @click="handleLocaleChange('ar')" v-else class="lang-icon">AR</span>
             <!-- <el-switch
               v-model="langValue"
               class="ml-2"
@@ -195,13 +185,10 @@ onMounted(() => {
       <spinner />
     </div>
 
-    <ErrorComponent
-      v-else-if="error"
-      :error="{
-        myMessage: 'Failed to show users Information',
-        apiMessage: error,
-      }"
-    />
+    <ErrorComponent v-else-if="error" :error="{
+      myMessage: 'Failed to show users Information',
+      apiMessage: error,
+    }" />
 
     <div v-else>
       <!-- Nav path -->
@@ -213,16 +200,8 @@ onMounted(() => {
       <div class="users-table">
         <!-- Tabs -->
         <div class="tabs flex">
-          <span
-            @click="handelChangeTab('active')"
-            :class="{ active: currentTab == 'active' }"
-            >Active Users</span
-          >
-          <span
-            @click="handelChangeTab('blocked')"
-            :class="{ active: currentTab == 'blocked' }"
-            >Blocked Users</span
-          >
+          <span @click="handelChangeTab('active')" :class="{ active: currentTab == 'active' }">Active Users</span>
+          <span @click="handelChangeTab('blocked')" :class="{ active: currentTab == 'blocked' }">Blocked Users</span>
         </div>
 
         <!-- Filters -->
@@ -242,12 +221,8 @@ onMounted(() => {
 
         <!-- Table -->
         <div class="users-list" style="overflow: auto">
-          <UsersTable
-            :users="filterPaginatedUsers"
-            :blockedUsers="blockedUsers"
-            :blockedUsersIds="blockedUsersIds"
-            :pageInfo="pageInfo"
-          />
+          <UsersTable :users="filterPaginatedUsers" :blockedUsers="blockedUsers" :blockedUsersIds="blockedUsersIds"
+            :pageInfo="pageInfo" />
 
           <div v-if="loading" style="width: 88vw; position: relative">
             <spinner />
