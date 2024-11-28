@@ -6,7 +6,6 @@
 
 2 - don't forget to fix edit graphQl request. (done)
 
-3 - try to send the file info from custom input component not targeting it from DOM 
+3 - try to send the file info from custom input component not targeting it from DOM (done)
 
 4 - implement the logic of adding form to fromData object.
-
