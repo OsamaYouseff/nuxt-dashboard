@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { CREATE_USER_MUTATION, UPDATE_USER_MUTATION } from "@/graphql/mutations/user";
+import {
+  CREATE_USER_MUTATION,
+  UPDATE_USER_MUTATION,
+} from "@/graphql/mutations/user";
 import { useMutation } from "@vue/apollo-composable";
 import type { UserForm } from "@/types/UserForm";
 import { uploadImage } from "~/composables/useCloudinary";
@@ -14,7 +17,7 @@ definePageMeta({ layout: "dashboard", middleware: "auth" });
 
 const route = useRoute();
 const userMode = ref("create");
-const imageUrl = ref("");
+const imageUrl = ref(null);
 const imgFile = ref<File | null>(null);
 
 const GET_USER_QUERY = gql`
@@ -34,7 +37,6 @@ const GET_USER_QUERY = gql`
 const { result, loading, error } = useQuery(GET_USER_QUERY);
 const user = computed(() => result?.value?.user);
 
-
 // Validation Schema
 const schema = toTypedSchema(
   yup.object({
@@ -46,13 +48,22 @@ const schema = toTypedSchema(
     avatar: yup.string().required().trim(),
   })
 );
-const { errors, defineField, resetForm, validate } = useForm<UserForm>({ validationSchema: schema });
-const [firstname, firstnameAttrs] = defineField("firstname", { validateOnModelUpdate: false });
-const [lastname, lastnameAttrs] = defineField("lastname", { validateOnModelUpdate: false });
-const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false });
-const [password, passwordAttrs] = defineField("password", { validateOnModelUpdate: false });
+const { errors, defineField, resetForm, validate } = useForm<UserForm>({
+  validationSchema: schema,
+});
+const [firstname, firstnameAttrs] = defineField("firstname", {
+  validateOnModelUpdate: false,
+});
+const [lastname, lastnameAttrs] = defineField("lastname", {
+  validateOnModelUpdate: false,
+});
+const [email, emailAttrs] = defineField("email", {
+  validateOnModelUpdate: false,
+});
+const [password, passwordAttrs] = defineField("password", {
+  validateOnModelUpdate: false,
+});
 const [role, roleAttrs] = defineField("role", { validateOnModelUpdate: false });
-
 
 const isFormChanged = () => {
   if (firstname.value !== user.value.name.split(" ")[0]) return true;
@@ -62,10 +73,9 @@ const isFormChanged = () => {
   else if (password.value !== user.value.password) return true;
   else if (user.value.avatar !== imageUrl.value) return true;
   return false;
-}
+};
 const fillFormData = () => {
-
-  if (userMode.value === "create") return
+  if (userMode.value === "create") return;
   firstname.value = user.value.name.split(" ")[0];
   lastname.value = user.value.name.split(" ")[1];
   email.value = user.value.email;
@@ -74,13 +84,9 @@ const fillFormData = () => {
   imageUrl.value = user.value.avatar;
 };
 
-
 // Form Handlers
 const handleCreateUser = async () => {
-
-  const {
-    mutate: addUser,
-  } = useMutation(CREATE_USER_MUTATION, () => ({
+  const { mutate: addUser } = useMutation(CREATE_USER_MUTATION, () => ({
     variables: {
       data: {
         name: `${firstname.value} ${lastname.value}`,
@@ -104,9 +110,7 @@ const handleCreateUser = async () => {
   } catch (err) {
     console.error("Error creating user:", err);
   }
-
-
-}
+};
 const handleEditUser = async () => {
   const { mutate: updateUser } = useMutation(UPDATE_USER_MUTATION, () => ({
     variables: {
@@ -133,10 +137,9 @@ const handleEditUser = async () => {
   } catch (err) {
     console.error("Error updating user:", err);
   }
-
-}
+};
 const handleUserActions = async () => {
-  // check if there any changes or not in form 
+  // check if there any changes or not in form
   if (!isFormChanged()) {
     alert("No changes detected");
     return;
@@ -145,7 +148,7 @@ const handleUserActions = async () => {
   // manual form validation
   const isValid = await validate();
   if (!isValid) {
-    console.log('Form has errors:', errors);
+    console.log("Form has errors:", errors);
     return;
   }
 
@@ -156,14 +159,13 @@ const handleUserActions = async () => {
     // Upload image to Cloudinary
     if (imgFile.value) {
       imageUrl.value = await uploadImage(imgFile.value);
-    } else return
+    } else return;
   }
 
   // invoke mutation
   if (userMode.value === "create") await handleCreateUser();
   else await handleEditUser();
 };
-
 
 // Watchers
 watchEffect(() => {
@@ -196,7 +198,10 @@ onMounted(async () => {
   <div class="content-wrapper">
     <spinner v-if="loading" />
 
-    <ErrorComponent v-if="error" :error="{ myMessage: 'Failed to Create User', apiMessage: error }" />
+    <ErrorComponent
+      v-if="error"
+      :error="{ myMessage: 'Failed to Create User', apiMessage: error }"
+    />
 
     <div class="container">
       <!-- header -->
@@ -207,7 +212,10 @@ onMounted(async () => {
       </header>
 
       <!-- Nav path -->
-      <div class="nav-path flex" style="gap: 0.625rem; margin-bottom: 1.25rem; color: #101828">
+      <div
+        class="nav-path flex"
+        style="gap: 0.625rem; margin-bottom: 1.25rem; color: #101828"
+      >
         <NuxtLink to="/user/listings">Users</NuxtLink>
         <img src="@/assets/icons/next-arrow.svg" alt="next-icon" />
         <NuxtLink :to="`/user/${userMode}`">{{ userMode }} user</NuxtLink>
@@ -215,24 +223,31 @@ onMounted(async () => {
 
       <!-- Profile form -->
       <div class="profile-form">
-        <div class="flex-between" style="border-bottom: 1px solid #eaeaea; padding-bottom: 20px">
+        <div
+          class="flex-between"
+          style="border-bottom: 1px solid #eaeaea; padding-bottom: 20px"
+        >
           <!-- Control Form -->
           <div class="control flex-between">
             <div>
-              <h2 style="
+              <h2
+                style="
                   font-weight: 500;
                   font-size: 1.125rem;
                   margin-bottom: 0.375rem;
-                ">
+                "
+              >
                 Add user account
               </h2>
-              <p style="
+              <p
+                style="
                   font-size: 0.875rem;
                   font-weight: 400;
                   line-height: 1.05rem;
                   color: #858589;
                   min-width: 200px;
-                ">
+                "
+              >
                 Add photo and personal details here
               </p>
             </div>
@@ -252,13 +267,24 @@ onMounted(async () => {
             <label for="name">Name</label>
             <div class="flex-between" style="gap: 0.625rem; width: 32rem">
               <div class="input-container flex">
-                <input v-model="firstname" v-bind="firstnameAttrs" type="text" id="firstname"
-                  placeholder="First Name" />
+                <input
+                  v-model="firstname"
+                  v-bind="firstnameAttrs"
+                  type="text"
+                  id="firstname"
+                  placeholder="First Name"
+                />
                 <ErrorMsg v-show="errors.firstname" :error="errors.firstname" />
               </div>
 
               <div class="input-container flex">
-                <input v-model="lastname" v-bind="lastnameAttrs" type="text" id="lastname" placeholder="Last Name" />
+                <input
+                  v-model="lastname"
+                  v-bind="lastnameAttrs"
+                  type="text"
+                  id="lastname"
+                  placeholder="Last Name"
+                />
                 <ErrorMsg v-show="errors.lastname" :error="errors.lastname" />
               </div>
             </div>
@@ -268,7 +294,13 @@ onMounted(async () => {
           <div class="flex-between">
             <label for="email">Email address</label>
             <div class="input-container flex">
-              <input v-model="email" v-bind="emailAttrs" type="email" id="email" placeholder="Email Address" />
+              <input
+                v-model="email"
+                v-bind="emailAttrs"
+                type="email"
+                id="email"
+                placeholder="Email Address"
+              />
               <ErrorMsg v-show="errors.email" :error="errors.email" />
             </div>
           </div>
@@ -277,7 +309,13 @@ onMounted(async () => {
           <div class="flex-between">
             <label for="password">Password</label>
             <div class="input-container flex">
-              <input v-model="password" v-bind="passwordAttrs" type="password" id="password" placeholder="Password" />
+              <input
+                v-model="password"
+                v-bind="passwordAttrs"
+                type="password"
+                id="password"
+                placeholder="Password"
+              />
               <ErrorMsg v-show="errors.password" :error="errors.password" />
             </div>
           </div>
@@ -285,15 +323,25 @@ onMounted(async () => {
           <!-- Role -->
           <div class="flex-between">
             <label for="role">Role</label>
-            <input disabled v-model="role" v-bind="roleAttrs" type="text" id="role" placeholder="customer" />
+            <input
+              disabled
+              v-model="role"
+              v-bind="roleAttrs"
+              type="text"
+              id="role"
+              placeholder="customer"
+            />
           </div>
 
           <!-- Photo -->
           <div class="flex-between">
             <label for="photo">Photo</label>
             <div class="input-container flex">
-              <CustomFileInput :currentImgUrl="imageUrl" @update:currentImgUrl="imageUrl = $event"
-                @update:imgFile="imgFile = $event" />
+              <CustomFileInput
+                :currentImgUrl="imageUrl"
+                @update:currentImgUrl="imageUrl = $event"
+                @update:imgFile="imgFile = $event"
+              />
               <ErrorMsg v-show="!imgFile && !imageUrl" :error="errors.avatar" />
             </div>
           </div>
@@ -382,7 +430,7 @@ input:not([type="file"]) {
   outline: none;
 }
 
-.input-wrapper>input:focus {
+.input-wrapper > input:focus {
   border: 0.125rem solid var(--secondary-color);
 }
 
