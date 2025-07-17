@@ -1,6 +1,6 @@
 <script setup lang="ts">
-useHead({ title: "Nuxt Dashboard | Home ",});
-definePageMeta({ middleware: "un-auth"});
+useHead({ title: "Nuxt Dashboard | Home ", });
+definePageMeta({ middleware: "un-auth" });
 
 </script>
 
@@ -8,8 +8,8 @@ definePageMeta({ middleware: "un-auth"});
     <div class="container flex-col-center">
         <h1>Welcome to Nuxt Dashboard</h1>
         <div class="flex-center" style="gap: 30px">
-            <NuxtLink to="/user/listings">Sign IN</NuxtLink>
-            <NuxtLink to="/user/listings">Sign Up</NuxtLink>
+            <NuxtLink to="/user/login">Sign IN</NuxtLink>
+            <NuxtLink to="/user/register">Sign Up</NuxtLink>
         </div>
     </div>
 </template>

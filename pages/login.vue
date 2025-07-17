@@ -15,8 +15,8 @@ const showPassword = ref(false);
 
 
 
-// email: "john@mail.com",
-// password: "changeme",
+// email: "ohn@mail.com",
+// password: "hangeme",
 
 // GraphQL API
 const { mutate: loginUser, loading, error } = useMutation(LOGIN_USER_MUTATION,
@@ -84,7 +84,7 @@ const handleSignIn = handleSubmit(
                 <form>
                     <!-- Email -->
                     <div class="input-wrapper">
-                        <input v-model="email" v-bind="emailAttrs" type="email" placeholder="Email" />
+                        <input v-model="email" v-bind="emailAttrs" type="email" placeholder="Email : john@mail.com" />
                         <img src="@/assets/icons/EnvelopeSimple.svg" />
                     </div>
                     <ErrorMsg v-if="errors.email" :error="errors.email" />
@@ -92,7 +92,7 @@ const handleSignIn = handleSubmit(
                     <!-- Password -->
                     <div class="input-wrapper">
                         <input v-model="password" v-bind="passwordAttrs" :type="showPassword ? 'text' : 'password'"
-                            placeholder="Password" />
+                            placeholder="Password : changeme" />
                         <img src="@/assets/icons/LockKey.svg" />
                         <div class="show-password">
                             <img @click="showPassword = !showPassword" class="eye" style="right: 0 !important"

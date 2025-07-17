@@ -14,14 +14,15 @@
     "@nuxtjs/apollo": "^5.0.0-alpha.14",
     "@nuxtjs/cloudinary": "^4.0.0",
     "@nuxtjs/i18n": "^9.1.0",
-    "@vee-validate/yup": "^4.14.6",
+    "@vee-validate/yup": "^4.15.1",
     "@vue/apollo-composable": "^4.0.0-beta.12",
     "axios": "^1.7.7",
     "cloudinary": "^2.5.1",
     "element-plus": "^2.8.8",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
-    "nuxt": "^3.13.2"
+    "nuxt": "^3.13.2",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "typescript": "^5.0.0"
