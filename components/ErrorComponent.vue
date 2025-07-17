@@ -5,13 +5,14 @@ const props = defineProps({
         apiMessage: String,
     },
 });
+
+const reload = () => {
+    window.location.reload();
+};
 </script>
 
 <template>
-    <div
-        class="flex-col-center"
-        style="text-align: center; height: 80vh; gap: 30px"
-    >
+    <div class="flex-col-center" style="text-align: center; height: 80vh; gap: 30px">
         <h1 style="color: var(--secondary-color)">
             {{ props.error.myMessage }} 😢😢
         </h1>
@@ -19,7 +20,7 @@ const props = defineProps({
             Error: {{ error.apiMessage }}
         </h2>
 
-        <button @click="$router.go(0)" class="flex-center try">
+        <button @click="reload()" class="flex-center try">
             <span>Retry</span>
         </button>
     </div>
@@ -50,6 +51,7 @@ h1 {
     color: var(--secondary-color);
     font-size: 30px;
 }
+
 h2 {
     color: var(--primary-color);
     font-size: 20px;
